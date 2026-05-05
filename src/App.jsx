@@ -7,16 +7,11 @@ import Dashboard from "./pages/Dashboard";
 import Account from "./pages/Account";
 import Receipts from "./pages/Receipts";
 
-// Additional pages for the full finance system (optional - can be added later)
-// import Farmers from "./pages/Farmers";
-// import Buyers from "./pages/Buyers";
-// import Transactions from "./pages/Transactions";
-// import StockManagement from "./pages/StockManagement";
-// import Orders from "./pages/Orders";
-// import Deliveries from "./pages/Deliveries";
-// import Payments from "./pages/Payments";
-// import Reports from "./pages/Reports";
 import Login from "./auth/Login";
+import Farmers from "./pages/farmers/Farmers";
+import AddFarmer from "./pages/farmers/AddFarmer";
+import EditFarmer from "./pages/farmers/EditFarmer";
+
 
 // Protected Route Component
 const PrivateRoute = ({ children }) => {
@@ -41,11 +36,9 @@ const App = () => {
         <Route
           path="/"
           element={
-           <PrivateRoute>
+            <PrivateRoute>
               <Layout />
-           </PrivateRoute>
-              
-          
+            </PrivateRoute>
           }
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
@@ -53,15 +46,20 @@ const App = () => {
           <Route path="account" element={<Account />} />
           <Route path="receipts" element={<Receipts />} />
           
-          {/* Additional routes for full finance system (uncomment when needed) */}
-          {/* <Route path="farmers" element={<Farmers />} />
-          <Route path="buyers" element={<Buyers />} />
-          <Route path="transactions" element={<Transactions />} />
-          <Route path="stock" element={<StockManagement />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="deliveries" element={<Deliveries />} />
-          <Route path="payments" element={<Payments />} />
-          <Route path="reports" element={<Reports />} /> */}
+          {/* Farmers Module Routes - Using pattern like your example */}
+          <Route path="farmers/add" element={<AddFarmer />} />
+          <Route path="farmers/edit/:id" element={<EditFarmer />} />
+          <Route path="farmers" element={<Farmers />} />
+          
+          {/* Additional routes for full finance system */}
+          <Route path="purchases" element={<div>Purchases Page</div>} />
+          <Route path="payments" element={<div>Payments Page</div>} />
+          <Route path="inventory" element={<div>Inventory Page</div>} />
+          <Route path="sales" element={<div>Sales Page</div>} />
+          <Route path="reports" element={<div>Reports Page</div>} />
+          <Route path="expenses" element={<div>Expenses Page</div>} />
+          <Route path="users-roles" element={<div>Users & Roles Page</div>} />
+          <Route path="settings" element={<div>Settings Page</div>} />
         </Route>
 
         {/* Catch all route - redirect to home */}

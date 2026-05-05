@@ -5,7 +5,7 @@ import {
   LogIn, Eye, EyeOff, AlertCircle, TrendingUp, 
   ArrowRight, CheckCircle, Shield, Leaf, 
   Users, DollarSign, Package, Truck, Zap,
-  BarChart3, Award, Star, Mail, Phone, Calendar
+  Award, Star, Mail, Phone, Calendar
 } from 'lucide-react';
 import BASE_URL from '../config/Config';
 
@@ -39,6 +39,9 @@ const Login = () => {
     setError('');
 
     try {
+      console.log('Attempting login to:', `${BASE_URL}/auth/login`);
+      console.log('With credentials:', { email: formData.email, password: '***' });
+      
       const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
@@ -51,19 +54,35 @@ const Login = () => {
       });
 
       const data = await response.json();
+      console.log('Login response:', data);
 
       if (response.ok && data.success) {
-        localStorage.setItem('token', data.accessToken);
-        localStorage.setItem('refreshToken', data.refreshToken);
+        // Store tokens and user data
+        if (data.accessToken) {
+          localStorage.setItem('token', data.accessToken);
+          console.log('Token saved:', data.accessToken.substring(0, 50) + '...');
+        } else {
+          console.error('No accessToken in response');
+        }
+        
+        if (data.refreshToken) {
+          localStorage.setItem('refreshToken', data.refreshToken);
+        }
+        
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Verify token was saved
+        const savedToken = localStorage.getItem('token');
+        console.log('Token verification - saved successfully:', !!savedToken);
+        console.log('Redirecting to dashboard...');
         
         navigate('/dashboard');
       } else {
         setError(data.message || 'Login failed. Please try again.');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login error details:', error);
       setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
@@ -178,7 +197,25 @@ const Login = () => {
           {/* Right Side - Login Form */}
           <div className="p-8 lg:p-12 bg-white">
             <div className="max-w-md mx-auto">
-           
+              {/* Quote Card */}
+              <div className="mb-8 p-4 rounded-xl bg-[#F1F8E9] border border-[#C8E6C9]">
+                <div className="flex gap-3">
+                  <div className="text-2xl">👨‍🌾</div>
+                  <div>
+                    <p className="text-sm text-[#5D4037] italic">
+                      "The best platform for agricultural trading. Simple, fast, and reliable."
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="flex">
+                        {[1,2,3,4,5].map((star) => (
+                          <Star key={star} className="w-3 h-3 fill-[#FF8F00] text-[#FF8F00]" />
+                        ))}
+                      </div>
+                      <span className="text-xs text-[#8D6E63]">- Rajesh Patil</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* Header */}
               <div className="text-center mb-6">
@@ -186,7 +223,15 @@ const Login = () => {
                 <p className="text-sm" style={{ color: '#8D6E63' }}>Enter your credentials to continue</p>
               </div>
 
-             
+              {/* Demo Button */}
+              <button
+                onClick={fillDemoCredentials}
+                className="group w-full mb-6 py-3 rounded-xl bg-[#F1F8E9] hover:bg-[#E8F5E9] transition-all flex items-center justify-center gap-2 border border-[#C8E6C9]"
+              >
+                <Zap className="w-4 h-4 text-[#FF6F00]" />
+                <span className="text-sm font-medium" style={{ color: '#2E7D32' }}>Try Demo Account</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" style={{ color: '#2E7D32' }} />
+              </button>
 
               {/* Divider */}
               <div className="relative my-6">
