@@ -1,3 +1,4 @@
+
 {
   "common": {
     "appName": "AgriBroker",
@@ -16,6 +17,7 @@
     "all": "All",
     "moreFilters": "More Filters"
   },
+
   "nav": {
     "dashboard": "Dashboard",
     "account": "Account",
@@ -23,14 +25,21 @@
     "farmers": "Farmers",
     "buyers": "Buyers",
     "transactions": "Transactions",
-    "stock": "Stock Management",
+    "stock": "Inventory",
     "orders": "Orders",
     "deliveries": "Deliveries",
     "payments": "Payments",
     "reports": "Reports",
-    "mainNav": "Main Navigation",
-    "financeTrading": "Finance & Trading"
+    "financeTrading": "Finance & Trading",
+
+    "purchases": "Purchases",
+    "sales": "Sales",
+    "expenses": "Expenses",
+    "usersRoles": "Users & Roles",
+    "settings": "Settings",
+    "mainNav": "Navigation"
   },
+
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back, {{name}}! Here's your trading summary.",
@@ -52,6 +61,7 @@
       "processing": "Processing"
     }
   },
+
   "account": {
     "title": "Account Settings",
     "subtitle": "Manage your profile and account details",
@@ -73,6 +83,7 @@
     "bankAccount": "Bank Account",
     "ifscCode": "IFSC Code"
   },
+
   "receipts": {
     "title": "Receipts",
     "subtitle": "Manage and track all your transaction receipts",
@@ -94,5 +105,14 @@
     "purchase": "Purchase",
     "sale": "Sale",
     "paid": "Paid"
+  },
+
+  "sidebar": {
+    "todaySummary": "Today's Summary",
+    "marketInsights": "Market Insights",
+    "marketMessage": "Wheat prices expected to rise by 8% this week",
+    "buying": "Buying",
+    "selling": "Selling"
   }
 }
+

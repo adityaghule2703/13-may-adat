@@ -207,7 +207,7 @@ const AddFarmer = () => {
     </label>
   );
 
-  const inputClasses = "w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-all bg-white text-sm";
+  const inputClasses = "w-full px-3 py-2 border rounded-lg border-[#E2E8F0] focus:outline-none  transition-all bg-white text-sm";
   const errorClasses = "text-xs text-red-500 mt-1";
 
   return (

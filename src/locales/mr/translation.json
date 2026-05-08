@@ -16,6 +16,7 @@
     "all": "सर्व",
     "moreFilters": "अधिक फिल्टर"
   },
+
   "nav": {
     "dashboard": "डॅशबोर्ड",
     "account": "खाते",
@@ -23,14 +24,21 @@
     "farmers": "शेतकरी",
     "buyers": "खरेदीदार",
     "transactions": "व्यवहार",
-    "stock": "स्टॉक व्यवस्थापन",
+    "stock": "स्टॉक",
     "orders": "ऑर्डर",
     "deliveries": "वितरण",
     "payments": "पेमेंट",
     "reports": "अहवाल",
-    "mainNav": "मुख्य मार्गदर्शक",
-    "financeTrading": "वित्त आणि व्यापार"
+    "financeTrading": "वित्त आणि व्यापार",
+
+    "purchases": "खरेदी",
+    "sales": "विक्री",
+    "expenses": "खर्च",
+    "usersRoles": "वापरकर्ते आणि भूमिका",
+    "settings": "सेटिंग्ज",
+    "mainNav": "मार्गदर्शन"
   },
+
   "dashboard": {
     "title": "डॅशबोर्ड",
     "welcome": "आपले स्वागत आहे, {{name}}! येथे आपला व्यापार सारांश आहे.",
@@ -52,6 +60,7 @@
       "processing": "प्रक्रियेत"
     }
   },
+
   "account": {
     "title": "खाते सेटिंग्ज",
     "subtitle": "आपले प्रोफाइल आणि खाते तपशील व्यवस्थापित करा",
@@ -73,6 +82,7 @@
     "bankAccount": "बँक खाते",
     "ifscCode": "आयएफएससी कोड"
   },
+
   "receipts": {
     "title": "पावत्या",
     "subtitle": "आपल्या सर्व व्यवहार पावत्या व्यवस्थापित करा",
@@ -94,5 +104,13 @@
     "purchase": "खरेदी",
     "sale": "विक्री",
     "paid": "भरलेले"
+  },
+
+  "sidebar": {
+    "todaySummary": "आजचा सारांश",
+    "marketInsights": "बाजार अंतर्दृष्टी",
+    "marketMessage": "गव्हाच्या किंमती या आठवड्यात ८% वाढण्याची शक्यता",
+    "buying": "खरेदी",
+    "selling": "विक्री"
   }
 }
