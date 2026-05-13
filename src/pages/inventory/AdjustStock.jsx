@@ -1,6 +1,7 @@
 // src/pages/inventory/AdjustStock.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -93,6 +94,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const AdjustStock = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -119,76 +121,68 @@ const AdjustStock = () => {
 
   const getToken = () => localStorage.getItem('token');
 
- // Fetch warehouses with their products from API
-const fetchWarehouses = async () => {
-  try {
-    const token = getToken();
-    const response = await axios.get(`${BASE_URL}/warehouse`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    if (response.data.success) {
-      setWarehouses(response.data.data);
+  const fetchWarehouses = async () => {
+    try {
+      const token = getToken();
+      const response = await axios.get(`${BASE_URL}/warehouse`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       
-      // If pre-selected warehouse exists, auto-select it
-      if (preSelectedWarehouse) {
-        const warehouse = response.data.data.find(w => w.name === preSelectedWarehouse);
-        if (warehouse) {
-          setSelectedWarehouse(warehouse);
-          setFormData(prev => ({ ...prev, warehouse: warehouse.name }));
-          // Get products for pre-selected warehouse
-          const products = warehouse.products || [];
-          setFilteredProducts(products);
-          
-          // If pre-selected product exists, auto-select it
-          if (preSelectedProduct) {
-            const product = products.find(p => p.productName === preSelectedProduct);
-            if (product) {
-              setSelectedProduct(product);
-              setFormData(prev => ({ ...prev, productName: product.productName }));
+      if (response.data.success) {
+        setWarehouses(response.data.data);
+        
+        if (preSelectedWarehouse) {
+          const warehouse = response.data.data.find(w => w.name === preSelectedWarehouse);
+          if (warehouse) {
+            setSelectedWarehouse(warehouse);
+            setFormData(prev => ({ ...prev, warehouse: warehouse.name }));
+            const products = warehouse.products || [];
+            setFilteredProducts(products);
+            
+            if (preSelectedProduct) {
+              const product = products.find(p => p.productName === preSelectedProduct);
+              if (product) {
+                setSelectedProduct(product);
+                setFormData(prev => ({ ...prev, productName: product.productName }));
+              }
             }
           }
         }
+      } else {
+        const errorMessage = response.data.message || response.data.error || t('inventory.errors.fetchFailed');
+        setError(errorMessage);
       }
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to load warehouse data';
+    } catch (error) {
+      console.error('Error fetching warehouses:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          t('inventory.errors.fetchFailed');
       setError(errorMessage);
+    } finally {
+      setLoadingData(false);
     }
-  } catch (error) {
-    console.error('Error fetching warehouses:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Failed to load warehouse data';
-    setError(errorMessage);
-  } finally {
-    setLoadingData(false);
-  }
-};
+  };
 
   useEffect(() => {
     fetchWarehouses();
   }, []);
 
-  // Handle warehouse selection
   const handleWarehouseChange = (event, newValue) => {
     setSelectedWarehouse(newValue);
-    setSelectedProduct(null); // Reset product when warehouse changes
+    setSelectedProduct(null);
     setFilteredProducts(newValue?.products || []);
     
     setFormData(prev => ({ 
       ...prev, 
       warehouse: newValue?.name || '',
-      productName: '' // Clear product name when warehouse changes
+      productName: ''
     }));
     
     if (fieldErrors.warehouse) setFieldErrors(prev => ({ ...prev, warehouse: '' }));
     if (fieldErrors.productName) setFieldErrors(prev => ({ ...prev, productName: '' }));
   };
 
-  // Handle product selection
   const handleProductChange = (event, newValue) => {
     setSelectedProduct(newValue);
     setFormData(prev => ({ ...prev, productName: newValue?.productName || '' }));
@@ -206,24 +200,24 @@ const fetchWarehouses = async () => {
     let isValid = true;
 
     if (!formData.warehouse) {
-      errors.warehouse = 'Please select a warehouse';
+      errors.warehouse = t('inventory.errors.warehouseRequired');
       isValid = false;
     }
     if (!formData.productName) {
-      errors.productName = 'Please select a product';
+      errors.productName = t('inventory.errors.productRequired');
       isValid = false;
     }
     if (!formData.adjustment || parseFloat(formData.adjustment) <= 0) {
-      errors.adjustment = 'Please enter a valid adjustment quantity';
+      errors.adjustment = t('inventory.errors.validQuantityRequired');
       isValid = false;
     }
     if (!formData.reason) {
-      errors.reason = 'Please provide a reason for adjustment';
+      errors.reason = t('inventory.errors.reasonRequired');
       isValid = false;
     }
 
     setFieldErrors(errors);
-    if (!isValid) setError('Please fill all required fields');
+    if (!isValid) setError(t('common.fillCorrectly'));
     return isValid;
   };
 
@@ -232,58 +226,56 @@ const fetchWarehouses = async () => {
     setTimeout(() => setError(''), 5000);
   };
 
- const handleSubmit = async () => {
-  if (!validateForm()) return;
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
 
-  setLoading(true);
-  setError('');
+    setLoading(true);
+    setError('');
 
-  try {
-    const token = getToken();
-    const adjustmentValue = formData.adjustmentType === 'add' 
-      ? parseFloat(formData.adjustment) 
-      : -parseFloat(formData.adjustment);
+    try {
+      const token = getToken();
+      const adjustmentValue = formData.adjustmentType === 'add' 
+        ? parseFloat(formData.adjustment) 
+        : -parseFloat(formData.adjustment);
 
-    const adjustData = {
-      productName: formData.productName,
-      warehouse: formData.warehouse,
-      adjustment: adjustmentValue,
-      reason: formData.reason
-    };
+      const adjustData = {
+        productName: formData.productName,
+        warehouse: formData.warehouse,
+        adjustment: adjustmentValue,
+        reason: formData.reason
+      };
 
-    const response = await axios.post(`${BASE_URL}/inventory/adjust`, adjustData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+      const response = await axios.post(`${BASE_URL}/inventory/adjust`, adjustData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        navigate('/login');
+        return;
       }
-    });
 
-    if (response.status === 401) {
-      localStorage.clear();
-      navigate('/login');
-      return;
-    }
-
-    if (response.data.success) {
-      setSuccess(true);
-      setTimeout(() => navigate('/inventory'), 2000);
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to adjust stock';
+      if (response.data.success) {
+        setSuccess(true);
+        setTimeout(() => navigate('/inventory'), 2000);
+      } else {
+        const errorMessage = response.data.message || response.data.error || t('inventory.errors.adjustFailed');
+        showError(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error adjusting stock:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          t('common.networkError');
       showError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Error adjusting stock:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Network error. Please check your connection.';
-    showError(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
@@ -291,7 +283,6 @@ const fetchWarehouses = async () => {
     }).format(amount || 0);
   };
 
-  // Label component
   const Label = ({ children, required }) => (
     <Typography sx={{ 
       fontSize: '0.7rem', 
@@ -327,7 +318,7 @@ const fetchWarehouses = async () => {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '96vh' }}>
         <CircularProgress sx={{ color: '#2E7D32' }} />
-        <Typography sx={{ ml: 2, color: '#2E7D32' }}>Loading data...</Typography>
+        <Typography sx={{ ml: 2, color: '#2E7D32' }}>{t('common.loading')}</Typography>
       </Box>
     );
   }
@@ -348,10 +339,10 @@ const fetchWarehouses = async () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Adjust Stock
+            {t('inventory.adjustTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Increase or decrease inventory stock
+            {t('inventory.adjustSubtitle')}
           </Typography>
         </Box>
       </Box>
@@ -364,7 +355,7 @@ const fetchWarehouses = async () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Stock adjusted successfully! Redirecting...
+          {t('inventory.messages.adjustSuccess')}
         </Alert>
       )}
 
@@ -373,14 +364,16 @@ const fetchWarehouses = async () => {
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Stock Adjustment Details</Typography>
+            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+              {t('inventory.stockAdjustmentDetails')}
+            </Typography>
           </Stack>
         </Box>
         <Box sx={{ p: 2.5 }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            {/* WAREHOUSE SELECTION - First column (moved to first position) */}
+            {/* WAREHOUSE SELECTION */}
             <Box>
-              <Label required>WAREHOUSE</Label>
+              <Label required>{t('inventory.warehouse')}</Label>
               <Autocomplete
                 fullWidth
                 options={warehouses}
@@ -388,13 +381,13 @@ const fetchWarehouses = async () => {
                 value={selectedWarehouse}
                 onChange={handleWarehouseChange}
                 disabled={!!preSelectedWarehouse}
-                getOptionLabel={(option) => `${option.name} (${option.isActive ? 'Active' : 'Inactive'})`}
+                getOptionLabel={(option) => `${option.name} (${option.isActive ? t('warehouses.status.active') : t('warehouses.status.inactive')})`}
                 isOptionEqualToValue={(option, value) => option._id === value?._id}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Select a warehouse"
+                    placeholder={t('inventory.placeholders.selectWarehouse')}
                     error={!!fieldErrors.warehouse}
                     helperText={fieldErrors.warehouse}
                     sx={inputSx}
@@ -408,12 +401,12 @@ const fetchWarehouses = async () => {
                           {option.name}
                         </Typography>
                         <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                          Code: {option.code} | Products: {option.products?.length || 0}
+                          {t('warehouses.table.code')}: {option.code} | {t('warehouses.productsCount')}: {option.products?.length || 0}
                         </Typography>
                       </Box>
                       <Box sx={{ textAlign: 'right' }}>
                         <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
-                          Location
+                          {t('warehouses.location')}
                         </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.7rem', color: '#2E7D32' }}>
                           {option.location?.city || 'N/A'}
@@ -436,14 +429,14 @@ const fetchWarehouses = async () => {
               />
               {warehouses.length === 0 && !loadingData && (
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#FF6F00', fontSize: '0.65rem' }}>
-                  No warehouses found. Please add a warehouse first.
+                  {t('inventory.noWarehousesFound')}
                 </Typography>
               )}
             </Box>
 
-            {/* PRODUCT SELECTION - Second column (only shows products from selected warehouse) */}
+            {/* PRODUCT SELECTION */}
             <Box>
-              <Label required>PRODUCT NAME</Label>
+              <Label required>{t('inventory.productName')}</Label>
               <Autocomplete
                 fullWidth
                 options={filteredProducts}
@@ -451,13 +444,13 @@ const fetchWarehouses = async () => {
                 value={selectedProduct}
                 onChange={handleProductChange}
                 disabled={!selectedWarehouse || !!preSelectedProduct}
-                getOptionLabel={(option) => `${option.productName} (Current: ${option.currentStock} ${option.unit})`}
+                getOptionLabel={(option) => `${option.productName} (${t('inventory.current')}: ${option.currentStock} ${option.unit})`}
                 isOptionEqualToValue={(option, value) => option.productName === value?.productName}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     size="small"
-                    placeholder={selectedWarehouse ? "Search and select a product" : "Please select a warehouse first"}
+                    placeholder={selectedWarehouse ? t('inventory.placeholders.selectProduct') : t('inventory.placeholders.selectWarehouseFirst')}
                     error={!!fieldErrors.productName}
                     helperText={fieldErrors.productName}
                     sx={inputSx}
@@ -471,12 +464,12 @@ const fetchWarehouses = async () => {
                           {option.productName}
                         </Typography>
                         <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                          Unit: {option.unit}
+                          {t('inventory.unit')}: {option.unit}
                         </Typography>
                       </Box>
                       <Box sx={{ textAlign: 'right' }}>
                         <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
-                          Current Stock
+                          {t('inventory.currentStock')}
                         </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#2E7D32' }}>
                           {option.currentStock} {option.unit}
@@ -499,14 +492,14 @@ const fetchWarehouses = async () => {
               />
               {selectedWarehouse && filteredProducts.length === 0 && (
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#FF6F00', fontSize: '0.65rem' }}>
-                  No products found in this warehouse.
+                  {t('inventory.noProductsInWarehouse')}
                 </Typography>
               )}
             </Box>
 
-            {/* ADJUSTMENT TYPE - spans both columns */}
+            {/* ADJUSTMENT TYPE */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label required>ADJUSTMENT TYPE</Label>
+              <Label required>{t('inventory.adjustmentType')}</Label>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
                 <Button
                   variant={formData.adjustmentType === 'add' ? 'contained' : 'outlined'}
@@ -526,7 +519,7 @@ const fetchWarehouses = async () => {
                   }}
                 >
                   <TrendingUp sx={{ fontSize: '1rem', mr: 0.5 }} />
-                  Add Stock (+)
+                  {t('inventory.addStock')} (+)
                 </Button>
                 <Button
                   variant={formData.adjustmentType === 'remove' ? 'contained' : 'outlined'}
@@ -546,14 +539,14 @@ const fetchWarehouses = async () => {
                   }}
                 >
                   <TrendingDown sx={{ fontSize: '1rem', mr: 0.5 }} />
-                  Remove Stock (-)
+                  {t('inventory.removeStock')} (-)
                 </Button>
               </Box>
             </Box>
 
-            {/* QUANTITY - First column */}
+            {/* QUANTITY */}
             <Box>
-              <Label required>QUANTITY</Label>
+              <Label required>{t('inventory.quantity')}</Label>
               <TextField
                 fullWidth
                 type="number"
@@ -561,19 +554,18 @@ const fetchWarehouses = async () => {
                 name="adjustment"
                 value={formData.adjustment}
                 onChange={handleChange}
-                placeholder="Enter quantity"
+                placeholder={t('inventory.placeholders.quantity')}
                 error={!!fieldErrors.adjustment}
                 helperText={fieldErrors.adjustment}
                 sx={inputSx}
               />
             </Box>
 
-            {/* Empty space for alignment */}
             <Box />
 
-            {/* REASON - spans both columns */}
+            {/* REASON */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label required>REASON FOR ADJUSTMENT</Label>
+              <Label required>{t('inventory.reasonForAdjustment')}</Label>
               <TextField
                 fullWidth
                 multiline
@@ -582,19 +574,18 @@ const fetchWarehouses = async () => {
                 name="reason"
                 value={formData.reason}
                 onChange={handleChange}
-                placeholder="e.g., New harvest received, Damaged goods, Expired products, etc."
+                placeholder={t('inventory.placeholders.reason')}
                 error={!!fieldErrors.reason}
                 helperText={fieldErrors.reason}
                 sx={inputSx}
               />
             </Box>
 
-            {/* Info Note - spans both columns */}
+            {/* Info Note */}
             <Box sx={{ gridColumn: 'span 2' }}>
               <Box sx={{ p: 2, bgcolor: '#FFF3E0', borderRadius: 1.5, border: '1px solid #FFE0B2' }}>
                 <Typography variant="caption" sx={{ color: '#E65100', fontSize: '0.7rem' }}>
-                  <strong>Note:</strong> Adding stock will increase inventory. Removing stock will decrease inventory.
-                  All adjustments are logged for audit purposes.
+                  <strong>{t('common.note')}:</strong> {t('inventory.adjustmentNote')}
                 </Typography>
               </Box>
             </Box>
@@ -621,7 +612,7 @@ const fetchWarehouses = async () => {
             }
           }}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={handleSubmit}
@@ -645,7 +636,7 @@ const fetchWarehouses = async () => {
             }
           }}
         >
-          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : 'Adjust Stock'}
+          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : t('inventory.buttons.adjustStock')}
         </Button>
       </Box>
     </Box>

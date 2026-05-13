@@ -1,6 +1,7 @@
 // src/pages/inventory/TransferStock.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -86,6 +87,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const TransferStock = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -111,87 +113,78 @@ const TransferStock = () => {
 
   const getToken = () => localStorage.getItem('token');
 
- // Fetch inventory items to get product list
-const fetchInventory = async () => {
-  try {
-    const token = getToken();
-    const response = await axios.get(`${BASE_URL}/inventory`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (response.data.success) {
-      setProducts(response.data.data);
-      if (preSelectedProduct) {
-        const product = response.data.data.find(p => p.productName === preSelectedProduct);
-        if (product) setSelectedProduct(product);
+  const fetchInventory = async () => {
+    try {
+      const token = getToken();
+      const response = await axios.get(`${BASE_URL}/inventory`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        setProducts(response.data.data);
+        if (preSelectedProduct) {
+          const product = response.data.data.find(p => p.productName === preSelectedProduct);
+          if (product) setSelectedProduct(product);
+        }
+      } else {
+        const errorMessage = response.data.message || response.data.error || t('inventory.errors.fetchFailed');
+        setError(errorMessage);
       }
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to load inventory data';
+    } catch (error) {
+      console.error('Error fetching inventory:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          t('inventory.errors.fetchFailed');
       setError(errorMessage);
     }
-  } catch (error) {
-    console.error('Error fetching inventory:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Failed to load inventory data';
-    setError(errorMessage);
-  }
-};
+  };
 
-  // Fetch warehouses from warehouse API
-const fetchWarehouses = async () => {
-  try {
-    const token = getToken();
-    const response = await axios.get(`${BASE_URL}/warehouse`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (response.data.success) {
-      const warehouseNames = response.data.data.map(warehouse => warehouse.name);
-      setWarehouses(warehouseNames);
-    } else {
-      // FIX: Check for both 'message' and 'error' fields before falling back
-      const errorMessage = response.data.message || response.data.error || 'Failed to load warehouses from API';
-      console.warn(errorMessage);
-      
-      // Fallback: try to get from inventory if warehouse API fails
-      const token2 = getToken();
-      const invResponse = await axios.get(`${BASE_URL}/inventory`, {
-        headers: { 'Authorization': `Bearer ${token2}` }
-      });
-      if (invResponse.data.success) {
-        const uniqueWarehouses = [...new Set(invResponse.data.data.map(item => item.warehouse))];
-        setWarehouses(uniqueWarehouses);
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching warehouses:', error);
-    // Fallback: get warehouses from inventory
+  const fetchWarehouses = async () => {
     try {
-      const token2 = getToken();
-      const invResponse = await axios.get(`${BASE_URL}/inventory`, {
-        headers: { 'Authorization': `Bearer ${token2}` }
+      const token = getToken();
+      const response = await axios.get(`${BASE_URL}/warehouse`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (invResponse.data.success) {
-        const uniqueWarehouses = [...new Set(invResponse.data.data.map(item => item.warehouse))];
-        setWarehouses(uniqueWarehouses);
+      if (response.data.success) {
+        const warehouseNames = response.data.data.map(warehouse => warehouse.name);
+        setWarehouses(warehouseNames);
       } else {
-        // FIX: Handle inventory API error as well
-        const fallbackErrorMessage = invResponse.data.message || invResponse.data.error || 'Failed to load warehouse data';
-        setError(fallbackErrorMessage);
+        const errorMessage = response.data.message || response.data.error || t('warehouses.errors.fetchFailed');
+        console.warn(errorMessage);
+        
+        const token2 = getToken();
+        const invResponse = await axios.get(`${BASE_URL}/inventory`, {
+          headers: { 'Authorization': `Bearer ${token2}` }
+        });
+        if (invResponse.data.success) {
+          const uniqueWarehouses = [...new Set(invResponse.data.data.map(item => item.warehouse))];
+          setWarehouses(uniqueWarehouses);
+        }
       }
-    } catch (err) {
-      console.error('Fallback also failed:', err);
-      // FIX: Better error extraction for fallback error
-      const fallbackErrorMsg = err.response?.data?.message || 
-                               err.response?.data?.error || 
-                               err.message || 
-                               'Failed to load warehouse data';
-      setError(fallbackErrorMsg);
+    } catch (error) {
+      console.error('Error fetching warehouses:', error);
+      try {
+        const token2 = getToken();
+        const invResponse = await axios.get(`${BASE_URL}/inventory`, {
+          headers: { 'Authorization': `Bearer ${token2}` }
+        });
+        if (invResponse.data.success) {
+          const uniqueWarehouses = [...new Set(invResponse.data.data.map(item => item.warehouse))];
+          setWarehouses(uniqueWarehouses);
+        } else {
+          const fallbackErrorMessage = invResponse.data.message || invResponse.data.error || t('warehouses.errors.fetchFailed');
+          setError(fallbackErrorMessage);
+        }
+      } catch (err) {
+        console.error('Fallback also failed:', err);
+        const fallbackErrorMsg = err.response?.data?.message || 
+                                 err.response?.data?.error || 
+                                 err.message || 
+                                 t('warehouses.errors.fetchFailed');
+        setError(fallbackErrorMsg);
+      }
     }
-  }
-};
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -202,7 +195,6 @@ const fetchWarehouses = async () => {
     loadData();
   }, []);
 
-  // Update stock info when product or source warehouse changes
   useEffect(() => {
     if (formData.productName && formData.fromWarehouse) {
       const product = products.find(
@@ -223,7 +215,6 @@ const fetchWarehouses = async () => {
   const handleFromWarehouseChange = (event, newValue) => {
     setFormData(prev => ({ ...prev, fromWarehouse: newValue || '' }));
     if (fieldErrors.fromWarehouse) setFieldErrors(prev => ({ ...prev, fromWarehouse: '' }));
-    // Reset destination warehouse if it's the same as source
     if (formData.toWarehouse === newValue) {
       setFormData(prev => ({ ...prev, toWarehouse: '' }));
     }
@@ -245,32 +236,35 @@ const fetchWarehouses = async () => {
     let isValid = true;
 
     if (!formData.productName) {
-      errors.productName = 'Please select a product';
+      errors.productName = t('inventory.errors.productRequired');
       isValid = false;
     }
     if (!formData.fromWarehouse) {
-      errors.fromWarehouse = 'Please select source warehouse';
+      errors.fromWarehouse = t('inventory.errors.sourceWarehouseRequired');
       isValid = false;
     }
     if (!formData.toWarehouse) {
-      errors.toWarehouse = 'Please select destination warehouse';
+      errors.toWarehouse = t('inventory.errors.destWarehouseRequired');
       isValid = false;
     }
     if (formData.fromWarehouse === formData.toWarehouse) {
-      errors.toWarehouse = 'Source and destination warehouses cannot be the same';
+      errors.toWarehouse = t('inventory.errors.sameWarehouse');
       isValid = false;
     }
     if (!formData.qty || parseFloat(formData.qty) <= 0) {
-      errors.qty = 'Please enter a valid quantity';
+      errors.qty = t('inventory.errors.validQuantityRequired');
       isValid = false;
     }
     if (selectedProductStock && parseFloat(formData.qty) > selectedProductStock.currentStock) {
-      errors.qty = `Insufficient stock. Only ${selectedProductStock.currentStock} ${selectedProductStock.unit} available`;
+      errors.qty = t('inventory.errors.insufficientStock', { 
+        stock: selectedProductStock.currentStock, 
+        unit: selectedProductStock.unit 
+      });
       isValid = false;
     }
 
     setFieldErrors(errors);
-    if (!isValid) setError('Please correct the errors above');
+    if (!isValid) setError(t('common.fixErrors'));
     return isValid;
   };
 
@@ -279,62 +273,56 @@ const fetchWarehouses = async () => {
     setTimeout(() => setError(''), 5000);
   };
 
-const handleSubmit = async () => {
-  if (!validateForm()) return;
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
 
-  setLoading(true);
-  setError('');
+    setLoading(true);
+    setError('');
 
-  try {
-    const token = getToken();
-    const transferData = {
-      productName: formData.productName,
-      fromWarehouse: formData.fromWarehouse,
-      toWarehouse: formData.toWarehouse,
-      qty: parseFloat(formData.qty)
-    };
+    try {
+      const token = getToken();
+      const transferData = {
+        productName: formData.productName,
+        fromWarehouse: formData.fromWarehouse,
+        toWarehouse: formData.toWarehouse,
+        qty: parseFloat(formData.qty)
+      };
 
-    const response = await axios.post(`${BASE_URL}/inventory/transfer`, transferData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+      const response = await axios.post(`${BASE_URL}/inventory/transfer`, transferData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        navigate('/login');
+        return;
       }
-    });
 
-    if (response.status === 401) {
-      localStorage.clear();
-      navigate('/login');
-      return;
-    }
-
-    if (response.data.success) {
-      setSuccess(true);
-      setTimeout(() => navigate('/inventory'), 2000);
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to transfer stock';
+      if (response.data.success) {
+        setSuccess(true);
+        setTimeout(() => navigate('/inventory'), 2000);
+      } else {
+        const errorMessage = response.data.message || response.data.error || t('inventory.errors.transferFailed');
+        showError(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error transferring stock:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          t('common.networkError');
       showError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Error transferring stock:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Network error. Please check your connection.';
-    showError(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-  // Get unique product names for dropdown
   const uniqueProductNames = [...new Set(products.map(p => p.productName))];
-  
-  // Get available destination warehouses (excluding source)
   const availableWarehouses = warehouses.filter(w => w !== formData.fromWarehouse);
 
-  // Label component
   const Label = ({ children, required }) => (
     <Typography sx={{ 
       fontSize: '0.7rem', 
@@ -370,13 +358,13 @@ const handleSubmit = async () => {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '96vh' }}>
         <CircularProgress sx={{ color: '#2E7D32' }} />
-        <Typography sx={{ ml: 2, color: '#2E7D32' }}>Loading data...</Typography>
+        <Typography sx={{ ml: 2, color: '#2E7D32' }}>{t('common.loading')}</Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{  height: '100%', overflow: 'auto' }}>
+    <Box sx={{ height: '100%', overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
         <IconButton 
@@ -391,10 +379,10 @@ const handleSubmit = async () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Transfer Stock
+            {t('inventory.transferTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Move stock between warehouses
+            {t('inventory.transferSubtitle')}
           </Typography>
         </Box>
       </Box>
@@ -407,7 +395,7 @@ const handleSubmit = async () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Stock transferred successfully! Redirecting...
+          {t('inventory.messages.transferSuccess')}
         </Alert>
       )}
 
@@ -416,14 +404,16 @@ const handleSubmit = async () => {
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <TransferIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Transfer Details</Typography>
+            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+              {t('inventory.transferDetails')}
+            </Typography>
           </Stack>
         </Box>
         <Box sx={{ p: 2.5 }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            {/* PRODUCT SELECTION - First column */}
+            {/* PRODUCT SELECTION */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label required>PRODUCT NAME</Label>
+              <Label required>{t('inventory.productName')}</Label>
               <Autocomplete
                 fullWidth
                 options={uniqueProductNames}
@@ -437,14 +427,13 @@ const handleSubmit = async () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Search and select a product"
+                    placeholder={t('inventory.placeholders.selectProduct')}
                     error={!!fieldErrors.productName}
                     helperText={fieldErrors.productName}
                     sx={inputSx}
                   />
                 )}
                 renderOption={(props, option) => {
-                  // Find all stock entries for this product across warehouses
                   const productStocks = products.filter(p => p.productName === option);
                   const totalStock = productStocks.reduce((sum, p) => sum + p.currentStock, 0);
                   const unit = productStocks[0]?.unit || 'units';
@@ -456,7 +445,7 @@ const handleSubmit = async () => {
                           {option}
                         </Typography>
                         <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                          Total Stock: {totalStock} {unit}
+                          {t('inventory.totalStock')}: {totalStock} {unit}
                         </Typography>
                       </Box>
                     </li>
@@ -476,9 +465,9 @@ const handleSubmit = async () => {
               />
             </Box>
 
-            {/* FROM WAREHOUSE - First column */}
+            {/* FROM WAREHOUSE */}
             <Box>
-              <Label required>FROM WAREHOUSE (Source)</Label>
+              <Label required>{t('inventory.fromWarehouse')}</Label>
               <Autocomplete
                 fullWidth
                 options={warehouses}
@@ -489,14 +478,13 @@ const handleSubmit = async () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder={warehouses.length === 0 ? 'No warehouses found' : 'Select source warehouse'}
+                    placeholder={warehouses.length === 0 ? t('inventory.placeholders.noWarehouses') : t('inventory.placeholders.selectSourceWarehouse')}
                     error={!!fieldErrors.fromWarehouse}
                     helperText={fieldErrors.fromWarehouse}
                     sx={inputSx}
                   />
                 )}
                 renderOption={(props, option) => {
-                  // Show stock info for selected product in this warehouse
                   const stockInfo = formData.productName 
                     ? products.find(p => p.productName === formData.productName && p.warehouse === option)
                     : null;
@@ -512,7 +500,7 @@ const handleSubmit = async () => {
                         </Box>
                         {stockInfo && (
                           <Typography variant="caption" sx={{ fontSize: '0.7rem', color: '#2E7D32' }}>
-                            Stock: {stockInfo.currentStock} {stockInfo.unit}
+                            {t('inventory.stock')}: {stockInfo.currentStock} {stockInfo.unit}
                           </Typography>
                         )}
                       </Box>
@@ -533,14 +521,14 @@ const handleSubmit = async () => {
               />
               {warehouses.length === 0 && !loadingData && (
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#FF6F00', fontSize: '0.65rem' }}>
-                  No warehouses found. Please add a warehouse first.
+                  {t('inventory.noWarehousesFound')}
                 </Typography>
               )}
             </Box>
 
-            {/* TO WAREHOUSE - Second column */}
+            {/* TO WAREHOUSE */}
             <Box>
-              <Label required>TO WAREHOUSE (Destination)</Label>
+              <Label required>{t('inventory.toWarehouse')}</Label>
               <Autocomplete
                 fullWidth
                 options={availableWarehouses}
@@ -551,7 +539,7 @@ const handleSubmit = async () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder={!formData.fromWarehouse ? 'Select source first' : 'Select destination warehouse'}
+                    placeholder={!formData.fromWarehouse ? t('inventory.placeholders.selectSourceFirst') : t('inventory.placeholders.selectDestWarehouse')}
                     error={!!fieldErrors.toWarehouse}
                     helperText={fieldErrors.toWarehouse}
                     sx={inputSx}
@@ -581,9 +569,9 @@ const handleSubmit = async () => {
               />
             </Box>
 
-            {/* QUANTITY - First column */}
+            {/* QUANTITY */}
             <Box>
-              <Label required>QUANTITY TO TRANSFER</Label>
+              <Label required>{t('inventory.quantityToTransfer')}</Label>
               <TextField
                 fullWidth
                 type="number"
@@ -591,28 +579,27 @@ const handleSubmit = async () => {
                 name="qty"
                 value={formData.qty}
                 onChange={handleChange}
-                placeholder="Enter quantity"
+                placeholder={t('inventory.placeholders.quantity')}
                 error={!!fieldErrors.qty}
                 helperText={fieldErrors.qty}
                 sx={inputSx}
               />
             </Box>
 
-            {/* Empty space for alignment */}
             <Box />
 
-            {/* Stock Info - spans both columns */}
+            {/* Stock Info */}
             {selectedProductStock && (
               <Box sx={{ gridColumn: 'span 2' }}>
                 <Box sx={{ p: 2, bgcolor: '#E3F2FD', borderRadius: 1.5, border: '1px solid #BBDEFB' }}>
                   <Typography variant="body2" sx={{ color: '#1565C0', fontSize: '0.75rem' }}>
-                    <strong>Available Stock:</strong> {selectedProductStock.currentStock} {selectedProductStock.unit} in {selectedProductStock.warehouse}
+                    <strong>{t('inventory.availableStock')}:</strong> {selectedProductStock.currentStock} {selectedProductStock.unit} {t('inventory.in')} {selectedProductStock.warehouse}
                   </Typography>
                 </Box>
               </Box>
             )}
 
-            {/* Transfer Direction Visual - spans both columns */}
+            {/* Transfer Direction Visual */}
             {formData.fromWarehouse && formData.toWarehouse && (
               <Box sx={{ gridColumn: 'span 2' }}>
                 <Box sx={{ p: 2, bgcolor: COLORS.primaryLight, borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -633,12 +620,11 @@ const handleSubmit = async () => {
               </Box>
             )}
 
-            {/* Info Note - spans both columns */}
+            {/* Info Note */}
             <Box sx={{ gridColumn: 'span 2' }}>
               <Box sx={{ p: 2, bgcolor: '#FFF3E0', borderRadius: 1.5, border: '1px solid #FFE0B2' }}>
                 <Typography variant="caption" sx={{ color: '#E65100', fontSize: '0.7rem' }}>
-                  <strong>Note:</strong> Transferring stock will decrease quantity from source warehouse
-                  and increase quantity in destination warehouse.
+                  <strong>{t('common.note')}:</strong> {t('inventory.transferNote')}
                 </Typography>
               </Box>
             </Box>
@@ -665,7 +651,7 @@ const handleSubmit = async () => {
             }
           }}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={handleSubmit}
@@ -689,7 +675,7 @@ const handleSubmit = async () => {
             }
           }}
         >
-          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><TransferIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Transfer Stock</>}
+          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><TransferIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('inventory.buttons.transferStock')}</>}
         </Button>
       </Box>
     </Box>

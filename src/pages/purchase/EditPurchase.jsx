@@ -1,6 +1,7 @@
 // src/pages/purchase/EditPurchase.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -95,6 +96,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const EditPurchase = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
@@ -132,21 +134,25 @@ const EditPurchase = () => {
   });
 
   const pricingTypeOptions = [
-    { value: 'kg', label: 'KG (Kilogram)' },
-    { value: 'quintal', label: 'Quintal (100 KG)' },
-    { value: 'piece', label: 'Piece' },
-    { value: 'bunch', label: 'Bunch' },
-    { value: 'crate', label: 'Crate' },
-    { value: 'dozen', label: 'Dozen' },
-    { value: 'flat', label: 'Flat' }
+    { value: 'kg', label: t('purchases.pricingTypes.kg') },
+    { value: 'quintal', label: t('purchases.pricingTypes.quintal') },
+    { value: 'piece', label: t('purchases.pricingTypes.piece') },
+    { value: 'bunch', label: t('purchases.pricingTypes.bunch') },
+    { value: 'crate', label: t('purchases.pricingTypes.crate') },
+    { value: 'dozen', label: t('purchases.pricingTypes.dozen') },
+    { value: 'flat', label: t('purchases.pricingTypes.flat') }
   ];
 
   const commissionTypeOptions = [
-    { value: 'fixed', label: 'Fixed (₹)' },
-    { value: 'percent', label: 'Percent (%)' }
+    { value: 'fixed', label: t('purchases.commissionTypes.fixed') },
+    { value: 'percent', label: t('purchases.commissionTypes.percent') }
   ];
 
-  const steps = ['Purchase Details', 'Product Lines', 'Deductions & Summary'];
+  const steps = [
+    t('purchases.steps.basicInfo'),
+    t('purchases.steps.productLines'),
+    t('purchases.steps.deductions')
+  ];
 
   const getToken = () => localStorage.getItem('token');
 
@@ -156,13 +162,6 @@ const EditPurchase = () => {
     if (line.pricingType === 'quintal') quantity = (line.actualQty || 0) * 100;
     const netQty = quantity - (line.qualityDeduction || 0);
     return netQty * (line.rate || 0);
-  };
-
-  // Calculate billed quantity
-  const calculateBilledQty = (line) => {
-    let quantity = line.actualQty || 0;
-    if (line.pricingType === 'quintal') quantity = (line.actualQty || 0) * 100;
-    return quantity - (line.qualityDeduction || 0);
   };
 
   // Fetch purchase details
@@ -185,9 +184,7 @@ const EditPurchase = () => {
         
         // Check if purchase can be edited (only DRAFT status)
         if (purchase.status !== 'draft') {
-          setError(`This purchase cannot be edited via full update as it is in "${purchase.status}" status. 
-            Only "draft" purchases can be fully edited. 
-            For "${purchase.status}" status, you can only update status/notes using the Update Status option.`);
+          setError(t('purchases.errors.editNotAllowed', { status: purchase.status }));
           setTimeout(() => navigate('/purchases'), 3000);
           return;
         }
@@ -226,11 +223,11 @@ const EditPurchase = () => {
           amountPaid: purchase.amountPaid || 0
         });
       } else {
-        setError(data.message || 'Failed to fetch purchase');
+        setError(data.message || t('purchases.errors.fetchFailed'));
       }
     } catch (error) {
       console.error('Error fetching purchase:', error);
-      setError('Network error. Please check your connection.');
+      setError(t('common.networkError'));
     } finally {
       setFetching(false);
     }
@@ -311,28 +308,28 @@ const EditPurchase = () => {
 
     if (step === 0) {
       if (!formData.purchaseDate) {
-        errors.purchaseDate = 'Purchase date is required';
+        errors.purchaseDate = t('purchases.errors.dateRequired');
         isValid = false;
       }
     } else if (step === 1) {
       formData.lines.forEach((line, idx) => {
         if (!line.productName) {
-          errors[`line_${idx}_product`] = 'Product name required';
+          errors[`line_${idx}_product`] = t('purchases.errors.productRequired');
           isValid = false;
         }
         if (line.rate <= 0) {
-          errors[`line_${idx}_rate`] = 'Valid rate required';
+          errors[`line_${idx}_rate`] = t('purchases.errors.rateRequired');
           isValid = false;
         }
         if (line.actualQty <= 0) {
-          errors[`line_${idx}_qty`] = 'Valid quantity required';
+          errors[`line_${idx}_qty`] = t('purchases.errors.qtyRequired');
           isValid = false;
         }
       });
     }
 
     setFieldErrors(errors);
-    if (!isValid) setError('Please fill all required fields');
+    if (!isValid) setError(t('common.fillCorrectly'));
     return isValid;
   };
 
@@ -355,7 +352,7 @@ const EditPurchase = () => {
 
   const handleSubmit = async () => {
     if (formData.lines.some(line => !line.productName || line.rate <= 0 || line.actualQty <= 0)) {
-      showError('Please complete all product lines');
+      showError(t('purchases.errors.completeLines'));
       return;
     }
 
@@ -365,7 +362,6 @@ const EditPurchase = () => {
     try {
       const token = getToken();
       
-      // Prepare lines with all required fields including lineTotal and billedQty
       const purchaseData = {
         purchaseDate: formData.purchaseDate,
         lines: formData.lines.map(line => {
@@ -389,7 +385,6 @@ const EditPurchase = () => {
             notes: line.notes || ''
           };
           
-          // Add bags and weightPerBag for kg pricing type
           if (line.pricingType === 'kg') {
             if (line.bags && line.bags > 0) {
               lineData.bags = parseInt(line.bags) || 0;
@@ -412,14 +407,11 @@ const EditPurchase = () => {
         amountPaid: parseFloat(formData.amountPaid) || 0
       };
 
-      // Add optional deduction fields if they have values
       if (formData.deductions.storageNote) purchaseData.deductions.storageNote = formData.deductions.storageNote;
       if (formData.deductions.returnDeduction > 0) purchaseData.deductions.returnDeduction = parseFloat(formData.deductions.returnDeduction);
       if (formData.deductions.returnNote) purchaseData.deductions.returnNote = formData.deductions.returnNote;
       if (formData.deductions.other > 0) purchaseData.deductions.other = parseFloat(formData.deductions.other);
       if (formData.deductions.otherNote) purchaseData.deductions.otherNote = formData.deductions.otherNote;
-
-      console.log('Submitting purchase data:', purchaseData);
 
       const response = await axios.put(`${BASE_URL}/purchases/${id}`, purchaseData, {
         headers: {
@@ -438,11 +430,11 @@ const EditPurchase = () => {
         setSuccess(true);
         setTimeout(() => navigate('/purchases'), 2000);
       } else {
-        showError(response.data.message || 'Failed to update purchase');
+        showError(response.data.message || t('purchases.errors.updateFailed'));
       }
     } catch (error) {
       console.error('Error updating purchase:', error);
-      showError(error.response?.data?.message || error.response?.data?.error || 'Network error. Please check your connection.');
+      showError(error.response?.data?.message || error.response?.data?.error || t('common.networkError'));
     } finally {
       setLoading(false);
     }
@@ -490,7 +482,7 @@ const EditPurchase = () => {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '96vh' }}>
         <CircularProgress sx={{ color: '#2E7D32' }} />
-        <Typography sx={{ ml: 2, color: '#2E7D32' }}>Loading purchase details...</Typography>
+        <Typography sx={{ ml: 2, color: '#2E7D32' }}>{t('common.loading')}</Typography>
       </Box>
     );
   }
@@ -511,10 +503,10 @@ const EditPurchase = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Edit Purchase
+            {t('purchases.editTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Receipt: {originalPurchase?.receiptNumber} | Status: {originalPurchase?.status}
+            {t('purchases.receipt')}: {originalPurchase?.receiptNumber} | {t('common.status')}: {originalPurchase?.status}
           </Typography>
         </Box>
       </Box>
@@ -527,7 +519,7 @@ const EditPurchase = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Purchase updated successfully! Redirecting...
+          {t('purchases.messages.updateSuccess')}
         </Alert>
       )}
 
@@ -538,8 +530,7 @@ const EditPurchase = () => {
         sx={{ mb: 2, borderRadius: 2 }}
       >
         <Typography variant="caption">
-          <strong>Note:</strong> Full update mode - You can edit all fields including products, deductions, and amount paid. 
-          This will recalculate all totals. Only available for <strong>DRAFT</strong> status purchases.
+          <strong>{t('common.note')}:</strong> {t('purchases.info.editNote')}
         </Typography>
       </Alert>
 
@@ -547,19 +538,19 @@ const EditPurchase = () => {
       <Paper sx={{ p: 2, mb: 3, bgcolor: COLORS.primaryLight, borderRadius: 2 }}>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
           <InfoIcon sx={{ fontSize: '1rem', color: COLORS.primary }} />
-          <Typography variant="caption" sx={{ fontWeight: 600, color: COLORS.primary }}>Farmer Information (Read-only)</Typography>
+          <Typography variant="caption" sx={{ fontWeight: 600, color: COLORS.primary }}>{t('purchases.farmerInfoReadOnly')}</Typography>
         </Stack>
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
           <Box>
-            <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>Farmer Name</Typography>
+            <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>{t('farmers.fullName')}</Typography>
             <Typography variant="body2" sx={{ fontWeight: 500, color: COLORS.text.primary }}>{selectedFarmer?.name || 'N/A'}</Typography>
           </Box>
           <Box>
-            <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>Mobile</Typography>
+            <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>{t('farmers.mobileNumber')}</Typography>
             <Typography variant="body2" sx={{ color: COLORS.text.primary }}>{selectedFarmer?.mobile || 'N/A'}</Typography>
           </Box>
           <Box>
-            <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>Pending Dues</Typography>
+            <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>{t('farmers.pendingDues')}</Typography>
             <Typography variant="body2" sx={{ fontWeight: 500, color: '#FF6F00' }}>{formatCurrency(selectedFarmer?.pendingDues || 0)}</Typography>
           </Box>
         </Box>
@@ -588,7 +579,7 @@ const EditPurchase = () => {
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: currentStep >= index ? '#2E7D32' : '#8D6E63', display: 'block', textAlign: 'left' }}>
-                    Step {index + 1}
+                    {t('common.step')} {index + 1}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500, color: currentStep >= index ? '#1B5E20' : '#8D6E63' }}>
                     {step}
@@ -609,13 +600,13 @@ const EditPurchase = () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <ShoppingCart sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Purchase Information</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('purchases.purchaseInformation')}</Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               <Box>
-                <Label required>PURCHASE DATE</Label>
+                <Label required>{t('purchases.purchaseDate')}</Label>
                 <TextField
                   fullWidth
                   type="date"
@@ -627,21 +618,21 @@ const EditPurchase = () => {
               </Box>
 
               <Box>
-                <Label>AMOUNT PAID (Already Paid)</Label>
+                <Label>{t('purchases.amountAlreadyPaid')}</Label>
                 <TextField
                   fullWidth
                   type="number"
                   size="small"
                   value={formData.amountPaid}
                   onChange={(e) => setFormData(prev => ({ ...prev, amountPaid: parseFloat(e.target.value) || 0 }))}
-                  placeholder="Amount already paid"
+                  placeholder={t('purchases.placeholders.amountAlreadyPaid')}
                   sx={inputSx}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">₹</InputAdornment>
                   }}
                 />
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                  This will be added to the payment record
+                  {t('purchases.amountPaidNote')}
                 </Typography>
               </Box>
             </Box>
@@ -649,7 +640,7 @@ const EditPurchase = () => {
         </Paper>
       )}
 
-      {/* Step 2: Product Lines - With Autocomplete for Pricing Type */}
+      {/* Step 2: Product Lines */}
       {currentStep === 1 && (
         <Stack spacing={2.5}>
           {formData.lines.map((line, index) => {
@@ -661,7 +652,9 @@ const EditPurchase = () => {
                 <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Stack direction="row" spacing={1} alignItems="center">
                     <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                    <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Product Line {index + 1}</Typography>
+                    <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+                      {t('purchases.productLine')} {index + 1}
+                    </Typography>
                   </Stack>
                   {formData.lines.length > 1 && (
                     <IconButton size="small" onClick={() => removeLine(index)} sx={{ color: '#EF4444' }}>
@@ -672,22 +665,21 @@ const EditPurchase = () => {
                 <Box sx={{ p: 2.5 }}>
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                     <Box sx={{ gridColumn: 'span 2' }}>
-                      <Label required>PRODUCT NAME</Label>
+                      <Label required>{t('purchases.productName')}</Label>
                       <TextField
                         fullWidth
                         size="small"
                         value={line.productName}
                         onChange={(e) => handleLineChange(index, 'productName', e.target.value)}
-                        placeholder="e.g., Wheat, Rice, Corn"
+                        placeholder={t('purchases.placeholders.productName')}
                         error={!!fieldErrors[`line_${index}_product`]}
                         helperText={fieldErrors[`line_${index}_product`]}
                         sx={inputSx}
                       />
                     </Box>
 
-                    {/* PRICING TYPE - Using Autocomplete like farmer dropdown */}
                     <Box>
-                      <Label required>PRICING TYPE</Label>
+                      <Label required>{t('purchases.pricingType')}</Label>
                       <Autocomplete
                         fullWidth
                         options={pricingTypeOptions}
@@ -701,7 +693,7 @@ const EditPurchase = () => {
                           <TextField
                             {...params}
                             size="small"
-                            placeholder="Select pricing type"
+                            placeholder={t('purchases.placeholders.selectPricingType')}
                             sx={inputSx}
                           />
                         )}
@@ -724,14 +716,14 @@ const EditPurchase = () => {
                     </Box>
 
                     <Box>
-                      <Label required>RATE</Label>
+                      <Label required>{t('purchases.rate')}</Label>
                       <TextField
                         fullWidth
                         type="number"
                         size="small"
                         value={line.rate}
                         onChange={(e) => handleLineChange(index, 'rate', parseFloat(e.target.value) || 0)}
-                        placeholder={`₹/${line.pricingType === 'kg' ? 'KG' : line.pricingType === 'quintal' ? 'Quintal' : 'Unit'}`}
+                        placeholder={t('purchases.placeholders.rate')}
                         error={!!fieldErrors[`line_${index}_rate`]}
                         helperText={fieldErrors[`line_${index}_rate`]}
                         sx={inputSx}
@@ -744,26 +736,26 @@ const EditPurchase = () => {
                     {line.pricingType === 'kg' && (
                       <>
                         <Box>
-                          <Label>NUMBER OF BAGS (Optional)</Label>
+                          <Label>{t('purchases.numberOfBags')}</Label>
                           <TextField
                             fullWidth
                             type="number"
                             size="small"
                             value={line.bags}
                             onChange={(e) => handleLineChange(index, 'bags', parseInt(e.target.value) || 0)}
-                            placeholder="Number of bags"
+                            placeholder={t('purchases.placeholders.numberOfBags')}
                             sx={inputSx}
                           />
                         </Box>
                         <Box>
-                          <Label>WEIGHT PER BAG (KG)</Label>
+                          <Label>{t('purchases.weightPerBag')}</Label>
                           <TextField
                             fullWidth
                             type="number"
                             size="small"
                             value={line.weightPerBag}
                             onChange={(e) => handleLineChange(index, 'weightPerBag', parseInt(e.target.value) || 0)}
-                            placeholder="Weight per bag"
+                            placeholder={t('purchases.placeholders.weightPerBag')}
                             sx={inputSx}
                           />
                         </Box>
@@ -771,46 +763,46 @@ const EditPurchase = () => {
                     )}
 
                     <Box>
-                      <Label required>QUANTITY</Label>
+                      <Label required>{t('purchases.quantity')}</Label>
                       <TextField
                         fullWidth
                         type="number"
                         size="small"
                         value={line.actualQty}
                         onChange={(e) => handleLineChange(index, 'actualQty', parseFloat(e.target.value) || 0)}
-                        placeholder={`Enter quantity in ${line.pricingType}`}
+                        placeholder={t('purchases.placeholders.quantity')}
                         error={!!fieldErrors[`line_${index}_qty`]}
                         helperText={fieldErrors[`line_${index}_qty`]}
                         sx={inputSx}
                       />
                       {line.pricingType === 'kg' && line.bags > 0 && line.weightPerBag > 0 && (
                         <Typography variant="caption" sx={{ mt: 0.5, display: 'block', color: '#8D6E63', fontSize: '0.65rem' }}>
-                          Using bags calculation
+                          {t('purchases.usingBagsCalculation')}
                         </Typography>
                       )}
                     </Box>
 
                     <Box>
-                      <Label>QUALITY DEDUCTION</Label>
+                      <Label>{t('purchases.qualityDeduction')}</Label>
                       <TextField
                         fullWidth
                         type="number"
                         size="small"
                         value={line.qualityDeduction}
                         onChange={(e) => handleLineChange(index, 'qualityDeduction', parseFloat(e.target.value) || 0)}
-                        placeholder={`Quality deduction (${line.pricingType === 'kg' ? 'KG' : 'Units'})`}
+                        placeholder={t('purchases.placeholders.qualityDeduction')}
                         sx={inputSx}
                       />
                     </Box>
 
                     <Box sx={{ gridColumn: 'span 2' }}>
-                      <Label>LINE NOTES</Label>
+                      <Label>{t('purchases.lineNotes')}</Label>
                       <TextField
                         fullWidth
                         size="small"
                         value={line.notes}
                         onChange={(e) => handleLineChange(index, 'notes', e.target.value)}
-                        placeholder="Any notes for this product line"
+                        placeholder={t('purchases.placeholders.lineNotes')}
                         sx={inputSx}
                       />
                     </Box>
@@ -818,7 +810,7 @@ const EditPurchase = () => {
                     <Box sx={{ gridColumn: 'span 2' }}>
                       <Box sx={{ p: 2, bgcolor: COLORS.primaryLight, borderRadius: 1.5 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
-                          <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>Line Total:</Typography>
+                          <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>{t('purchases.lineTotal')}:</Typography>
                           <Typography sx={{ fontSize: '0.9rem', fontWeight: 700, color: COLORS.primaryDark }}>
                             {formatCurrency(lineTotal)}
                           </Typography>
@@ -846,53 +838,53 @@ const EditPurchase = () => {
               '&:hover': { borderColor: COLORS.primary, bgcolor: COLORS.primaryLight }
             }}
           >
-            <AddIcon sx={{ mr: 0.5, fontSize: '1rem' }} /> Add Another Product
+            <AddIcon sx={{ mr: 0.5, fontSize: '1rem' }} /> {t('purchases.addAnotherProduct')}
           </Button>
         </Stack>
       )}
 
-      {/* Step 3: Deductions & Summary - With Autocomplete for Commission Type */}
+      {/* Step 3: Deductions & Summary */}
       {currentStep === 2 && (
         <Stack spacing={2.5}>
           <Paper sx={{ borderRadius: 2.5, overflow: 'visible', border: `1px solid ${COLORS.border}` }}>
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Settings sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Deductions & Charges</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('purchases.deductionsCharges')}</Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 <Box>
-                  <Label>TRANSPORT CHARGES</Label>
+                  <Label>{t('purchases.transportCharges')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.transport}
                     onChange={(e) => handleDeductionChange('transport', parseFloat(e.target.value) || 0)}
-                    placeholder="Transport cost"
+                    placeholder={t('purchases.placeholders.transportCharges')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
                 </Box>
 
                 <Box>
-                  <Label>LABOUR CHARGES</Label>
+                  <Label>{t('purchases.labourCharges')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.labour}
                     onChange={(e) => handleDeductionChange('labour', parseFloat(e.target.value) || 0)}
-                    placeholder="Labour cost"
+                    placeholder={t('purchases.placeholders.labourCharges')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
                 </Box>
 
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label>COMMISSION</Label>
+                  <Label>{t('purchases.commission')}</Label>
                   <Stack direction="row" spacing={1}>
                     <TextField
                       fullWidth
@@ -900,7 +892,7 @@ const EditPurchase = () => {
                       size="small"
                       value={formData.deductions.commission}
                       onChange={(e) => handleDeductionChange('commission', parseFloat(e.target.value) || 0)}
-                      placeholder="Commission amount"
+                      placeholder={t('purchases.placeholders.commissionAmount')}
                       sx={{ ...inputSx, flex: 2 }}
                       InputProps={{
                         startAdornment: (
@@ -910,7 +902,6 @@ const EditPurchase = () => {
                         )
                       }}
                     />
-                    {/* Commission Type - Using Autocomplete like farmer dropdown */}
                     <Box sx={{ flex: 1 }}>
                       <Autocomplete
                         fullWidth
@@ -925,7 +916,7 @@ const EditPurchase = () => {
                           <TextField
                             {...params}
                             size="small"
-                            placeholder="Type"
+                            placeholder={t('purchases.placeholders.commissionType')}
                             sx={inputSx}
                           />
                         )}
@@ -949,14 +940,14 @@ const EditPurchase = () => {
                 </Box>
 
                 <Box>
-                  <Label>STORAGE CHARGES</Label>
+                  <Label>{t('purchases.storageCharges')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.storage}
                     onChange={(e) => handleDeductionChange('storage', parseFloat(e.target.value) || 0)}
-                    placeholder="Storage cost"
+                    placeholder={t('purchases.placeholders.storageCharges')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
@@ -965,20 +956,20 @@ const EditPurchase = () => {
                     size="small"
                     value={formData.deductions.storageNote}
                     onChange={(e) => handleDeductionChange('storageNote', e.target.value)}
-                    placeholder="Storage note (optional)"
+                    placeholder={t('purchases.placeholders.storageNote')}
                     sx={{ ...inputSx, mt: 1 }}
                   />
                 </Box>
 
                 <Box>
-                  <Label>RETURN DEDUCTION</Label>
+                  <Label>{t('purchases.returnDeduction')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.returnDeduction}
                     onChange={(e) => handleDeductionChange('returnDeduction', parseFloat(e.target.value) || 0)}
-                    placeholder="Return deduction amount"
+                    placeholder={t('purchases.placeholders.returnDeduction')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
@@ -987,34 +978,34 @@ const EditPurchase = () => {
                     size="small"
                     value={formData.deductions.returnNote}
                     onChange={(e) => handleDeductionChange('returnNote', e.target.value)}
-                    placeholder="Return reason (optional)"
+                    placeholder={t('purchases.placeholders.returnNote')}
                     sx={{ ...inputSx, mt: 1 }}
                   />
                 </Box>
 
                 <Box>
-                  <Label>ADVANCE ADJUSTED</Label>
+                  <Label>{t('purchases.advanceAdjusted')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.advanceAdjusted}
                     onChange={(e) => handleDeductionChange('advanceAdjusted', parseFloat(e.target.value) || 0)}
-                    placeholder="Advance payment adjusted"
+                    placeholder={t('purchases.placeholders.advanceAdjusted')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
                 </Box>
 
                 <Box>
-                  <Label>OTHER DEDUCTIONS</Label>
+                  <Label>{t('purchases.otherDeductions')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.other}
                     onChange={(e) => handleDeductionChange('other', parseFloat(e.target.value) || 0)}
-                    placeholder="Other charges"
+                    placeholder={t('purchases.placeholders.otherDeductions')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
@@ -1023,7 +1014,7 @@ const EditPurchase = () => {
                     size="small"
                     value={formData.deductions.otherNote}
                     onChange={(e) => handleDeductionChange('otherNote', e.target.value)}
-                    placeholder="Description (optional)"
+                    placeholder={t('purchases.placeholders.otherNote')}
                     sx={{ ...inputSx, mt: 1 }}
                   />
                 </Box>
@@ -1033,36 +1024,36 @@ const EditPurchase = () => {
 
           <Paper sx={{ p: 2.5, bgcolor: COLORS.primaryLight, borderRadius: 2.5, border: `1px solid ${COLORS.primary}` }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, color: COLORS.primaryDark, mb: 2, fontSize: '0.85rem' }}>
-              Purchase Summary
+              {t('purchases.purchaseSummary')}
             </Typography>
             <Stack spacing={1.5}>
               <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>Gross Total</Typography>
+                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>{t('purchases.grossTotal')}</Typography>
                 <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: COLORS.text.primary }}>
                   {formatCurrency(calculations.grossTotal)}
                 </Typography>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>Total Deductions</Typography>
+                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>{t('purchases.totalDeductions')}</Typography>
                 <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: '#D32F2F' }}>
                   - {formatCurrency(calculations.totalDeductions)}
                 </Typography>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>Final Payable</Typography>
+                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>{t('purchases.finalPayable')}</Typography>
                 <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: '#FF6F00' }}>
                   {formatCurrency(calculations.finalPayable)}
                 </Typography>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>Amount Already Paid</Typography>
+                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>{t('purchases.amountAlreadyPaid')}</Typography>
                 <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: '#2E7D32' }}>
                   {formatCurrency(formData.amountPaid)}
                 </Typography>
               </Stack>
               <Box sx={{ pt: 1, mt: 1, borderTop: `1px solid ${COLORS.primary}` }}>
                 <Stack direction="row" justifyContent="space-between">
-                  <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: COLORS.primaryDark }}>Amount Due After Update</Typography>
+                  <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: COLORS.primaryDark }}>{t('purchases.amountDueAfterUpdate')}</Typography>
                   <Typography sx={{ fontSize: '0.9rem', fontWeight: 700, color: calculations.finalPayable - formData.amountPaid > 0 ? '#FF6F00' : '#2E7D32' }}>
                     {formatCurrency(calculations.finalPayable - formData.amountPaid)}
                   </Typography>
@@ -1075,17 +1066,17 @@ const EditPurchase = () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Products Summary</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('purchases.productsSummary')}</Typography>
               </Stack>
             </Box>
             <TableContainer>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: COLORS.primaryLight }}>
-                    <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>Product</TableCell>
-                    <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>Quantity</TableCell>
-                    <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>Rate</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>Total</TableCell>
+                    <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>{t('purchases.table.product')}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>{t('purchases.table.quantity')}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>{t('purchases.table.rate')}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>{t('purchases.table.total')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -1131,7 +1122,7 @@ const EditPurchase = () => {
               }
             }}
           >
-            Previous
+            {t('common.previous')}
           </Button>
         )}
         {currentStep < 2 && (
@@ -1152,7 +1143,7 @@ const EditPurchase = () => {
               }
             }}
           >
-            Next
+            {t('common.next')}
           </Button>
         )}
         {currentStep === 2 && (
@@ -1178,7 +1169,7 @@ const EditPurchase = () => {
               }
             }}
           >
-            {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : 'Update Purchase'}
+            {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : t('common.update')}
           </Button>
         )}
       </Box>

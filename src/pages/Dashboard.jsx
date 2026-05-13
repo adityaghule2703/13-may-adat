@@ -13,11 +13,10 @@ import {
 } from 'lucide-react';
 import BASE_URL from '../config/Config';
 
-
 const Dashboard = () => {
   const { t } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState('week');
-  const [isRefreshing, setIsReffreshing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedChart, setSelectedChart] = useState('line');
   const [showAlerts, setShowAlerts] = useState(true);
   
@@ -28,6 +27,7 @@ const Dashboard = () => {
     totalWarehouses: 0,
     totalRevenue: 0
   });
+  const [recentPayments, setRecentPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -63,6 +63,29 @@ const Dashboard = () => {
     return true;
   };
 
+  // Format date to readable format
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+  };
+
+  // Format time
+  const formatTime = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  };
+
   // Fetch Farmers Count
   const fetchFarmers = async () => {
     try {
@@ -87,7 +110,7 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch Payments Total
+  // Fetch Payments Total and Recent Payments
   const fetchPayments = async () => {
     try {
       const token = getToken();
@@ -97,17 +120,20 @@ const Dashboard = () => {
 
       if (response.status === 401) {
         localStorage.clear();
-        return 0;
+        return { total: 0, recent: [] };
       }
 
       const data = await response.json();
-      if (data.success && data.summary) {
-        return data.summary.totalAmount || 0;
+      if (data.success) {
+        return {
+          total: data.summary?.totalAmount || 0,
+          recent: data.data || []
+        };
       }
-      return 0;
+      return { total: 0, recent: [] };
     } catch (error) {
       console.error('Error fetching payments:', error);
-      return 0;
+      return { total: 0, recent: [] };
     }
   };
 
@@ -169,7 +195,7 @@ const Dashboard = () => {
     setError(null);
     
     try {
-      const [farmersCount, paymentsTotal, warehousesCount, revenueTotal] = await Promise.all([
+      const [farmersCount, paymentsData, warehousesCount, revenueTotal] = await Promise.all([
         fetchFarmers(),
         fetchPayments(),
         fetchWarehouses(),
@@ -178,10 +204,12 @@ const Dashboard = () => {
       
       setStatsData({
         totalFarmers: farmersCount,
-        totalPayments: paymentsTotal,
+        totalPayments: paymentsData.total,
         totalWarehouses: warehousesCount,
         totalRevenue: revenueTotal
       });
+      
+      setRecentPayments(paymentsData.recent || []);
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
       setError('Failed to load dashboard data');
@@ -214,6 +242,22 @@ const Dashboard = () => {
   // Format number
   const formatNumber = (num) => {
     return new Intl.NumberFormat('en-IN').format(num || 0);
+  };
+
+  // Get status color based on payment mode or status
+  const getStatusColor = (paymentMode) => {
+    switch(paymentMode?.toLowerCase()) {
+      case 'cash':
+        return 'bg-green-100 text-green-700';
+      case 'online':
+        return 'bg-blue-100 text-blue-700';
+      case 'bank':
+        return 'bg-purple-100 text-purple-700';
+      case 'cheque':
+        return 'bg-orange-100 text-orange-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
   };
 
   const stats = [
@@ -589,46 +633,54 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Recent Transactions with Graph */}
+      {/* Recent Transactions with Real Payments Data */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Transactions Table */}
+        {/* Recent Payments Table */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b flex justify-between items-center" style={{ borderColor: '#E8F5E9' }}>
             <div>
-              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Recent Transactions</h3>
-              <p className="text-xs mt-1" style={{ color: '#8D6E63' }}>Latest 5 transactions</p>
+              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Recent Payments</h3>
+              <p className="text-xs mt-1" style={{ color: '#8D6E63' }}>Latest payment transactions</p>
             </div>
             <button className="text-sm flex items-center gap-1" style={{ color: '#2E7D32' }}>
               View All <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           <div className="divide-y" style={{ borderColor: '#E8F5E9' }}>
-            {[
-              { id: 1, name: 'Suresh Patel', amount: '₹25,000', status: 'completed', time: '10:30 AM', type: 'purchase' },
-              { id: 2, name: 'Ramesh Kumar', amount: '₹18,000', status: 'pending', time: '11:45 AM', type: 'purchase' },
-              { id: 3, name: 'AgriCorp Ltd', amount: '₹55,000', status: 'completed', time: '02:15 PM', type: 'sale' },
-              { id: 4, name: 'Amit Singh', amount: '₹20,000', status: 'processing', time: '04:30 PM', type: 'purchase' },
-              { id: 5, name: 'FoodMills Ltd', amount: '₹52,000', status: 'pending', time: '05:45 PM', type: 'sale' },
-            ].map((transaction) => (
-              <div key={transaction.id} className="px-6 py-3 hover:bg-green-50 transition-all">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium" style={{ color: '#2E7D32' }}>{transaction.name}</p>
-                    <p className="text-xs" style={{ color: '#8D6E63' }}>{transaction.time} • {transaction.type}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold" style={{ color: '#FF6F00' }}>{transaction.amount}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      transaction.status === 'completed' ? 'bg-green-100 text-green-700' :
-                      transaction.status === 'pending' ? 'bg-orange-100 text-orange-700' :
-                      'bg-blue-100 text-blue-700'
-                    }`}>
-                      {transaction.status}
-                    </span>
+            {recentPayments.length === 0 ? (
+              <div className="px-6 py-8 text-center">
+                <DollarSign className="w-12 h-12 mx-auto mb-3" style={{ color: '#C8E6C9' }} />
+                <p className="text-sm" style={{ color: '#8D6E63' }}>No payments found</p>
+              </div>
+            ) : (
+              recentPayments.map((payment) => (
+                <div key={payment._id} className="px-6 py-3 hover:bg-green-50 transition-all">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium" style={{ color: '#2E7D32' }}>
+                        {payment.farmer?.name || 'Unknown Farmer'}
+                      </p>
+                      <p className="text-xs" style={{ color: '#8D6E63' }}>
+                        {formatTime(payment.createdAt)} • {formatDate(payment.createdAt)} • {payment.paymentMode || 'N/A'}
+                      </p>
+                      {payment.referenceNumber && (
+                        <p className="text-xs mt-1" style={{ color: '#8D6E63' }}>
+                          Ref: {payment.referenceNumber}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold" style={{ color: '#FF6F00' }}>
+                        {formatCurrency(payment.amount)}
+                      </p>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusColor(payment.paymentMode)}`}>
+                        {payment.paymentMode?.toUpperCase() || 'COMPLETED'}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 

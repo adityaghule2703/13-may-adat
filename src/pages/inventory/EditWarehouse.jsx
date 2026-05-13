@@ -1,6 +1,7 @@
 // src/pages/inventory/EditWarehouse.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -96,6 +97,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const EditWarehouse = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
@@ -129,12 +131,16 @@ const EditWarehouse = () => {
   });
 
   const unitOptions = [
-    { value: 'KG', label: 'KG (Kilograms)' },
-    { value: 'TON', label: 'TON (Tons)' },
-    { value: 'QUINTAL', label: 'QUINTAL (100 KG)' }
+    { value: 'KG', label: t('inventory.units.kgLabel') },
+    { value: 'TON', label: t('inventory.units.tonLabel') },
+    { value: 'QUINTAL', label: t('inventory.units.quintalLabel') }
   ];
 
-  const steps = ['Basic Information', 'Location & Manager', 'Capacity & Notes'];
+  const steps = [
+    t('warehouses.steps.basicInfo'),
+    t('warehouses.steps.locationManager'),
+    t('warehouses.steps.capacityNotes')
+  ];
 
   const getToken = () => localStorage.getItem('token');
 
@@ -176,11 +182,11 @@ const EditWarehouse = () => {
           notes: warehouse.notes || ''
         });
       } else {
-        setError(response.data.message || 'Failed to fetch warehouse');
+        setError(response.data.message || t('warehouses.errors.fetchFailed'));
       }
     } catch (error) {
       console.error('Error fetching warehouse:', error);
-      setError(error.response?.data?.message || 'Network error. Please check your connection.');
+      setError(error.response?.data?.message || t('common.networkError'));
     } finally {
       setFetching(false);
     }
@@ -216,46 +222,44 @@ const EditWarehouse = () => {
     let isValid = true;
 
     if (step === 0) {
-      // Name and code are now read-only, so no validation needed for them
-      // But we still need to ensure they exist (they should from API)
       if (!formData.name.trim()) {
-        errors.name = 'Warehouse name is required';
+        errors.name = t('warehouses.errors.nameRequired');
         isValid = false;
       }
       if (!formData.code.trim()) {
-        errors.code = 'Warehouse code is required';
+        errors.code = t('warehouses.errors.codeRequired');
         isValid = false;
       }
     } else if (step === 1) {
       if (!formData.location.city.trim()) {
-        errors['location.city'] = 'City is required';
+        errors['location.city'] = t('warehouses.errors.cityRequired');
         isValid = false;
       }
       if (!formData.location.state.trim()) {
-        errors['location.state'] = 'State is required';
+        errors['location.state'] = t('warehouses.errors.stateRequired');
         isValid = false;
       }
       if (!formData.manager.name.trim()) {
-        errors['manager.name'] = 'Manager name is required';
+        errors['manager.name'] = t('warehouses.errors.managerNameRequired');
         isValid = false;
       }
       if (!formData.manager.phone.trim()) {
-        errors['manager.phone'] = 'Manager phone is required';
+        errors['manager.phone'] = t('warehouses.errors.managerPhoneRequired');
         isValid = false;
       } else if (!/^[0-9]{10}$/.test(formData.manager.phone)) {
-        errors['manager.phone'] = 'Enter valid 10-digit mobile number';
+        errors['manager.phone'] = t('warehouses.errors.invalidPhone');
         isValid = false;
       }
     } else if (step === 2) {
       if (!formData.capacity.total) {
-        errors['capacity.total'] = 'Total capacity is required';
+        errors['capacity.total'] = t('warehouses.errors.totalCapacityRequired');
         isValid = false;
       }
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -277,39 +281,38 @@ const EditWarehouse = () => {
     const errors = {};
     let isValid = true;
 
-    // Name and code validation (though read-only, we still check they exist)
     if (!formData.name) {
-      errors.name = 'Warehouse name is required';
+      errors.name = t('warehouses.errors.nameRequired');
       isValid = false;
     }
     if (!formData.code) {
-      errors.code = 'Warehouse code is required';
+      errors.code = t('warehouses.errors.codeRequired');
       isValid = false;
     }
     if (!formData.location.city) {
-      errors['location.city'] = 'City is required';
+      errors['location.city'] = t('warehouses.errors.cityRequired');
       isValid = false;
     }
     if (!formData.location.state) {
-      errors['location.state'] = 'State is required';
+      errors['location.state'] = t('warehouses.errors.stateRequired');
       isValid = false;
     }
     if (!formData.manager.name) {
-      errors['manager.name'] = 'Manager name is required';
+      errors['manager.name'] = t('warehouses.errors.managerNameRequired');
       isValid = false;
     }
     if (!formData.manager.phone) {
-      errors['manager.phone'] = 'Manager phone is required';
+      errors['manager.phone'] = t('warehouses.errors.managerPhoneRequired');
       isValid = false;
     }
     if (!formData.capacity.total) {
-      errors['capacity.total'] = 'Total capacity is required';
+      errors['capacity.total'] = t('warehouses.errors.totalCapacityRequired');
       isValid = false;
     }
     
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -352,11 +355,11 @@ const EditWarehouse = () => {
         setSuccess(true);
         setTimeout(() => navigate('/warehouses'), 2000);
       } else {
-        showError(response.data.message || 'Failed to update warehouse');
+        showError(response.data.message || t('warehouses.errors.updateFailed'));
       }
     } catch (error) {
       console.error('Error updating warehouse:', error);
-      showError(error.response?.data?.message || 'Network error. Please check your connection.');
+      showError(error.response?.data?.message || t('common.networkError'));
     } finally {
       setLoading(false);
     }
@@ -407,7 +410,6 @@ const EditWarehouse = () => {
     }
   };
 
-  // Read-only input styling for name and code
   const readOnlyInputSx = {
     ...inputSx,
     '& .MuiOutlinedInput-root': {
@@ -419,14 +421,13 @@ const EditWarehouse = () => {
     }
   };
 
-  // Get selected unit label for display
   const selectedUnit = unitOptions.find(opt => opt.value === formData.capacity.unit) || null;
 
   if (fetching) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '96vh' }}>
         <CircularProgress sx={{ color: '#2E7D32' }} />
-        <Typography sx={{ ml: 2, color: '#2E7D32' }}>Loading warehouse details...</Typography>
+        <Typography sx={{ ml: 2, color: '#2E7D32' }}>{t('common.loading')}</Typography>
       </Box>
     );
   }
@@ -447,10 +448,10 @@ const EditWarehouse = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Edit Warehouse
+            {t('warehouses.editTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Update warehouse information
+            {t('warehouses.editSubtitle')}
           </Typography>
         </Box>
         <Box sx={{ ml: 'auto' }}>
@@ -477,7 +478,7 @@ const EditWarehouse = () => {
                 }
               }}
             >
-              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Update Warehouse</>}
+              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('common.update')}</>}
             </Button>
           )}
         </Box>
@@ -491,7 +492,7 @@ const EditWarehouse = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Warehouse updated successfully! Redirecting...
+          {t('warehouses.messages.updateSuccess')}
         </Alert>
       )}
 
@@ -518,7 +519,7 @@ const EditWarehouse = () => {
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: currentStep >= index ? '#2E7D32' : '#8D6E63', display: 'block', textAlign: 'left' }}>
-                    Step {index + 1}
+                    {t('common.step')} {index + 1}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500, color: currentStep >= index ? '#1B5E20' : '#8D6E63' }}>
                     {step}
@@ -539,22 +540,24 @@ const EditWarehouse = () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <WarehouseIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Basic Information</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+                {t('warehouses.basicInformation')}
+              </Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               {/* Warehouse Name - READ ONLY */}
               <Box>
-                <Label required>WAREHOUSE NAME</Label>
-                <Tooltip title="Warehouse name cannot be changed" arrow placement="top">
+                <Label required>{t('warehouses.name')}</Label>
+                <Tooltip title={t('warehouses.nameReadOnlyTooltip')} arrow placement="top">
                   <TextField
                     fullWidth
                     size="small"
                     name="name"
                     value={formData.name}
                     disabled
-                    placeholder="Enter warehouse name"
+                    placeholder={t('warehouses.placeholders.name')}
                     error={!!fieldErrors.name}
                     helperText={fieldErrors.name}
                     sx={readOnlyInputSx}
@@ -572,15 +575,15 @@ const EditWarehouse = () => {
 
               {/* Warehouse Code - READ ONLY */}
               <Box>
-                <Label required>WAREHOUSE CODE</Label>
-                <Tooltip title="Warehouse code cannot be changed" arrow placement="top">
+                <Label required>{t('warehouses.code')}</Label>
+                <Tooltip title={t('warehouses.codeReadOnlyTooltip')} arrow placement="top">
                   <TextField
                     fullWidth
                     size="small"
                     name="code"
                     value={formData.code}
                     disabled
-                    placeholder="e.g., WH001, CS001"
+                    placeholder={t('warehouses.placeholders.code')}
                     error={!!fieldErrors.code}
                     helperText={fieldErrors.code}
                     sx={readOnlyInputSx}
@@ -598,7 +601,7 @@ const EditWarehouse = () => {
 
               {/* Status - spans both columns */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label>STATUS</Label>
+                <Label>{t('warehouses.status.label')}</Label>
                 <RadioGroup
                   row
                   name="isActive"
@@ -608,13 +611,13 @@ const EditWarehouse = () => {
                   <FormControlLabel 
                     value={true} 
                     control={<Radio size="small" />} 
-                    label={<Typography sx={{ fontSize: '0.75rem' }}>Active</Typography>}
+                    label={<Typography sx={{ fontSize: '0.75rem' }}>{t('warehouses.status.active')}</Typography>}
                     sx={{ mr: 3 }}
                   />
                   <FormControlLabel 
                     value={false} 
                     control={<Radio size="small" />} 
-                    label={<Typography sx={{ fontSize: '0.75rem' }}>Inactive</Typography>}
+                    label={<Typography sx={{ fontSize: '0.75rem' }}>{t('warehouses.status.inactive')}</Typography>}
                   />
                 </RadioGroup>
               </Box>
@@ -631,14 +634,16 @@ const EditWarehouse = () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <LocationIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Location Details</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+                  {t('warehouses.locationDetails')}
+                </Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 {/* Address - spans both columns */}
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label>ADDRESS</Label>
+                  <Label>{t('warehouses.address')}</Label>
                   <TextField
                     fullWidth
                     multiline
@@ -647,21 +652,21 @@ const EditWarehouse = () => {
                     name="location.address"
                     value={formData.location.address}
                     onChange={handleChange}
-                    placeholder="Enter full address"
+                    placeholder={t('warehouses.placeholders.address')}
                     sx={inputSx}
                   />
                 </Box>
 
                 {/* City */}
                 <Box>
-                  <Label required>CITY</Label>
+                  <Label required>{t('warehouses.city')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="location.city"
                     value={formData.location.city}
                     onChange={handleChange}
-                    placeholder="Enter city"
+                    placeholder={t('warehouses.placeholders.city')}
                     error={!!fieldErrors['location.city']}
                     helperText={fieldErrors['location.city']}
                     sx={inputSx}
@@ -670,14 +675,14 @@ const EditWarehouse = () => {
 
                 {/* State */}
                 <Box>
-                  <Label required>STATE</Label>
+                  <Label required>{t('warehouses.state')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="location.state"
                     value={formData.location.state}
                     onChange={handleChange}
-                    placeholder="Enter state"
+                    placeholder={t('warehouses.placeholders.state')}
                     error={!!fieldErrors['location.state']}
                     helperText={fieldErrors['location.state']}
                     sx={inputSx}
@@ -686,14 +691,14 @@ const EditWarehouse = () => {
 
                 {/* Pincode */}
                 <Box>
-                  <Label>PINCODE</Label>
+                  <Label>{t('warehouses.pincode')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="location.pincode"
                     value={formData.location.pincode}
                     onChange={handleChange}
-                    placeholder="Enter pincode"
+                    placeholder={t('warehouses.placeholders.pincode')}
                     sx={inputSx}
                   />
                 </Box>
@@ -706,21 +711,23 @@ const EditWarehouse = () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <PersonIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Manager Details</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+                  {t('warehouses.managerDetails')}
+                </Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 {/* Manager Name */}
                 <Box>
-                  <Label required>MANAGER NAME</Label>
+                  <Label required>{t('warehouses.managerName')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="manager.name"
                     value={formData.manager.name}
                     onChange={handleChange}
-                    placeholder="Enter manager name"
+                    placeholder={t('warehouses.placeholders.managerName')}
                     error={!!fieldErrors['manager.name']}
                     helperText={fieldErrors['manager.name']}
                     sx={inputSx}
@@ -729,14 +736,14 @@ const EditWarehouse = () => {
 
                 {/* Phone Number */}
                 <Box>
-                  <Label required>PHONE NUMBER</Label>
+                  <Label required>{t('farmers.mobileNumber')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="manager.phone"
                     value={formData.manager.phone}
                     onChange={handleChange}
-                    placeholder="10-digit mobile number"
+                    placeholder={t('warehouses.placeholders.managerPhone')}
                     inputProps={{ maxLength: 10 }}
                     error={!!fieldErrors['manager.phone']}
                     helperText={fieldErrors['manager.phone']}
@@ -746,14 +753,14 @@ const EditWarehouse = () => {
 
                 {/* Email - spans both columns */}
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label>EMAIL</Label>
+                  <Label>{t('common.email')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="manager.email"
                     value={formData.manager.email}
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder={t('warehouses.placeholders.managerEmail')}
                     type="email"
                     sx={inputSx}
                   />
@@ -772,14 +779,16 @@ const EditWarehouse = () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Capacity Details</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+                  {t('warehouses.capacityDetails')}
+                </Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 {/* Total Capacity */}
                 <Box>
-                  <Label required>TOTAL CAPACITY</Label>
+                  <Label required>{t('warehouses.totalCapacity')}</Label>
                   <TextField
                     fullWidth
                     type="number"
@@ -787,16 +796,16 @@ const EditWarehouse = () => {
                     name="capacity.total"
                     value={formData.capacity.total}
                     onChange={handleChange}
-                    placeholder="Enter total capacity"
+                    placeholder={t('warehouses.placeholders.totalCapacity')}
                     error={!!fieldErrors['capacity.total']}
                     helperText={fieldErrors['capacity.total']}
                     sx={inputSx}
                   />
                 </Box>
 
-                {/* Unit - Using Autocomplete like farmer dropdown */}
+                {/* Unit - Using Autocomplete */}
                 <Box>
-                  <Label>UNIT</Label>
+                  <Label>{t('warehouses.unit')}</Label>
                   <Autocomplete
                     fullWidth
                     options={unitOptions}
@@ -808,7 +817,7 @@ const EditWarehouse = () => {
                       <TextField
                         {...params}
                         size="small"
-                        placeholder="Select unit"
+                        placeholder={t('warehouses.placeholders.selectUnit')}
                         sx={inputSx}
                       />
                     )}
@@ -832,7 +841,7 @@ const EditWarehouse = () => {
 
                 {/* Used Capacity */}
                 <Box>
-                  <Label>USED CAPACITY</Label>
+                  <Label>{t('warehouses.usedCapacity')}</Label>
                   <TextField
                     fullWidth
                     type="number"
@@ -840,7 +849,7 @@ const EditWarehouse = () => {
                     name="capacity.used"
                     value={formData.capacity.used}
                     onChange={handleChange}
-                    placeholder="Currently used capacity"
+                    placeholder={t('warehouses.placeholders.usedCapacity')}
                     sx={inputSx}
                   />
                 </Box>
@@ -853,7 +862,9 @@ const EditWarehouse = () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <FileTextIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Additional Notes</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+                  {t('common.notes')}
+                </Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
@@ -865,7 +876,7 @@ const EditWarehouse = () => {
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                placeholder="Enter any additional notes about this warehouse..."
+                placeholder={t('warehouses.placeholders.notes')}
                 sx={inputSx}
               />
             </Box>
@@ -893,7 +904,7 @@ const EditWarehouse = () => {
               }
             }}
           >
-            <ChevronLeft sx={{ fontSize: '1rem', mr: 0.5 }} /> Previous
+            <ChevronLeft sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('common.previous')}
           </Button>
         )}
         {currentStep < 2 && (
@@ -915,7 +926,7 @@ const EditWarehouse = () => {
               }
             }}
           >
-            Next <ChevronRight sx={{ fontSize: '1rem', ml: 0.5 }} />
+            {t('common.next')} <ChevronRight sx={{ fontSize: '1rem', ml: 0.5 }} />
           </Button>
         )}
         {currentStep === 2 && <Box />}

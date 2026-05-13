@@ -612,7 +612,7 @@ const BudgetAlerts = () => {
                   <tr style={{ background: '#1B3A1F', borderBottom: '1px solid #2E5A32' }}>
                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.category')}</th>
                     <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.monthlyLimit')}</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.currentSpend')}</th>
+                    {/* <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.currentSpend')}</th> */}
                     <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.remaining')}</th>
                     <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.usage')}</th>
                     <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.status')}</th>
@@ -640,9 +640,9 @@ const BudgetAlerts = () => {
                         <td className="px-6 py-4 text-right text-sm font-semibold" style={{ color: '#2E7D32' }}>
                           {formatCurrency(budget.monthlyLimit)}
                         </td>
-                        <td className="px-6 py-4 text-right text-sm font-semibold" style={{ color: '#FF6F00' }}>
+                        {/* <td className="px-6 py-4 text-right text-sm font-semibold" style={{ color: '#FF6F00' }}>
                           {formatCurrency(budget.currentSpend || 0)}
-                        </td>
+                        </td> */}
                         <td className="px-6 py-4 text-right text-sm" style={{ color: '#5D4037' }}>
                           {formatCurrency(budget.remainingBudget || 0)}
                         </td>

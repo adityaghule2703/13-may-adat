@@ -7,8 +7,7 @@ import {
   Plus, Download, RefreshCw, Loader, AlertCircle,
   Calendar, User, DollarSign, TrendingUp, X,
   Truck, Package, Wallet, CheckCircle, XCircle,
-  Clock, Printer, FileText, MoreVertical, RefreshCw as UpdateIcon,
-  Lock
+  Clock, Printer, FileText, MoreVertical, RefreshCw as UpdateIcon
 } from 'lucide-react';
 import BASE_URL from '../../config/Config';
 
@@ -51,14 +50,6 @@ const Purchases = () => {
   const [updateStatus, setUpdateStatus] = useState('');
   const [updateNotes, setUpdateNotes] = useState('');
   const [updating, setUpdating] = useState(false);
-
-  // Lock Rate Modal State
-  const [showLockRateModal, setShowLockRateModal] = useState(false);
-  const [lockingPurchase, setLockingPurchase] = useState(null);
-  const [selectedLineIndex, setSelectedLineIndex] = useState(0);
-  const [newRate, setNewRate] = useState('');
-  const [lockReason, setLockReason] = useState('');
-  const [locking, setLocking] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -294,22 +285,22 @@ const Purchases = () => {
       let deductionsHtml = '';
       if (hasDeductions) {
         if (deductions.transport > 0) {
-          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'वाहतूक खर्च' : 'Transport'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.transport)}</td><td></td></tr>`;
+          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'वाहतूक खर्च' : 'Transport'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.transport)}</td></tr>`;
         }
         if (deductions.labour > 0) {
-          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'मजुरी' : 'Labour'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.labour)}</td><td></td></tr>`;
+          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'मजुरी' : 'Labour'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.labour)}</td></tr>`;
         }
         if (deductions.commission > 0) {
-          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'कमिशन' : 'Commission'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.commission)}</td><td></td></tr>`;
+          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'कमिशन' : 'Commission'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.commission)}</td></tr>`;
         }
         if (deductions.storage > 0) {
-          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'गोदाम खर्च' : 'Storage'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.storage)}</td><td></td></tr>`;
+          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'गोदाम खर्च' : 'Storage'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.storage)}</td></tr>`;
         }
         if (deductions.advanceAdjusted > 0) {
-          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'अग्रिम समायोजन' : 'Advance Adjusted'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.advanceAdjusted)}</td><td></td></tr>`;
+          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'अग्रिम समायोजन' : 'Advance Adjusted'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.advanceAdjusted)}</td></tr>`;
         }
         if (deductions.other > 0) {
-          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'इतर कपात' : 'Other Deductions'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.other)}</td><td></td></tr>`;
+          deductionsHtml += `<tr><td colspan="3" style="text-align: right;">${isMarathi ? 'इतर कपात' : 'Other Deductions'}:</td><td style="text-align: right;">- ₹ ${formatNumber(deductions.other)}</td></tr>`;
         }
       }
       
@@ -784,73 +775,6 @@ const Purchases = () => {
     }
   };
 
-  // Open Lock Rate Modal
-  const openLockRateModal = (purchase) => {
-    setLockingPurchase(purchase);
-    setSelectedLineIndex(0);
-    setNewRate('');
-    setLockReason('');
-    setShowLockRateModal(true);
-    handleActionMenuClose();
-  };
-
-  // Handle Lock Rate Submit
-  const handleLockRate = async () => {
-    if (!lockingPurchase) return;
-    
-    if (!newRate || parseFloat(newRate) <= 0) {
-      alert(t('purchases.messages.validRateRequired'));
-      return;
-    }
-
-    if (!lockReason.trim()) {
-      alert(t('purchases.messages.reasonRequired'));
-      return;
-    }
-
-    setLocking(true);
-    try {
-      const token = getToken();
-      const response = await fetch(`${BASE_URL}/purchases/${lockingPurchase._id}/lock-rate`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          lineIndex: selectedLineIndex,
-          newRate: parseFloat(newRate),
-          reason: lockReason
-        })
-      });
-
-      if (response.status === 401) {
-        localStorage.clear();
-        navigate('/login');
-        return;
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        setShowLockRateModal(false);
-        setLockingPurchase(null);
-        setSelectedLineIndex(0);
-        setNewRate('');
-        setLockReason('');
-        fetchPurchases();
-        alert(t('purchases.messages.rateLocked'));
-      } else {
-        setError(data.message || t('purchases.errors.rateLockFailed'));
-      }
-    } catch (error) {
-      console.error('Error locking rate:', error);
-      setError(t('common.networkError'));
-    } finally {
-      setLocking(false);
-    }
-  };
-
   // Smart dropdown positioning
   const MENU_HEIGHT = 240;
   const anchorRect = actionMenuAnchor?.getBoundingClientRect();
@@ -1037,147 +961,131 @@ const Purchases = () => {
                     <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.table.actions')}</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {purchases.map((purchase, index) => {
-                    const statusColors = getStatusColor(purchase.status);
-                    const StatusIcon = statusColors.icon;
-                    const productNames = purchase.lines?.map(l => l.productName).join(', ') || '-';
-                    const isActionMenuOpen = Boolean(actionMenuAnchor) && selectedPurchaseForMenu?._id === purchase._id;
-                    
-                    return (
-                      <tr
-                        key={purchase._id}
-                        className="hover:bg-green-50 transition-colors"
-                        style={{ borderBottom: index !== purchases.length - 1 ? '1px solid #E8F5E9' : 'none' }}
-                      >
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <FileText className="w-4 h-4" style={{ color: '#8D6E63' }} />
-                            <span className="text-sm font-medium" style={{ color: '#2E7D32' }}>{purchase.receiptNumber}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4" style={{ color: '#8D6E63' }} />
-                            <span className="text-sm" style={{ color: '#5D4037' }}>{formatDate(purchase.purchaseDate)}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <User className="w-4 h-4" style={{ color: '#8D6E63' }} />
-                            <div>
-                              <p className="text-sm font-medium" style={{ color: '#2E7D32' }}>{purchase.farmer?.name || 'N/A'}</p>
-                              {purchase.farmer?.mobile && <p className="text-xs" style={{ color: '#8D6E63' }}>{purchase.farmer.mobile}</p>}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <p className="text-sm truncate max-w-[150px]" style={{ color: '#5D4037' }}>{productNames}</p>
-                          <p className="text-xs" style={{ color: '#8D6E63' }}>{purchase.lines?.length || 0} {t('purchases.items')}</p>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <span className="text-sm font-semibold" style={{ color: '#2E7D32' }}>{formatCurrency(purchase.grossTotal)}</span>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <span className="text-sm" style={{ color: '#D32F2F' }}>- {formatCurrency(purchase.totalDeductions)}</span>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <span className="text-sm font-bold" style={{ color: '#FF6F00' }}>{formatCurrency(purchase.finalPayable)}</span>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <span className="text-xs px-2 py-1 rounded-full flex items-center gap-1 w-fit" style={{ background: statusColors.bg, color: statusColors.text }}>
-                            <StatusIcon className="w-3 h-3" />{statusColors.label}
-                          </span>
-                        </td>
-
-                        {/* Actions cell */}
-                        <td className="px-4 py-3 whitespace-nowrap text-center">
-                          <button
-                            onClick={(e) => handleActionMenuOpen(e, purchase)}
-                            className="p-2 rounded-lg hover:bg-gray-100 transition-all flex items-center gap-1 mx-auto"
-                            style={{ color: '#2E7D32' }}
-                          >
-                            <MoreVertical className="w-4 h-4" />
-                            <span className="text-xs font-medium">{t('common.actions')}</span>
-                          </button>
-
-                          {/* Dropdown menu */}
-                          {isActionMenuOpen && anchorRect && (
-                            <div
-                              className="fixed bg-white rounded-lg shadow-xl border overflow-hidden z-50"
-                              style={{
-                                borderColor: '#E8F5E9',
-                                width: '200px',
-                                position: 'fixed',
-                                top: openUpward
-                                  ? anchorRect.top - MENU_HEIGHT - 4
-                                  : anchorRect.bottom + 4,
-                                left: anchorRect.left - 140,
-                              }}
-                            >
-                              {/* View Details */}
-                              <button
-                                onClick={() => {
-                                  navigate(`/purchases/view/${purchase._id}`);
-                                  handleActionMenuClose();
-                                }}
-                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-green-50 flex items-center gap-2 transition-colors"
-                                style={{ color: '#2E7D32' }}
-                              >
-                                <Eye className="w-4 h-4" />
-                                {t('common.view')}
-                              </button>
-
-                              {/* Edit / Update Status (Full Edit) */}
-                              <button
-                                onClick={() => {
-                                  handleEditClick(purchase);
-                                  handleActionMenuClose();
-                                }}
-                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-orange-50 flex items-center gap-2 transition-colors"
-                                style={{ color: '#FF6F00' }}
-                                title={getEditButtonTitle(purchase.status)}
-                              >
-                                <Edit2 className="w-4 h-4" />
-                                {purchase.status === 'draft' ? t('common.edit') : t('purchases.buttons.editFullDetails')}
-                              </button>
-
-                              {/* Update Status (Quick Status Update) */}
-                              <button
-                                onClick={() => openUpdateStatusModal(purchase)}
-                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-blue-50 flex items-center gap-2 transition-colors"
-                                style={{ color: '#1976D2' }}
-                              >
-                                <UpdateIcon className="w-4 h-4" />
-                                {t('purchases.buttons.updateStatus')}
-                              </button>
-
-                              {/* Lock Rate */}
-                              <button
-                                onClick={() => openLockRateModal(purchase)}
-                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-purple-50 flex items-center gap-2 transition-colors"
-                                style={{ color: '#7B1FA2' }}
-                              >
-                                <Lock className="w-4 h-4" />
-                                {t('purchases.buttons.lockRate')}
-                              </button>
-
-                              {/* Print Receipt */}
-                              <button
-                                onClick={() => handlePrintReceipt(purchase._id)}
-                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-2 transition-colors border-t"
-                                style={{ color: '#1565C0', borderColor: '#E8F5E9' }}
-                              >
-                                <Printer className="w-4 h-4" />
-                                {t('purchases.buttons.printReceipt')}
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
+              <tbody>
+  {purchases.map((purchase, index) => {
+    const statusColors = getStatusColor(purchase.status);
+    const StatusIcon = statusColors.icon;
+    const productNames = purchase.lines?.map(l => l.productName).join(', ') || '-';
+    const isActionMenuOpen = Boolean(actionMenuAnchor) && selectedPurchaseForMenu?._id === purchase._id;
+    
+    return (
+      <tr
+        key={purchase._id}
+        className="hover:bg-green-50 transition-colors"
+        style={{ borderBottom: index !== purchases.length - 1 ? '1px solid #E8F5E9' : 'none' }}
+      >
+        <td className="px-4 py-3 whitespace-nowrap">
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4" style={{ color: '#8D6E63' }} />
+            <span className="text-sm font-medium" style={{ color: '#2E7D32' }}>{purchase.receiptNumber}</span>
+          </div>
+        </td>
+        <td className="px-4 py-3 whitespace-nowrap">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4" style={{ color: '#8D6E63' }} />
+            <span className="text-sm" style={{ color: '#5D4037' }}>{formatDate(purchase.purchaseDate)}</span>
+          </div>
+        </td>
+        <td className="px-4 py-3 whitespace-nowrap">
+          <div className="flex items-center gap-2">
+            <User className="w-4 h-4" style={{ color: '#8D6E63' }} />
+            <div>
+              <p className="text-sm font-medium" style={{ color: '#2E7D32' }}>{purchase.farmer?.name || 'N/A'}</p>
+              {purchase.farmer?.mobile && <p className="text-xs" style={{ color: '#8D6E63' }}>{purchase.farmer.mobile}</p>}
+            </div>
+          </div>
+        </td>
+        <td className="px-4 py-3">
+          <p className="text-sm truncate max-w-[150px]" style={{ color: '#5D4037' }}>{productNames}</p>
+          <p className="text-xs" style={{ color: '#8D6E63' }}>{purchase.lines?.length || 0} {t('purchases.items')}</p>
+        </td>
+        <td className="px-4 py-3 whitespace-nowrap">
+          <span className="text-sm font-semibold" style={{ color: '#2E7D32' }}>{formatCurrency(purchase.grossTotal)}</span>
+        </td>
+        <td className="px-4 py-3 whitespace-nowrap">
+          <span className="text-sm" style={{ color: '#D32F2F' }}>- {formatCurrency(purchase.totalDeductions)}</span>
+        </td>
+        <td className="px-4 py-3 whitespace-nowrap">
+          <span className="text-sm font-bold" style={{ color: '#FF6F00' }}>{formatCurrency(purchase.finalPayable)}</span>
+        </td>
+        <td className="px-4 py-3 whitespace-nowrap">
+          <span className="text-xs px-2 py-1 rounded-full flex items-center gap-1 w-fit" style={{ background: statusColors.bg, color: statusColors.text }}>
+            <StatusIcon className="w-3 h-3" />{statusColors.label}
+          </span>
+        </td>
+        <td className="px-4 py-3 whitespace-nowrap text-center">
+          <button
+            onClick={(e) => handleActionMenuOpen(e, purchase)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-all flex items-center gap-1 mx-auto"
+            style={{ color: '#2E7D32' }}
+          >
+            <MoreVertical className="w-4 h-4" />
+            <span className="text-xs font-medium">{t('common.actions')}</span>
+          </button>
+          {/* Dropdown menu */}
+          {isActionMenuOpen && anchorRect && (
+            <div
+              className="fixed bg-white rounded-lg shadow-xl border overflow-hidden z-50"
+              style={{
+                borderColor: '#E8F5E9',
+                width: '200px',
+                position: 'fixed',
+                top: openUpward
+                  ? anchorRect.top - MENU_HEIGHT - 4
+                  : anchorRect.bottom + 4,
+                left: anchorRect.left - 140,
+              }}
+            >
+              {/* View Details */}
+              <button
+                onClick={() => {
+                  navigate(`/purchases/view/${purchase._id}`);
+                  handleActionMenuClose();
+                }}
+                className="w-full px-4 py-2.5 text-left text-sm hover:bg-green-50 flex items-center gap-2 transition-colors"
+                style={{ color: '#2E7D32' }}
+              >
+                <Eye className="w-4 h-4" />
+                {t('common.view')}
+              </button>
+              {/* Edit */}
+              <button
+                onClick={() => {
+                  handleEditClick(purchase);
+                  handleActionMenuClose();
+                }}
+                className="w-full px-4 py-2.5 text-left text-sm hover:bg-orange-50 flex items-center gap-2 transition-colors"
+                style={{ color: '#FF6F00' }}
+                title={getEditButtonTitle(purchase.status)}
+              >
+                <Edit2 className="w-4 h-4" />
+                {t('common.edit')}
+              </button>
+              {/* Update Status */}
+              <button
+                onClick={() => openUpdateStatusModal(purchase)}
+                className="w-full px-4 py-2.5 text-left text-sm hover:bg-blue-50 flex items-center gap-2 transition-colors"
+                style={{ color: '#1976D2' }}
+              >
+                <UpdateIcon className="w-4 h-4" />
+                {t('purchases.buttons.updateStatus')}
+              </button>
+              {/* Print Receipt */}
+              <button
+                onClick={() => handlePrintReceipt(purchase._id)}
+                className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-2 transition-colors border-t"
+                style={{ color: '#1565C0', borderColor: '#E8F5E9' }}
+              >
+                <Printer className="w-4 h-4" />
+                {t('purchases.buttons.printReceipt')}
+              </button>
+            </div>
+          )}
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
               </table>
             </div>
 
@@ -1323,105 +1231,6 @@ const Purchases = () => {
                     <><Loader className="w-4 h-4 animate-spin" /> {t('common.updating')}...</>
                   ) : (
                     <><UpdateIcon className="w-4 h-4" /> {t('purchases.buttons.updateStatus')}</>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Lock Rate Modal */}
-      {showLockRateModal && lockingPurchase && (
-        <div className="fixed inset-0 z-50">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.6)',
-              backdropFilter: 'blur(4px)'
-            }}
-            onClick={() => { setShowLockRateModal(false); setLockingPurchase(null); }}
-          />
-          <div className="flex items-center justify-center min-h-screen p-4">
-            <div className="relative bg-white rounded-xl shadow-xl w-full" style={{ maxWidth: '500px', zIndex: 10000 }}>
-              <div className="flex justify-between items-center p-6 border-b" style={{ borderColor: '#E8F5E9' }}>
-                <div>
-                  <h3 className="text-lg font-semibold" style={{ color: '#7B1FA2' }}>{t('purchases.modals.lockRate.title')}</h3>
-                  <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>
-                    {t('purchases.modals.lockRate.receiptLabel')}: {lockingPurchase.receiptNumber}
-                  </p>
-                </div>
-                <button
-                  onClick={() => { setShowLockRateModal(false); setLockingPurchase(null); }}
-                  className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <X className="w-5 h-5" style={{ color: '#8D6E63' }} />
-                </button>
-              </div>
-              <div className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#2E7D32' }}>
-                    {t('purchases.modals.lockRate.selectProduct')} *
-                  </label>
-                  <select
-                    value={selectedLineIndex}
-                    onChange={(e) => setSelectedLineIndex(parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-1"
-                    style={{ borderColor: '#C8E6C9' }}
-                  >
-                    {lockingPurchase.lines?.map((line, idx) => (
-                      <option key={idx} value={idx}>
-                        {line.productName} - {t('purchases.modals.lockRate.currentRate')}: {formatCurrency(line.rate)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#2E7D32' }}>
-                    {t('purchases.modals.lockRate.newRate')} *
-                  </label>
-                  <input
-                    type="number"
-                    value={newRate}
-                    onChange={(e) => setNewRate(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-1"
-                    style={{ borderColor: '#C8E6C9' }}
-                    placeholder={t('purchases.modals.lockRate.ratePlaceholder')}
-                    step="0.01"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#2E7D32' }}>
-                    {t('purchases.modals.lockRate.reason')} *
-                  </label>
-                  <textarea
-                    value={lockReason}
-                    onChange={(e) => setLockReason(e.target.value)}
-                    rows="3"
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-1 resize-none"
-                    style={{ borderColor: '#C8E6C9' }}
-                    placeholder={t('purchases.modals.lockRate.reasonPlaceholder')}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 p-6 border-t" style={{ borderColor: '#E8F5E9' }}>
-                <button
-                  onClick={() => { setShowLockRateModal(false); setLockingPurchase(null); }}
-                  className="px-4 py-2 rounded-lg border text-sm font-medium transition-all hover:bg-gray-50"
-                  style={{ borderColor: '#C8E6C9', color: '#8D6E63' }}
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  onClick={handleLockRate}
-                  disabled={locking}
-                  className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all hover:scale-105"
-                  style={{ background: 'linear-gradient(135deg, #7B1FA2, #9C27B0)' }}
-                >
-                  {locking ? (
-                    <><Loader className="w-4 h-4 animate-spin" /> {t('common.locking')}...</>
-                  ) : (
-                    <><Lock className="w-4 h-4" /> {t('purchases.buttons.lockRate')}</>
                   )}
                 </button>
               </div>
