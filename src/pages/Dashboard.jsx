@@ -11,13 +11,25 @@ import {
   TrendingDown as TrendDown, ChevronLeft, Maximize2,
   Download as DownloadIcon, Filter, Settings
 } from 'lucide-react';
+import BASE_URL from '../config/Config';
+
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState('week');
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isRefreshing, setIsReffreshing] = useState(false);
   const [selectedChart, setSelectedChart] = useState('line');
   const [showAlerts, setShowAlerts] = useState(true);
+  
+  // State for API data
+  const [statsData, setStatsData] = useState({
+    totalFarmers: 0,
+    totalPayments: 0,
+    totalWarehouses: 0,
+    totalRevenue: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   // Sample data for graphs
   const weeklyData = {
@@ -39,49 +51,213 @@ const Dashboard = () => {
     { id: 4, type: 'warning', title: 'Price Alert', message: 'Rice prices increased by 5%', time: '2 hours ago', icon: TrendingUp, color: '#FF6F00' },
   ];
 
+  // Get token from localStorage
+  const getToken = () => localStorage.getItem('token');
+
+  const isAuthenticated = () => {
+    const token = getToken();
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (!token || isLoggedIn !== 'true') {
+      return false;
+    }
+    return true;
+  };
+
+  // Fetch Farmers Count
+  const fetchFarmers = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${BASE_URL}/farmers`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        return null;
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        return data.pagination?.total || 0;
+      }
+      return 0;
+    } catch (error) {
+      console.error('Error fetching farmers:', error);
+      return 0;
+    }
+  };
+
+  // Fetch Payments Total
+  const fetchPayments = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${BASE_URL}/payments`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        return 0;
+      }
+
+      const data = await response.json();
+      if (data.success && data.summary) {
+        return data.summary.totalAmount || 0;
+      }
+      return 0;
+    } catch (error) {
+      console.error('Error fetching payments:', error);
+      return 0;
+    }
+  };
+
+  // Fetch Warehouses Count
+  const fetchWarehouses = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${BASE_URL}/warehouse`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        return 0;
+      }
+
+      const data = await response.json();
+      if (data.success && data.pagination) {
+        return data.pagination.total || 0;
+      }
+      return 0;
+    } catch (error) {
+      console.error('Error fetching warehouses:', error);
+      return 0;
+    }
+  };
+
+  // Fetch Sales Revenue
+  const fetchSalesRevenue = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${BASE_URL}/sales`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        return 0;
+      }
+
+      const data = await response.json();
+      if (data.success && data.data) {
+        // Calculate total revenue from all sales
+        const totalRevenue = data.data.reduce((sum, sale) => sum + (sale.grandTotal || 0), 0);
+        return totalRevenue;
+      }
+      return 0;
+    } catch (error) {
+      console.error('Error fetching sales revenue:', error);
+      return 0;
+    }
+  };
+
+  // Fetch all dashboard data
+  const fetchDashboardData = async () => {
+    if (!isAuthenticated()) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const [farmersCount, paymentsTotal, warehousesCount, revenueTotal] = await Promise.all([
+        fetchFarmers(),
+        fetchPayments(),
+        fetchWarehouses(),
+        fetchSalesRevenue()
+      ]);
+      
+      setStatsData({
+        totalFarmers: farmersCount,
+        totalPayments: paymentsTotal,
+        totalWarehouses: warehousesCount,
+        totalRevenue: revenueTotal
+      });
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+      setError('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    fetchDashboardData().finally(() => {
+      setTimeout(() => setIsRefreshing(false), 500);
+    });
+  };
+
+  // Format currency
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount || 0);
+  };
+
+  // Format number
+  const formatNumber = (num) => {
+    return new Intl.NumberFormat('en-IN').format(num || 0);
+  };
+
   const stats = [
     { 
       title: 'Total Farmers', 
-      value: "156", 
+      value: formatNumber(statsData.totalFarmers), 
       change: "+12", 
       changeType: "increase",
       icon: Leaf, 
       color: "#2E7D32",
-      bgColor: "#E8F5E9"
+      bgColor: "#E8F5E9",
+      loading: loading
     },
     { 
-      title: 'Total Buyers', 
-      value: "48", 
+      title: 'Total Payments', 
+      value: formatCurrency(statsData.totalPayments), 
       change: "+5", 
       changeType: "increase",
       icon: Users, 
       color: "#43A047",
-      bgColor: "#E8F5E9"
+      bgColor: "#E8F5E9",
+      loading: loading
     },
     { 
-      title: 'Today\'s Purchase', 
-      value: "₹1,25,000", 
+      title: 'Total Warehouses', 
+      value: formatNumber(statsData.totalWarehouses), 
       change: "+8%", 
       changeType: "increase",
       icon: ShoppingCart, 
       color: "#FF6F00",
-      bgColor: "#FFF3E0"
+      bgColor: "#FFF3E0",
+      loading: loading
     },
     { 
-      title: 'Today\'s Sale', 
-      value: "₹1,85,000", 
+      title: 'Total Revenue', 
+      value: formatCurrency(statsData.totalRevenue), 
       change: "+15%", 
       changeType: "increase",
       icon: DollarSign, 
       color: "#FF8F00",
-      bgColor: "#FFF3E0"
+      bgColor: "#FFF3E0",
+      loading: loading
     },
   ];
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1000);
-  };
 
   // Custom Line Chart Component
   const LineChart = ({ data, type }) => {
@@ -147,6 +323,17 @@ const Dashboard = () => {
     );
   };
 
+  if (loading && !statsData.totalFarmers && !statsData.totalRevenue) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <RefreshCw className="w-10 h-10 animate-spin mx-auto mb-4" style={{ color: '#2E7D32' }} />
+          <p style={{ color: '#8D6E63' }}>Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header with Alerts Toggle */}
@@ -180,7 +367,16 @@ const Dashboard = () => {
         </div>
       </div>
 
-      
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-red-500" />
+          <span className="text-sm text-red-600">{error}</span>
+          <button onClick={fetchDashboardData} className="ml-auto text-sm text-red-600 hover:underline">
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -196,7 +392,13 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <p className="text-xs font-medium uppercase tracking-wider" style={{ color: '#8D6E63' }}>{stat.title}</p>
-                  <p className="text-2xl font-bold mt-2" style={{ color: '#1B5E20' }}>{stat.value}</p>
+                  {stat.loading ? (
+                    <div className="mt-2">
+                      <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  ) : (
+                    <p className="text-2xl font-bold mt-2" style={{ color: '#1B5E20' }}>{stat.value}</p>
+                  )}
                   <div className="flex items-center gap-1 mt-2">
                     {isIncrease ? (
                       <TrendUp className="w-3 h-3" style={{ color: '#4CAF50' }} />
@@ -329,7 +531,7 @@ const Dashboard = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-xs opacity-90">Total Revenue</p>
-                <p className="text-2xl font-bold mt-1">₹3,10,000</p>
+                <p className="text-2xl font-bold mt-1">{formatCurrency(statsData.totalRevenue)}</p>
                 <p className="text-xs mt-2 opacity-80">+32% from last month</p>
               </div>
               <Wallet className="w-8 h-8 opacity-90" />

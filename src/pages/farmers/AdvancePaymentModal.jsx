@@ -1,5 +1,6 @@
 // src/pages/farmers/AdvancePaymentModal.jsx
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, AlertCircle, Loader, Wallet } from 'lucide-react';
 import BASE_URL from '../../config/Config';
 
@@ -12,6 +13,7 @@ const AdvancePaymentModal = ({
   navigate,
   formatCurrency 
 }) => {
+  const { t } = useTranslation();
   const [advanceForm, setAdvanceForm] = useState({
     amount: '',
     paymentMode: 'cash',
@@ -45,12 +47,12 @@ const AdvancePaymentModal = ({
 
   const handleSubmit = async () => {
     if (!advanceForm.amount || advanceForm.amount <= 0) {
-      setError('Please enter a valid amount');
+      setError(t('farmers.errors.validAmountRequired'));
       return;
     }
 
     if (!advanceForm.paymentMode) {
-      setError('Please select a payment mode');
+      setError(t('farmers.errors.paymentModeRequired'));
       return;
     }
 
@@ -88,11 +90,11 @@ const AdvancePaymentModal = ({
         onSuccess();
         onClose();
       } else {
-        setError(data.message || 'Failed to record advance payment');
+        setError(data.message || t('farmers.errors.advanceFailed'));
       }
     } catch (error) {
       console.error('Error submitting advance:', error);
-      setError('Network error. Please try again.');
+      setError(t('common.networkError'));
     } finally {
       setSubmitting(false);
     }
@@ -144,10 +146,10 @@ const AdvancePaymentModal = ({
           <div className="flex justify-between items-center p-6 border-b" style={{ borderColor: '#E8F5E9' }}>
             <div>
               <h3 className="text-lg font-semibold" style={{ color: '#1B5E20' }}>
-                Advance Payment
+                {t('farmers.modals.advance.title', { name: farmer.name })}
               </h3>
               <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>
-                Record advance payment for {farmer.name}
+                {t('farmers.modals.advance.subtitle')}
               </p>
             </div>
             <button
@@ -172,7 +174,7 @@ const AdvancePaymentModal = ({
               {/* Amount Field */}
               <div className="col-span-2">
                 <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>
-                  Amount <span className="text-red-500">*</span>
+                  {t('common.amount')} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
@@ -181,7 +183,7 @@ const AdvancePaymentModal = ({
                     name="amount"
                     value={advanceForm.amount}
                     onChange={handleChange}
-                    placeholder="Enter amount"
+                    placeholder={t('common.enterAmount')}
                     className="w-full pl-8 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
                     style={{ borderColor: '#C8E6C9' }}
                   />
@@ -191,7 +193,7 @@ const AdvancePaymentModal = ({
               {/* Payment Mode Field */}
               <div className="col-span-2 sm:col-span-1">
                 <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>
-                  Payment Mode <span className="text-red-500">*</span>
+                  {t('payments.modes.paymentMode')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="paymentMode"
@@ -200,26 +202,26 @@ const AdvancePaymentModal = ({
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
                   style={{ borderColor: '#C8E6C9' }}
                 >
-                  <option value="cash">Cash</option>
-                  <option value="cheque">Cheque</option>
-                  <option value="bank_transfer">Bank Transfer</option>
-                  <option value="upi">UPI</option>
-                  <option value="credit_card">Credit Card</option>
-                  <option value="debit_card">Debit Card</option>
+                  <option value="cash">{t('payments.modes.cash')}</option>
+                  <option value="cheque">{t('payments.modes.cheque')}</option>
+                  <option value="bank_transfer">{t('payments.modes.bank')}</option>
+                  <option value="upi">{t('payments.modes.upi')}</option>
+                  <option value="credit_card">{t('payments.modes.creditCard')}</option>
+                  <option value="debit_card">{t('payments.modes.debitCard')}</option>
                 </select>
               </div>
 
               {/* Reference Number Field (Optional) */}
               <div className="col-span-2 sm:col-span-1">
                 <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>
-                  Reference Number <span className="text-gray-400">(Optional)</span>
+                  {t('payments.referenceNumber')} <span className="text-gray-400">({t('common.optional')})</span>
                 </label>
                 <input
                   type="text"
                   name="referenceNumber"
                   value={advanceForm.referenceNumber}
                   onChange={handleChange}
-                  placeholder="Cheque/Transaction/Receipt Number"
+                  placeholder={t('payments.referencePlaceholder')}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
                   style={{ borderColor: '#C8E6C9' }}
                 />
@@ -229,14 +231,14 @@ const AdvancePaymentModal = ({
             {/* Notes Field (Optional) - Full width */}
             <div>
               <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>
-                Notes <span className="text-gray-400">(Optional)</span>
+                {t('common.notes')} <span className="text-gray-400">({t('common.optional')})</span>
               </label>
               <textarea
                 name="notes"
                 value={advanceForm.notes}
                 onChange={handleChange}
                 rows="3"
-                placeholder="Additional notes about this payment..."
+                placeholder={t('common.notesPlaceholder')}
                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent resize-none"
                 style={{ borderColor: '#C8E6C9' }}
               />
@@ -245,7 +247,7 @@ const AdvancePaymentModal = ({
             {/* Current Dues Info */}
             <div className="bg-gray-50 rounded-lg p-3">
               <div className="flex justify-between text-sm">
-                <span style={{ color: '#8D6E63' }}>Current Pending Dues:</span>
+                <span style={{ color: '#8D6E63' }}>{t('farmers.modals.advance.currentDues')}:</span>
                 <span className="font-semibold" style={{ color: '#FF6F00' }}>
                   {formatCurrency(farmer.pendingDues)}
                 </span>
@@ -260,7 +262,7 @@ const AdvancePaymentModal = ({
               className="px-4 py-2 rounded-lg border text-sm font-medium transition-all hover:bg-gray-50"
               style={{ borderColor: '#C8E6C9', color: '#8D6E63' }}
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               onClick={handleSubmit}
@@ -271,12 +273,12 @@ const AdvancePaymentModal = ({
               {submitting ? (
                 <>
                   <Loader className="w-4 h-4 animate-spin" />
-                  Processing...
+                  {t('common.processing')}
                 </>
               ) : (
                 <>
                   <Wallet className="w-4 h-4" />
-                  Record Payment
+                  {t('farmers.actions.advancePayment')}
                 </>
               )}
             </button>

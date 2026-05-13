@@ -1,6 +1,7 @@
 // src/pages/farmers/EditFarmer.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -95,6 +96,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const EditFarmer = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
@@ -116,7 +118,7 @@ const EditFarmer = () => {
     gstNumber: ''
   });
 
-  const steps = ['Personal Information', 'Bank Details'];
+  const steps = [t('farmers.steps.personalInfo'), t('farmers.steps.bankDetails')];
 
   const getToken = () => localStorage.getItem('token');
 
@@ -181,12 +183,12 @@ const EditFarmer = () => {
           gstNumber: response.data.data.gstNumber || ''
         });
       } else {
-        setError(response.data.message || 'Failed to fetch farmer details');
+        setError(response.data.message || t('farmers.errors.fetchFailed'));
         setTimeout(() => setError(''), 3000);
       }
     } catch (error) {
       console.error('Error fetching farmer:', error);
-      setError(error.response?.data?.message || 'Network error. Please check your connection.');
+      setError(error.response?.data?.message || t('common.networkError'));
       setTimeout(() => setError(''), 3000);
     } finally {
       setFetching(false);
@@ -221,40 +223,40 @@ const EditFarmer = () => {
 
     if (step === 0) {
       if (!formData.name.trim()) {
-        errors.name = 'Farmer name is required';
+        errors.name = t('farmers.errors.nameRequired');
         isValid = false;
       } else if (!validateName(formData.name)) {
-        errors.name = 'Name should contain only letters, spaces, dots, and hyphens';
+        errors.name = t('farmers.errors.nameInvalid');
         isValid = false;
       }
       
       if (!formData.mobile.trim()) {
-        errors.mobile = 'Mobile number is required';
+        errors.mobile = t('farmers.errors.mobileRequired');
         isValid = false;
       } else if (!validateMobile(formData.mobile)) {
-        errors.mobile = 'Enter a valid 10-digit mobile number starting with 6,7,8, or 9';
+        errors.mobile = t('farmers.errors.mobileInvalid');
         isValid = false;
       }
       
       if (!formData.village.trim()) {
-        errors.village = 'Village name is required';
+        errors.village = t('farmers.errors.villageRequired');
         isValid = false;
       }
       
       if (!formData.city.trim()) {
-        errors.city = 'City is required';
+        errors.city = t('farmers.errors.cityRequired');
         isValid = false;
       }
       
       if (!formData.state.trim()) {
-        errors.state = 'State is required';
+        errors.state = t('farmers.errors.stateRequired');
         isValid = false;
       }
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields correctly');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -277,59 +279,59 @@ const EditFarmer = () => {
     let isValid = true;
 
     if (!formData.name.trim()) {
-      errors.name = 'Farmer name is required';
+      errors.name = t('farmers.errors.nameRequired');
       isValid = false;
     } else if (!validateName(formData.name)) {
-      errors.name = 'Name should contain only letters, spaces, dots, and hyphens';
+      errors.name = t('farmers.errors.nameInvalid');
       isValid = false;
     }
     
     if (!formData.mobile.trim()) {
-      errors.mobile = 'Mobile number is required';
+      errors.mobile = t('farmers.errors.mobileRequired');
       isValid = false;
     } else if (!validateMobile(formData.mobile)) {
-      errors.mobile = 'Enter a valid 10-digit mobile number starting with 6,7,8, or 9';
+      errors.mobile = t('farmers.errors.mobileInvalid');
       isValid = false;
     }
     
     if (!formData.village.trim()) {
-      errors.village = 'Village name is required';
+      errors.village = t('farmers.errors.villageRequired');
       isValid = false;
     }
     
     if (!formData.city.trim()) {
-      errors.city = 'City is required';
+      errors.city = t('farmers.errors.cityRequired');
       isValid = false;
     }
     
     if (!formData.state.trim()) {
-      errors.state = 'State is required';
+      errors.state = t('farmers.errors.stateRequired');
       isValid = false;
     }
 
     if (formData.bankName && !validateBankName(formData.bankName)) {
-      errors.bankName = 'Bank name should contain only letters, spaces, dots, and hyphens';
+      errors.bankName = t('farmers.errors.bankNameInvalid');
       isValid = false;
     }
 
     if (formData.bankAccountNumber && !validateBankAccountNumber(formData.bankAccountNumber)) {
-      errors.bankAccountNumber = 'Account number should be 9-18 digits';
+      errors.bankAccountNumber = t('farmers.errors.accountNumberInvalid');
       isValid = false;
     }
 
     if (formData.ifscCode && !validateIFSC(formData.ifscCode.toUpperCase())) {
-      errors.ifscCode = 'Enter a valid IFSC code (e.g., SBIN0001234)';
+      errors.ifscCode = t('farmers.errors.ifscInvalid');
       isValid = false;
     }
 
     if (formData.gstNumber && !validateGST(formData.gstNumber.toUpperCase())) {
-      errors.gstNumber = 'Enter a valid GST number';
+      errors.gstNumber = t('farmers.errors.gstInvalid');
       isValid = false;
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fix the errors before submitting');
+      setError(t('common.fixErrors'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -373,11 +375,11 @@ const EditFarmer = () => {
         setSuccess(true);
         setTimeout(() => navigate('/farmers'), 2000);
       } else {
-        showError(response.data.message || 'Failed to update farmer. Please try again.');
+        showError(response.data.message || t('farmers.errors.updateFailed'));
       }
     } catch (error) {
       console.error('Error updating farmer:', error);
-      showError(error.response?.data?.message || 'Network error. Please check your connection.');
+      showError(error.response?.data?.message || t('common.networkError'));
     } finally {
       setLoading(false);
     }
@@ -419,7 +421,7 @@ const EditFarmer = () => {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '96vh' }}>
         <CircularProgress sx={{ color: '#2E7D32' }} />
-        <Typography sx={{ ml: 2, color: '#2E7D32' }}>Loading farmer details...</Typography>
+        <Typography sx={{ ml: 2, color: '#2E7D32' }}>{t('common.loading')}</Typography>
       </Box>
     );
   }
@@ -440,10 +442,10 @@ const EditFarmer = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Edit Farmer
+            {t('farmers.editTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Update farmer information in the system
+            {t('farmers.editSubtitle')}
           </Typography>
         </Box>
         <Box sx={{ ml: 'auto' }}>
@@ -470,7 +472,7 @@ const EditFarmer = () => {
                 }
               }}
             >
-              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Update Farmer</>}
+              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('common.update')}</>}
             </Button>
           )}
         </Box>
@@ -484,7 +486,7 @@ const EditFarmer = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Farmer updated successfully! Redirecting...
+          {t('farmers.messages.updateSuccess')}
         </Alert>
       )}
 
@@ -511,7 +513,7 @@ const EditFarmer = () => {
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: currentStep >= index ? '#2E7D32' : '#8D6E63', display: 'block', textAlign: 'left' }}>
-                    Step {index + 1}
+                    {t('common.step')} {index + 1}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500, color: currentStep >= index ? '#1B5E20' : '#8D6E63' }}>
                     {step}
@@ -532,21 +534,21 @@ const EditFarmer = () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <PersonIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Personal Information</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('farmers.personalInfo')}</Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               {/* Name */}
               <Box>
-                <Label required>FARMER NAME</Label>
+                <Label required>{t('farmers.fullName')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Enter farmer name"
+                  placeholder={t('farmers.placeholders.name')}
                   error={!!fieldErrors.name}
                   helperText={fieldErrors.name}
                   sx={inputSx}
@@ -558,14 +560,14 @@ const EditFarmer = () => {
 
               {/* Mobile */}
               <Box>
-                <Label required>MOBILE NUMBER</Label>
+                <Label required>{t('farmers.mobileNumber')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="mobile"
                   value={formData.mobile}
                   onChange={handleChange}
-                  placeholder="10-digit mobile number"
+                  placeholder={t('farmers.placeholders.mobile')}
                   inputProps={{ maxLength: 10 }}
                   error={!!fieldErrors.mobile}
                   helperText={fieldErrors.mobile}
@@ -575,13 +577,13 @@ const EditFarmer = () => {
                   }}
                 />
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                  Must be 10 digits starting with 6,7,8, or 9
+                  {t('farmers.mobileHint')}
                 </Typography>
               </Box>
 
               {/* Address - spans both columns */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label>ADDRESS</Label>
+                <Label>{t('farmers.address')}</Label>
                 <TextField
                   fullWidth
                   multiline
@@ -590,7 +592,7 @@ const EditFarmer = () => {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  placeholder="Enter full address"
+                  placeholder={t('farmers.placeholders.address')}
                   sx={inputSx}
                   InputProps={{
                     startAdornment: <InputAdornment position="start"><HomeIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary }} /></InputAdornment>
@@ -600,14 +602,14 @@ const EditFarmer = () => {
 
               {/* Village */}
               <Box>
-                <Label required>VILLAGE</Label>
+                <Label required>{t('farmers.village')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="village"
                   value={formData.village}
                   onChange={handleChange}
-                  placeholder="Enter village name"
+                  placeholder={t('farmers.placeholders.village')}
                   error={!!fieldErrors.village}
                   helperText={fieldErrors.village}
                   sx={inputSx}
@@ -619,14 +621,14 @@ const EditFarmer = () => {
 
               {/* City */}
               <Box>
-                <Label required>CITY</Label>
+                <Label required>{t('farmers.city')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  placeholder="Enter city"
+                  placeholder={t('farmers.placeholders.city')}
                   error={!!fieldErrors.city}
                   helperText={fieldErrors.city}
                   sx={inputSx}
@@ -638,14 +640,14 @@ const EditFarmer = () => {
 
               {/* State */}
               <Box>
-                <Label required>STATE</Label>
+                <Label required>{t('farmers.state')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="state"
                   value={formData.state}
                   onChange={handleChange}
-                  placeholder="Enter state"
+                  placeholder={t('farmers.placeholders.state')}
                   error={!!fieldErrors.state}
                   helperText={fieldErrors.state}
                   sx={inputSx}
@@ -665,24 +667,24 @@ const EditFarmer = () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <BankIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Bank Details</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('farmers.bankDetails')}</Typography>
             </Stack>
             <Typography variant="caption" sx={{ mt: 0.5, display: 'block', color: '#8D6E63', fontSize: '0.65rem' }}>
-              Optional - These fields can be updated later
+              {t('farmers.bankOptional')}
             </Typography>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               {/* Bank Name */}
               <Box>
-                <Label>BANK NAME</Label>
+                <Label>{t('farmers.bankName')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="bankName"
                   value={formData.bankName}
                   onChange={handleChange}
-                  placeholder="Enter bank name (e.g., State Bank of India)"
+                  placeholder={t('farmers.placeholders.bankName')}
                   error={!!fieldErrors.bankName}
                   helperText={fieldErrors.bankName}
                   sx={inputSx}
@@ -694,14 +696,14 @@ const EditFarmer = () => {
 
               {/* Bank Account Number */}
               <Box>
-                <Label>BANK ACCOUNT NUMBER</Label>
+                <Label>{t('farmers.accountNumber')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="bankAccountNumber"
                   value={formData.bankAccountNumber}
                   onChange={handleChange}
-                  placeholder="9-18 digit account number"
+                  placeholder={t('farmers.placeholders.accountNumber')}
                   error={!!fieldErrors.bankAccountNumber}
                   helperText={fieldErrors.bankAccountNumber}
                   sx={inputSx}
@@ -710,20 +712,20 @@ const EditFarmer = () => {
                   }}
                 />
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                  Must be 9-18 digits
+                  {t('farmers.accountHint')}
                 </Typography>
               </Box>
 
               {/* IFSC Code */}
               <Box>
-                <Label>IFSC CODE</Label>
+                <Label>{t('farmers.ifscCode')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="ifscCode"
                   value={formData.ifscCode}
                   onChange={handleUppercaseChange}
-                  placeholder="Enter IFSC code (e.g., SBIN0001234)"
+                  placeholder={t('farmers.placeholders.ifsc')}
                   inputProps={{ maxLength: 11 }}
                   error={!!fieldErrors.ifscCode}
                   helperText={fieldErrors.ifscCode}
@@ -733,20 +735,20 @@ const EditFarmer = () => {
                   }}
                 />
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                  11 characters: 4 letters, then 0, then 6 alphanumeric
+                  {t('farmers.ifscHint')}
                 </Typography>
               </Box>
 
               {/* GST Number */}
               <Box>
-                <Label>GST NUMBER</Label>
+                <Label>{t('farmers.gstNumber')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="gstNumber"
                   value={formData.gstNumber}
                   onChange={handleUppercaseChange}
-                  placeholder="Enter GST number (optional)"
+                  placeholder={t('farmers.placeholders.gst')}
                   inputProps={{ maxLength: 15 }}
                   error={!!fieldErrors.gstNumber}
                   helperText={fieldErrors.gstNumber}
@@ -756,7 +758,7 @@ const EditFarmer = () => {
                   }}
                 />
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                  15-character GSTIN format (optional)
+                  {t('farmers.gstHint')}
                 </Typography>
               </Box>
             </Box>
@@ -784,7 +786,7 @@ const EditFarmer = () => {
               }
             }}
           >
-            Previous
+            {t('common.previous')}
           </Button>
         )}
         {currentStep === 0 && (
@@ -806,7 +808,7 @@ const EditFarmer = () => {
               }
             }}
           >
-            Next
+            {t('common.next')}
           </Button>
         )}
         {currentStep === 1 && <Box />}
