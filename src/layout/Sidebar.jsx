@@ -1,6 +1,5 @@
-// src/layout/Sidebar.jsx
 import React, { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
@@ -28,24 +27,22 @@ import BASE_URL from '../config/Config';
 const Sidebar = ({ isMobileOpen, onClose }) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
   const [summaryData, setSummaryData] = useState(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [summaryError, setSummaryError] = useState(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split('T')[0];
   };
 
-  // Fetch today's profit/loss summary
   const fetchTodaySummary = async () => {
     const token = localStorage.getItem('token');
     const isLoggedIn = localStorage.getItem('isLoggedIn');
-    
-    if (!token || isLoggedIn !== 'true') {
-      return;
-    }
+
+    if (!token || isLoggedIn !== 'true') return;
 
     setLoadingSummary(true);
     setSummaryError(null);
@@ -92,12 +89,47 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
     }).format(amount || 0);
   };
 
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        try {
+          await fetch(`${BASE_URL}/auth/logout`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+        } catch (apiError) {
+          console.error('Logout API error:', apiError);
+        }
+      }
+
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('isLoggedIn');
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('isLoggedIn');
+      navigate('/login');
+    } finally {
+      setIsLoggingOut(false);
+      if (onClose) onClose();
+    }
+  };
+
   // Close mobile sidebar on route change
   useEffect(() => {
     if (onClose && isMobileOpen) {
       onClose();
     }
-  }, [location.pathname, onClose, isMobileOpen]);
+  }, [location.pathname]);
 
   const menuItemClass = ({ isActive }) =>
     `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
@@ -110,25 +142,26 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
   };
 
   const mainMenu = [
-    { path: "/dashboard", name: t('nav.dashboard'), icon: LayoutDashboard },
-    { path: "/farmers", name: t('nav.farmers'), icon: Users },
-     { path: "/products", name: t('nav.products'), icon: Package },
-    { path: "/purchases", name: t('nav.purchases'), icon: ShoppingCart },
-    { path: "/payments", name: t('nav.payments'), icon: CreditCard },
-    { path: "/inventory", name: t('nav.inventory'), icon: Package },
-    { path: "/warehouses", name: t('nav.warehouses'), icon: Users },
-     { path: "/buyers", name: t('nav.buyers'), icon: ShoppingBag },
-    { path: "/sales", name: t('nav.sales'), icon: ShoppingBag },
-    { path: "/expenses", name: t('nav.expenses'), icon: Wallet },
-    { path: "/ledger", name: t('nav.ledger'), icon: Receipt },
-    { path: "/budget-alerts", name: t('nav.budgetAlerts'), icon: Bell },
-    { path: "/audit-logs", name: t('nav.auditLogs'), icon: History },
-    { path: "/users", name: t('nav.usersRoles'), icon: UserCog },
+    { path: "/dashboard",    name: t('nav.dashboard'),    icon: LayoutDashboard },
+    { path: "/farmers",      name: t('nav.farmers'),      icon: Users },
+    { path: "/products",     name: t('nav.products'),     icon: Package },
+    { path: "/purchases",    name: t('nav.purchases'),    icon: ShoppingCart },
+    { path: "/payments",     name: t('nav.payments'),     icon: CreditCard },
+    { path: "/inventory",    name: t('nav.inventory'),    icon: Package },
+    { path: "/warehouses",   name: t('nav.warehouses'),   icon: Users },
+    { path: "/buyers",       name: t('nav.buyers'),       icon: ShoppingBag },
+    { path: "/sales",        name: t('nav.sales'),        icon: ShoppingBag },
+    { path: "/sale-payments",name: t('nav.salepayments'), icon: ShoppingBag },
+    { path: "/expenses",     name: t('nav.expenses'),     icon: Wallet },
+    { path: "/ledger",       name: t('nav.ledger'),       icon: Receipt },
+    { path: "/budget-alerts",name: t('nav.budgetAlerts'), icon: Bell },
+    { path: "/audit-logs",   name: t('nav.auditLogs'),    icon: History },
+    { path: "/users",        name: t('nav.usersRoles'),   icon: UserCog },
   ];
 
   const sidebarContent = (
     <aside className="h-full flex flex-col overflow-y-auto scrollbar-hide" style={{ background: '#1B3A1F' }}>
-      {/* Header with Logo and Close Button for Mobile */}
+      {/* Mobile Header with Close Button */}
       <div className="lg:hidden flex items-center justify-between p-4 border-b" style={{ borderColor: '#2E5A32' }}>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #4CAF50, #66BB6A)' }}>
@@ -136,8 +169,8 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
           </div>
           <span className="font-bold text-white">AgriBroker</span>
         </div>
-        <button 
-          onClick={onClose} 
+        <button
+          onClick={onClose}
           className="p-2 rounded-lg hover:bg-white/10 transition-colors"
         >
           <X className="w-5 h-5 text-gray-400" />
@@ -153,7 +186,7 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
           <TrendingUp className="w-4 h-4" style={{ color: '#FF8F00' }} />
           <span className="text-xs font-bold" style={{ color: '#FF8F00' }}>{t('sidebar.todaySummary')}</span>
         </div>
-        
+
         {loadingSummary ? (
           <div className="flex justify-center py-4">
             <Loader className="w-5 h-5 animate-spin" style={{ color: '#FF8F00' }} />
@@ -161,7 +194,7 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
         ) : summaryError ? (
           <div className="text-center py-2">
             <p className="text-[10px]" style={{ color: '#FF6F00' }}>{t('common.error')}</p>
-            <button 
+            <button
               onClick={fetchTodaySummary}
               className="text-[9px] mt-1 hover:underline"
               style={{ color: '#FF8F00' }}
@@ -181,7 +214,7 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
                 <p className="text-white font-bold text-sm">{formatCurrency(summaryData.totalExpenses || 0)}</p>
               </div>
             </div>
-            
+
             <div className="mt-2 pt-2 border-t" style={{ borderColor: 'rgba(255, 111, 0, 0.3)' }}>
               <div className="flex justify-between">
                 <span className="text-[10px] text-gray-400">{t('sidebar.netProfitLoss')}</span>
@@ -213,11 +246,10 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
         <nav className="space-y-1">
           {mainMenu.map((item) => {
             const Icon = item.icon;
-            
             return (
-              <NavLink 
-                key={item.path} 
-                to={item.path} 
+              <NavLink
+                key={item.path}
+                to={item.path}
                 className={menuItemClass}
                 style={({ isActive }) => isActive ? activeStyle : {}}
                 onClick={onClose}
@@ -234,28 +266,57 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
         </nav>
       </div>
 
-      {/* Logout */}
+      {/* Logout Button */}
       <div className="px-3 sm:px-5 mb-6">
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-white/5" style={{ color: '#D84315' }}>
-          <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-          <span className="text-sm font-medium">{t('common.logout')}</span>
+        <button
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ color: '#D84315' }}
+        >
+          {isLoggingOut ? (
+            <>
+              <Loader className="w-5 h-5 animate-spin" />
+              <span className="text-sm font-medium">{t('common.loggingOut') || 'Logging out...'}</span>
+            </>
+          ) : (
+            <>
+              <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+              <span className="text-sm font-medium">{t('common.logout')}</span>
+            </>
+          )}
         </button>
       </div>
     </aside>
   );
 
-  // For mobile: render as drawer
+  // ─── MOBILE: render as overlay drawer ───────────────────────────────────────
   if (isMobileOpen !== undefined) {
     return (
-      <div className={`fixed top-0 left-0 bottom-0 w-72 z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        {sidebarContent}
-      </div>
+      <>
+        {/* Backdrop */}
+        {isMobileOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={onClose}
+            style={{ backdropFilter: 'blur(4px)' }}
+          />
+        )}
+        {/* Drawer */}
+        <div
+          className={`fixed top-0 left-0 bottom-0 w-72 z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+            isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          {sidebarContent}
+        </div>
+      </>
     );
   }
 
-  // For desktop: render as fixed sidebar
+  // ─── DESKTOP: render as fixed sidebar ───────────────────────────────────────
   return (
-    <aside className="fixed left-0 top-16 bottom-0 w-72 hidden lg:block">
+    <aside className="fixed left-0 top-16 bottom-0 w-72 hidden lg:block z-10">
       {sidebarContent}
     </aside>
   );

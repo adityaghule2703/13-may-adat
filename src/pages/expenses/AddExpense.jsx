@@ -1,6 +1,7 @@
 // src/pages/expenses/AddExpense.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -68,6 +69,7 @@ const COLORS = {
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -104,6 +106,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const AddExpense = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -122,26 +125,26 @@ const AddExpense = () => {
     notes: ''
   });
 
-  const steps = ['Expense Details', 'Payment Information'];
+  const steps = [t('expenses.step1'), t('expenses.step2')];
 
-  // Category options with icons
+  // Category options with icons and translations
   const categoryOptions = [
-    { value: 'transport_logistics', label: 'Transport & Logistics', icon: <TruckIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'labour_wages', label: 'Labour & Wages', icon: <BriefcaseIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'market_fees', label: 'Market Fees', icon: <LandmarkIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'storage_cold_chain', label: 'Storage & Cold Chain', icon: <WarehouseIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'shop_office', label: 'Shop & Office', icon: <BuildingIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'repairs_maintenance', label: 'Repairs & Maintenance', icon: <WrenchIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'banking_finance', label: 'Banking & Finance', icon: <BanknoteIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'marketing_misc', label: 'Marketing & Miscellaneous', icon: <MegaphoneIcon sx={{ fontSize: '1rem' }} /> }
+    { value: 'transport_logistics', label: t('expenses.categories.transport'), icon: <TruckIcon sx={{ fontSize: '1rem' }} /> },
+    { value: 'labour_wages', label: t('expenses.categories.labour'), icon: <BriefcaseIcon sx={{ fontSize: '1rem' }} /> },
+    { value: 'market_fees', label: t('expenses.categories.marketFees'), icon: <LandmarkIcon sx={{ fontSize: '1rem' }} /> },
+    { value: 'storage_cold_chain', label: t('expenses.categories.storage'), icon: <WarehouseIcon sx={{ fontSize: '1rem' }} /> },
+    { value: 'shop_office', label: t('expenses.categories.shopOffice'), icon: <BuildingIcon sx={{ fontSize: '1rem' }} /> },
+    { value: 'repairs_maintenance', label: t('expenses.categories.repairs'), icon: <WrenchIcon sx={{ fontSize: '1rem' }} /> },
+    { value: 'banking_finance', label: t('expenses.categories.banking'), icon: <BanknoteIcon sx={{ fontSize: '1rem' }} /> },
+    { value: 'marketing_misc', label: t('expenses.categories.marketing'), icon: <MegaphoneIcon sx={{ fontSize: '1rem' }} /> }
   ];
 
-  // Payment options
+  // Payment options with translations
   const paymentOptions = [
-    { value: 'cash', label: 'Cash' },
-    { value: 'upi', label: 'UPI' },
-    { value: 'bank', label: 'Bank Transfer' },
-    { value: 'cheque', label: 'Cheque' }
+    { value: 'cash', label: t('payments.modes.cash') },
+    { value: 'upi', label: t('payments.modes.upi') },
+    { value: 'bank', label: t('payments.modes.bank') },
+    { value: 'cheque', label: t('payments.modes.cheque') }
   ];
 
   const getToken = () => localStorage.getItem('token');
@@ -163,31 +166,31 @@ const AddExpense = () => {
 
     if (step === 0) {
       if (!formData.category) {
-        errors.category = 'Please select a category';
+        errors.category = t('expenses.errors.categoryRequired');
         isValid = false;
       }
       if (!formData.amount || parseFloat(formData.amount) <= 0) {
-        errors.amount = 'Please enter a valid amount';
+        errors.amount = t('expenses.errors.validAmountRequired');
         isValid = false;
       }
-      if (!formData.description) {
-        errors.description = 'Description is required';
+      if (!formData.description.trim()) {
+        errors.description = t('expenses.errors.descriptionRequired');
         isValid = false;
       }
       if (!formData.expenseDate) {
-        errors.expenseDate = 'Expense date is required';
+        errors.expenseDate = t('expenses.errors.dateRequired');
         isValid = false;
       }
     } else if (step === 1) {
       if (!formData.paidBy) {
-        errors.paidBy = 'Payment method is required';
+        errors.paidBy = t('expenses.errors.paymentMethodRequired');
         isValid = false;
       }
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -210,29 +213,29 @@ const AddExpense = () => {
     let isValid = true;
 
     if (!formData.category) {
-      errors.category = 'Please select a category';
+      errors.category = t('expenses.errors.categoryRequired');
       isValid = false;
     }
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
-      errors.amount = 'Please enter a valid amount';
+      errors.amount = t('expenses.errors.validAmountRequired');
       isValid = false;
     }
-    if (!formData.description) {
-      errors.description = 'Description is required';
+    if (!formData.description.trim()) {
+      errors.description = t('expenses.errors.descriptionRequired');
       isValid = false;
     }
     if (!formData.expenseDate) {
-      errors.expenseDate = 'Expense date is required';
+      errors.expenseDate = t('expenses.errors.dateRequired');
       isValid = false;
     }
     if (!formData.paidBy) {
-      errors.paidBy = 'Payment method is required';
+      errors.paidBy = t('expenses.errors.paymentMethodRequired');
       isValid = false;
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields');
+      setError(t('common.fillCorrectly'));
     }
     return isValid;
   };
@@ -242,63 +245,55 @@ const AddExpense = () => {
     setTimeout(() => setError(''), 5000);
   };
 
- const handleSubmit = async () => {
-  if (!validateAllFields()) return;
+  const handleSubmit = async () => {
+    if (!validateAllFields()) return;
 
-  setLoading(true);
-  setError('');
+    setLoading(true);
+    setError('');
 
-  try {
-    const token = getToken();
-    const expenseData = {
-      category: formData.category,
-      amount: parseFloat(formData.amount),
-      description: formData.description,
-      expenseDate: formData.expenseDate,
-      paidBy: formData.paidBy,
-      paidTo: formData.paidTo || undefined,
-      referenceNumber: formData.referenceNumber || undefined,
-      notes: formData.notes || undefined
-    };
+    try {
+      const token = getToken();
+      const expenseData = {
+        category: formData.category,
+        amount: parseFloat(formData.amount),
+        description: formData.description,
+        expenseDate: formData.expenseDate,
+        paidBy: formData.paidBy,
+        paidTo: formData.paidTo || undefined,
+        referenceNumber: formData.referenceNumber || undefined,
+        notes: formData.notes || undefined
+      };
 
-    const response = await axios.post(`${BASE_URL}/expenses`, expenseData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+      const response = await axios.post(`${BASE_URL}/expenses`, expenseData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        navigate('/login');
+        return;
       }
-    });
 
-    if (response.status === 401) {
-      localStorage.clear();
-      navigate('/login');
-      return;
-    }
-
-    if (response.data.success) {
-      setSuccess(true);
-      setTimeout(() => navigate('/expenses'), 2000);
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to create expense';
+      if (response.data.success) {
+        setSuccess(true);
+        setTimeout(() => navigate('/expenses'), 2000);
+      } else {
+        const errorMessage = response.data.message || response.data.error || t('expenses.errors.createFailed');
+        showError(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error creating expense:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          t('common.networkError');
       showError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Error creating expense:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Network error. Please check your connection.';
-    showError(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency', currency: 'INR', minimumFractionDigits: 2
-    }).format(amount || 0);
   };
 
   // Label component
@@ -363,10 +358,10 @@ const AddExpense = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Add Expense
+            {t('expenses.addTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Record a new business expense
+            {t('expenses.addSubtitle')}
           </Typography>
         </Box>
         <Box sx={{ ml: 'auto' }}>
@@ -393,7 +388,7 @@ const AddExpense = () => {
                 }
               }}
             >
-              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Save Expense</>}
+              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('common.save')}</>}
             </Button>
           )}
         </Box>
@@ -407,7 +402,7 @@ const AddExpense = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Expense created successfully! Redirecting...
+          {t('expenses.messages.createSuccess')}
         </Alert>
       )}
 
@@ -434,7 +429,7 @@ const AddExpense = () => {
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: currentStep >= index ? '#2E7D32' : '#8D6E63', display: 'block', textAlign: 'left' }}>
-                    Step {index + 1}
+                    {t('common.step')} {index + 1}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500, color: currentStep >= index ? '#1B5E20' : '#8D6E63' }}>
                     {step}
@@ -455,14 +450,14 @@ const AddExpense = () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <WalletIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Expense Details</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('expenses.expenseDetails')}</Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-              {/* Category - Using Autocomplete like farmer dropdown */}
+              {/* Category - Using Autocomplete */}
               <Box>
-                <Label required>CATEGORY</Label>
+                <Label required>{t('expenses.category')}</Label>
                 <Autocomplete
                   fullWidth
                   options={categoryOptions}
@@ -474,7 +469,7 @@ const AddExpense = () => {
                     <TextField
                       {...params}
                       size="small"
-                      placeholder="Select expense category"
+                      placeholder={t('expenses.placeholders.selectCategory')}
                       error={!!fieldErrors.category}
                       helperText={fieldErrors.category}
                       sx={inputSx}
@@ -503,7 +498,7 @@ const AddExpense = () => {
 
               {/* Amount */}
               <Box>
-                <Label required>AMOUNT</Label>
+                <Label required>{t('common.amount')}</Label>
                 <TextField
                   fullWidth
                   type="number"
@@ -511,7 +506,7 @@ const AddExpense = () => {
                   name="amount"
                   value={formData.amount}
                   onChange={handleChange}
-                  placeholder="Enter amount"
+                  placeholder={t('common.enterAmount')}
                   error={!!fieldErrors.amount}
                   helperText={fieldErrors.amount}
                   sx={inputSx}
@@ -523,7 +518,7 @@ const AddExpense = () => {
 
               {/* Description - spans both columns */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label required>DESCRIPTION</Label>
+                <Label required>{t('expenses.description')}</Label>
                 <TextField
                   fullWidth
                   multiline
@@ -532,7 +527,7 @@ const AddExpense = () => {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder="Describe the expense"
+                  placeholder={t('expenses.placeholders.description')}
                   error={!!fieldErrors.description}
                   helperText={fieldErrors.description}
                   sx={inputSx}
@@ -541,7 +536,7 @@ const AddExpense = () => {
 
               {/* Expense Date */}
               <Box>
-                <Label required>EXPENSE DATE</Label>
+                <Label required>{t('expenses.expenseDate')}</Label>
                 <TextField
                   fullWidth
                   type="date"
@@ -566,14 +561,14 @@ const AddExpense = () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <PaymentIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Payment Information</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('expenses.paymentInformation')}</Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 {/* Paid By */}
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label required>PAID BY</Label>
+                  <Label required>{t('expenses.paidBy')}</Label>
                   <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1.5, mb: 2 }}>
                     {paymentOptions.map(option => (
                       <Button
@@ -603,14 +598,14 @@ const AddExpense = () => {
 
                 {/* Paid To */}
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label>PAID TO (Vendor/Person)</Label>
+                  <Label>{t('expenses.paidTo')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="paidTo"
                     value={formData.paidTo}
                     onChange={handleChange}
-                    placeholder="Vendor or person name"
+                    placeholder={t('expenses.placeholders.paidTo')}
                     sx={inputSx}
                     InputProps={{
                       startAdornment: <PersonIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -621,14 +616,14 @@ const AddExpense = () => {
                 {/* Reference Number - Only show when payment method is NOT cash */}
                 {formData.paidBy !== 'cash' && (
                   <Box sx={{ gridColumn: 'span 2' }}>
-                    <Label>REFERENCE NUMBER</Label>
+                    <Label>{t('expenses.referenceNumber')}</Label>
                     <TextField
                       fullWidth
                       size="small"
                       name="referenceNumber"
                       value={formData.referenceNumber}
                       onChange={handleChange}
-                      placeholder="Bill/Invoice/Transaction No."
+                      placeholder={t('expenses.placeholders.referenceNumber')}
                       sx={inputSx}
                       InputProps={{
                         startAdornment: <ReceiptIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -639,7 +634,7 @@ const AddExpense = () => {
 
                 {/* Notes */}
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label>NOTES (Optional)</Label>
+                  <Label>{t('common.notes')} ({t('common.optional')})</Label>
                   <TextField
                     fullWidth
                     multiline
@@ -648,7 +643,7 @@ const AddExpense = () => {
                     name="notes"
                     value={formData.notes}
                     onChange={handleChange}
-                    placeholder="Additional notes..."
+                    placeholder={t('expenses.placeholders.notes')}
                     sx={inputSx}
                   />
                 </Box>
@@ -659,7 +654,7 @@ const AddExpense = () => {
           {/* Info Note */}
           <Paper sx={{ p: 2.5, bgcolor: '#E3F2FD', borderRadius: 2.5, border: '1px solid #BBDEFB' }}>
             <Typography variant="caption" sx={{ color: '#1565C0', fontSize: '0.7rem' }}>
-              <strong>Note:</strong> Expenses under ₹1,000 will be auto-approved. Higher amounts require manager approval.
+              <strong>{t('common.tip')}:</strong> {t('expenses.autoApprovalNote')}
             </Typography>
           </Paper>
         </Stack>
@@ -685,7 +680,7 @@ const AddExpense = () => {
               }
             }}
           >
-            <ChevronLeft sx={{ fontSize: '1rem', mr: 0.5 }} /> Previous
+            <ChevronLeft sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('common.previous')}
           </Button>
         )}
         {currentStep < 1 && (
@@ -707,7 +702,7 @@ const AddExpense = () => {
               }
             }}
           >
-            Next <ChevronRight sx={{ fontSize: '1rem', ml: 0.5 }} />
+            {t('common.next')} <ChevronRight sx={{ fontSize: '1rem', ml: 0.5 }} />
           </Button>
         )}
         {currentStep === 1 && <Box />}

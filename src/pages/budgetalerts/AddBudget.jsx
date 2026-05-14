@@ -1,6 +1,7 @@
 // src/pages/budgetalerts/AddBudget.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -54,6 +55,7 @@ const COLORS = {
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -90,6 +92,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const AddBudget = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -107,14 +110,14 @@ const AddBudget = () => {
   });
 
   const categoryOptions = [
-    { value: 'transport_logistics', label: 'Transport & Logistics' },
-    { value: 'labour_wages', label: 'Labour & Wages' },
-    { value: 'market_fees', label: 'Market Fees' },
-    { value: 'storage_cold_chain', label: 'Storage & Cold Chain' },
-    { value: 'shop_office', label: 'Shop & Office' },
-    { value: 'repairs_maintenance', label: 'Repairs & Maintenance' },
-    { value: 'banking_finance', label: 'Banking & Finance' },
-    { value: 'marketing_misc', label: 'Marketing & Miscellaneous' }
+    { value: 'transport_logistics', label: t('expenses.categories.transport') },
+    { value: 'labour_wages', label: t('expenses.categories.labour') },
+    { value: 'market_fees', label: t('expenses.categories.marketFees') },
+    { value: 'storage_cold_chain', label: t('expenses.categories.storage') },
+    { value: 'shop_office', label: t('expenses.categories.shopOffice') },
+    { value: 'repairs_maintenance', label: t('expenses.categories.repairs') },
+    { value: 'banking_finance', label: t('expenses.categories.banking') },
+    { value: 'marketing_misc', label: t('expenses.categories.marketing') }
   ];
 
   const getToken = () => localStorage.getItem('token');
@@ -135,29 +138,29 @@ const AddBudget = () => {
     let isValid = true;
 
     if (!formData.category) {
-      errors.category = 'Category is required';
+      errors.category = t('budgetAlerts.errors.categoryRequired');
       isValid = false;
     }
     if (!formData.monthlyLimit || parseFloat(formData.monthlyLimit) <= 0) {
-      errors.monthlyLimit = 'Please enter a valid budget amount';
+      errors.monthlyLimit = t('budgetAlerts.errors.validAmountRequired');
       isValid = false;
     }
     if (!formData.month) {
-      errors.month = 'Month is required';
+      errors.month = t('budgetAlerts.errors.monthRequired');
       isValid = false;
     }
     if (!formData.year) {
-      errors.year = 'Year is required';
+      errors.year = t('budgetAlerts.errors.yearRequired');
       isValid = false;
     }
     if (!formData.alertThreshold || formData.alertThreshold < 0 || formData.alertThreshold > 100) {
-      errors.alertThreshold = 'Alert threshold must be between 0 and 100';
+      errors.alertThreshold = t('budgetAlerts.errors.thresholdInvalid');
       isValid = false;
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields correctly');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -168,56 +171,54 @@ const AddBudget = () => {
     setTimeout(() => setError(''), 5000);
   };
 
-const handleSubmit = async () => {
-  if (!validateForm()) return;
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
 
-  setLoading(true);
-  setError('');
+    setLoading(true);
+    setError('');
 
-  try {
-    const token = getToken();
-    const payload = {
-      category: formData.category,
-      monthlyLimit: parseFloat(formData.monthlyLimit),
-      month: parseInt(formData.month),
-      year: parseInt(formData.year),
-      alertThreshold: parseInt(formData.alertThreshold),
-      notes: formData.notes || undefined
-    };
+    try {
+      const token = getToken();
+      const payload = {
+        category: formData.category,
+        monthlyLimit: parseFloat(formData.monthlyLimit),
+        month: parseInt(formData.month),
+        year: parseInt(formData.year),
+        alertThreshold: parseInt(formData.alertThreshold),
+        notes: formData.notes || undefined
+      };
 
-    const response = await axios.post(`${BASE_URL}/budget-alerts`, payload, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+      const response = await axios.post(`${BASE_URL}/budget-alerts`, payload, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        navigate('/login');
+        return;
       }
-    });
 
-    if (response.status === 401) {
-      localStorage.clear();
-      navigate('/login');
-      return;
-    }
-
-    if (response.data.success) {
-      setSuccess(true);
-      setTimeout(() => navigate('/budget-alerts'), 2000);
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to set budget';
+      if (response.data.success) {
+        setSuccess(true);
+        setTimeout(() => navigate('/budget-alerts'), 2000);
+      } else {
+        const errorMessage = response.data.message || response.data.error || t('budgetAlerts.errors.createFailed');
+        showError(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error setting budget:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          t('common.networkError');
       showError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Error setting budget:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Network error. Please check your connection.';
-    showError(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Label component
   const Label = ({ children, required }) => (
@@ -254,11 +255,21 @@ const handleSubmit = async () => {
   // Get selected category for Autocomplete
   const selectedCategory = categoryOptions.find(opt => opt.value === formData.category) || null;
 
-  // Get months for dropdown
-  const months = Array.from({ length: 12 }, (_, i) => ({
-    value: i + 1,
-    label: new Date(2000, i, 1).toLocaleString('default', { month: 'long' })
-  }));
+  // Get months for dropdown with translations
+  const getMonths = () => {
+    const monthNames = [
+      t('common.months.january'), t('common.months.february'), t('common.months.march'),
+      t('common.months.april'), t('common.months.may'), t('common.months.june'),
+      t('common.months.july'), t('common.months.august'), t('common.months.september'),
+      t('common.months.october'), t('common.months.november'), t('common.months.december')
+    ];
+    return Array.from({ length: 12 }, (_, i) => ({
+      value: i + 1,
+      label: monthNames[i]
+    }));
+  };
+
+  const months = getMonths();
 
   // Get years for dropdown (current year - 2 to current year + 2)
   const currentYear = new Date().getFullYear();
@@ -280,10 +291,10 @@ const handleSubmit = async () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Set Budget
+            {t('budgetAlerts.setBudget')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Set monthly budget limit for a category
+            {t('budgetAlerts.setBudgetSubtitle')}
           </Typography>
         </Box>
         <Button
@@ -309,7 +320,7 @@ const handleSubmit = async () => {
             }
           }}
         >
-          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Set Budget</>}
+          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('budgetAlerts.setBudget')}</>}
         </Button>
       </Box>
 
@@ -321,7 +332,7 @@ const handleSubmit = async () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Budget set successfully! Redirecting...
+          {t('budgetAlerts.messages.createSuccess')}
         </Alert>
       )}
 
@@ -330,14 +341,14 @@ const handleSubmit = async () => {
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <MoneyIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Budget Information</Typography>
+            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('budgetAlerts.budgetInformation')}</Typography>
           </Stack>
         </Box>
         <Box sx={{ p: 2.5 }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            {/* Category - Using Autocomplete like farmer dropdown */}
+            {/* Category - Using Autocomplete */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label required>CATEGORY</Label>
+              <Label required>{t('budgetAlerts.category')}</Label>
               <Autocomplete
                 fullWidth
                 options={categoryOptions}
@@ -349,7 +360,7 @@ const handleSubmit = async () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Select expense category"
+                    placeholder={t('budgetAlerts.placeholders.selectCategory')}
                     error={!!fieldErrors.category}
                     helperText={fieldErrors.category}
                     sx={inputSx}
@@ -375,7 +386,7 @@ const handleSubmit = async () => {
 
             {/* Monthly Limit */}
             <Box>
-              <Label required>MONTHLY LIMIT</Label>
+              <Label required>{t('budgetAlerts.monthlyLimit')}</Label>
               <TextField
                 fullWidth
                 type="number"
@@ -383,7 +394,7 @@ const handleSubmit = async () => {
                 name="monthlyLimit"
                 value={formData.monthlyLimit}
                 onChange={handleChange}
-                placeholder="Enter budget amount"
+                placeholder={t('budgetAlerts.placeholders.monthlyLimit')}
                 error={!!fieldErrors.monthlyLimit}
                 helperText={fieldErrors.monthlyLimit}
                 sx={inputSx}
@@ -396,9 +407,9 @@ const handleSubmit = async () => {
             {/* Empty space for alignment */}
             <Box />
 
-            {/* Month - Keep as Select */}
+            {/* Month */}
             <Box>
-              <Label required>MONTH</Label>
+              <Label required>{t('budgetAlerts.month')}</Label>
               <Autocomplete
                 fullWidth
                 options={months}
@@ -413,7 +424,7 @@ const handleSubmit = async () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Select month"
+                    placeholder={t('budgetAlerts.placeholders.selectMonth')}
                     error={!!fieldErrors.month}
                     helperText={fieldErrors.month}
                     sx={inputSx}
@@ -437,9 +448,9 @@ const handleSubmit = async () => {
               />
             </Box>
 
-            {/* Year - Keep as Select */}
+            {/* Year */}
             <Box>
-              <Label required>YEAR</Label>
+              <Label required>{t('budgetAlerts.year')}</Label>
               <Autocomplete
                 fullWidth
                 options={years.map(year => ({ value: year, label: year.toString() }))}
@@ -454,7 +465,7 @@ const handleSubmit = async () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Select year"
+                    placeholder={t('budgetAlerts.placeholders.selectYear')}
                     error={!!fieldErrors.year}
                     helperText={fieldErrors.year}
                     sx={inputSx}
@@ -480,7 +491,7 @@ const handleSubmit = async () => {
 
             {/* Alert Threshold - spans both columns */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label>ALERT THRESHOLD (%)</Label>
+              <Label>{t('budgetAlerts.alertThreshold')}</Label>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Slider
                   value={formData.alertThreshold}
@@ -518,14 +529,14 @@ const handleSubmit = async () => {
                 />
               </Box>
               <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#8D6E63', fontSize: '0.65rem' }}>
-                You will be alerted when expenses reach this percentage of your budget
+                {t('budgetAlerts.thresholdHint')}
               </Typography>
               {fieldErrors.alertThreshold && <Typography variant="caption" sx={{ color: '#EF4444', fontSize: '0.65rem' }}>{fieldErrors.alertThreshold}</Typography>}
             </Box>
 
             {/* Notes - spans both columns */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label>NOTES (Optional)</Label>
+              <Label>{t('common.notes')} ({t('common.optional')})</Label>
               <TextField
                 fullWidth
                 multiline
@@ -534,7 +545,7 @@ const handleSubmit = async () => {
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                placeholder="Additional notes about this budget..."
+                placeholder={t('budgetAlerts.placeholders.notes')}
                 sx={inputSx}
               />
             </Box>
@@ -543,8 +554,7 @@ const handleSubmit = async () => {
             <Box sx={{ gridColumn: 'span 2' }}>
               <Box sx={{ p: 2, bgcolor: '#E3F2FD', borderRadius: 1.5, border: '1px solid #BBDEFB' }}>
                 <Typography variant="caption" sx={{ color: '#1565C0', fontSize: '0.7rem' }}>
-                  <strong>Note:</strong> Budget alerts help you track your expenses. When you reach your alert threshold, you will receive a warning. 
-                  Exceeding 90% will trigger a critical alert.
+                  <strong>{t('common.tip')}:</strong> {t('budgetAlerts.infoNote')}
                 </Typography>
               </Box>
             </Box>

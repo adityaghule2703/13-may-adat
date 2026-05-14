@@ -102,7 +102,9 @@ const AddPurchase = () => {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [farmers, setFarmers] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loadingFarmers, setLoadingFarmers] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
   const [selectedFarmer, setSelectedFarmer] = useState(null);
   const [calculations, setCalculations] = useState({
     grossTotal: 0,
@@ -115,6 +117,7 @@ const AddPurchase = () => {
     purchaseDate: new Date().toISOString().split('T')[0],
     lines: [
       {
+        productId: null,
         productName: '',
         pricingType: 'kg',
         bags: '',
@@ -141,6 +144,7 @@ const AddPurchase = () => {
     notes: ''
   });
 
+  // Define options inside component after t is defined
   const pricingTypeOptions = [
     { value: 'kg', label: t('purchases.pricingTypes.kg') },
     { value: 'quintal', label: t('purchases.pricingTypes.quintal') },
@@ -166,12 +170,14 @@ const AddPurchase = () => {
 
   useEffect(() => {
     fetchFarmers();
+    fetchProducts();
   }, []);
 
+  // Fetch farmers using dropdown API
   const fetchFarmers = async () => {
     try {
       const token = getToken();
-      const response = await axios.get(`${BASE_URL}/farmers`, {
+      const response = await axios.get(`${BASE_URL}/farmers/dropdown`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -181,6 +187,25 @@ const AddPurchase = () => {
       console.error('Error fetching farmers:', error);
     } finally {
       setLoadingFarmers(false);
+    }
+  };
+
+  // Fetch products
+  const fetchProducts = async () => {
+    try {
+      const token = getToken();
+      const response = await axios.get(`${BASE_URL}/products?limit=100`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        // Filter only active products
+        const activeProducts = response.data.data.filter(p => p.isActive === true);
+        setProducts(activeProducts);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoadingProducts(false);
     }
   };
 
@@ -227,6 +252,25 @@ const AddPurchase = () => {
     }
   };
 
+  const handleProductChange = (index, product) => {
+    const updatedLines = [...formData.lines];
+    updatedLines[index] = {
+      ...updatedLines[index],
+      productId: product?._id || null,
+      productName: product?.productName || '',
+      rate: '',
+      actualQty: '',
+      qualityDeduction: '',
+      bags: '',
+      weightPerBag: ''
+    };
+    setFormData(prev => ({ ...prev, lines: updatedLines }));
+    
+    if (fieldErrors[`line_${index}_product`]) {
+      setFieldErrors(prev => ({ ...prev, [`line_${index}_product`]: '' }));
+    }
+  };
+
   const handleLineChange = (index, field, value) => {
     const updatedLines = [...formData.lines];
     updatedLines[index][field] = value;
@@ -248,6 +292,7 @@ const AddPurchase = () => {
     setFormData(prev => ({
       ...prev,
       lines: [...prev.lines, {
+        productId: null,
         productName: '', 
         pricingType: 'kg', 
         bags: '', 
@@ -400,7 +445,7 @@ const AddPurchase = () => {
     }).format(amount || 0);
   };
 
-  // Label component matching AddDimensions
+  // Label component
   const Label = ({ children, required }) => (
     <Typography sx={{ 
       fontSize: '0.7rem', 
@@ -413,7 +458,7 @@ const AddPurchase = () => {
     </Typography>
   );
 
-  // Input styling matching AddDimensions
+  // Input styling
   const inputSx = {
     '& .MuiOutlinedInput-root': {
       borderRadius: 1.5,
@@ -547,15 +592,7 @@ const AddPurchase = () => {
                             {option.name}
                           </Typography>
                           <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                            {option.mobile} • {option.village}, {option.city}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ textAlign: 'right' }}>
-                          <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
-                            {t('farmers.pendingDues')}
-                          </Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#FF6F00' }}>
-                            {formatCurrency(option.pendingDues || 0)}
+                            {option.mobile} • {option.village}, {option.city || 'N/A'}
                           </Typography>
                         </Box>
                       </Box>
@@ -582,7 +619,7 @@ const AddPurchase = () => {
                       {selectedFarmer.name}
                     </Typography>
                     <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                      {selectedFarmer.village}, {selectedFarmer.city}
+                      {selectedFarmer.village}, {selectedFarmer.city || 'Location not specified'}
                     </Typography>
                   </Box>
                 )}
@@ -620,12 +657,13 @@ const AddPurchase = () => {
         </Paper>
       )}
 
-      {/* Step 2: Product Lines - With Autocomplete for Pricing Type */}
+      {/* Step 2: Product Lines - With Product Dropdown */}
       {currentStep === 1 && (
         <Stack spacing={2.5}>
           {formData.lines.map((line, index) => {
             const lineTotal = calculateLineTotal(line);
             const selectedPricingType = pricingTypeOptions.find(opt => opt.value === line.pricingType) || null;
+            const selectedProduct = products.find(p => p.productName === line.productName) || null;
             
             return (
               <Paper key={index} sx={{ borderRadius: 2.5, overflow: 'visible', border: `1px solid ${COLORS.border}` }}>
@@ -644,22 +682,61 @@ const AddPurchase = () => {
                 </Box>
                 <Box sx={{ p: 2.5 }}>
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                    {/* PRODUCT NAME - spans both columns */}
+                    {/* PRODUCT NAME - spans both columns - With Autocomplete */}
                     <Box sx={{ gridColumn: 'span 2' }}>
                       <Label required>{t('purchases.productName')}</Label>
-                      <TextField
+                      <Autocomplete
                         fullWidth
-                        size="small"
-                        value={line.productName}
-                        onChange={(e) => handleLineChange(index, 'productName', e.target.value)}
-                        placeholder={t('purchases.placeholders.productName')}
-                        error={!!fieldErrors[`line_${index}_product`]}
-                        helperText={fieldErrors[`line_${index}_product`]}
-                        sx={inputSx}
+                        options={products}
+                        loading={loadingProducts}
+                        value={selectedProduct}
+                        onChange={(event, newValue) => handleProductChange(index, newValue)}
+                        getOptionLabel={(option) => option.productName}
+                        isOptionEqualToValue={(option, value) => option._id === value?._id}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            placeholder="Search or select product..."
+                            error={!!fieldErrors[`line_${index}_product`]}
+                            helperText={fieldErrors[`line_${index}_product`]}
+                            sx={inputSx}
+                          />
+                        )}
+                        renderOption={(props, option) => (
+                          <li {...props}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                              <Box>
+                                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem' }}>
+                                  {option.productName}
+                                </Typography>
+                                {option.description && (
+                                  <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
+                                    {option.description}
+                                  </Typography>
+                                )}
+                              </Box>
+                              <Typography variant="caption" sx={{ fontSize: '0.65rem', color: option.isActive ? '#2E7D32' : '#D32F2F' }}>
+                                {option.isActive ? 'Active' : 'Inactive'}
+                              </Typography>
+                            </Box>
+                          </li>
+                        )}
+                        ListboxProps={{
+                          sx: {
+                            maxHeight: '300px',
+                            overflowY: 'auto',
+                            '& .MuiAutocomplete-option': {
+                              fontSize: '0.75rem',
+                              py: 1,
+                              px: 1.5
+                            }
+                          }
+                        }}
                       />
                     </Box>
 
-                    {/* PRICING TYPE - first column - Now using Autocomplete like farmer dropdown */}
+                    {/* PRICING TYPE - first column */}
                     <Box>
                       <Label required>{t('purchases.pricingType')}</Label>
                       <Autocomplete
@@ -833,7 +910,7 @@ const AddPurchase = () => {
         </Stack>
       )}
 
-      {/* Step 3: Deductions & Summary - With Autocomplete for Commission Type */}
+      {/* Step 3: Deductions & Summary */}
       {currentStep === 2 && (
         <Stack spacing={2.5}>
           {/* Deductions Section */}

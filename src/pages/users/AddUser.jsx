@@ -1,6 +1,7 @@
 // src/pages/users/AddUser.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -63,6 +64,7 @@ const COLORS = {
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -99,6 +101,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const AddUser = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -124,12 +127,12 @@ const AddUser = () => {
     bankName: ''
   });
 
-  const steps = ['User Information', 'Business Details', 'Bank Details'];
+  const steps = [t('users.steps.userInfo'), t('users.steps.businessDetails'), t('users.steps.bankDetails')];
 
   // Role options - Only Super Admin and Operator
   const roleOptions = [
-    { value: 'superadmin', label: 'Super Admin', icon: <AdminIcon sx={{ fontSize: '1rem' }} />, desc: 'Full system access with all permissions' },
-    { value: 'operator', label: 'Operator', icon: <ShieldIcon sx={{ fontSize: '1rem' }} />, desc: 'Manage day-to-day operations' }
+    { value: 'superadmin', label: t('users.roles.superadmin'), icon: <AdminIcon sx={{ fontSize: '1rem' }} />, desc: t('users.roles.superadminDesc') },
+    { value: 'operator', label: t('users.roles.operator'), icon: <ShieldIcon sx={{ fontSize: '1rem' }} />, desc: t('users.roles.operatorDesc') }
   ];
 
   const getToken = () => localStorage.getItem('token');
@@ -151,36 +154,36 @@ const AddUser = () => {
 
     if (step === 0) {
       if (!formData.name.trim()) {
-        errors.name = 'Name is required';
+        errors.name = t('users.errors.nameRequired');
         isValid = false;
       }
       if (!formData.email.trim()) {
-        errors.email = 'Email is required';
+        errors.email = t('users.errors.emailRequired');
         isValid = false;
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        errors.email = 'Invalid email format';
+        errors.email = t('users.errors.emailInvalid');
         isValid = false;
       }
       if (!formData.password) {
-        errors.password = 'Password is required';
+        errors.password = t('users.errors.passwordRequired');
         isValid = false;
       } else if (formData.password.length < 6) {
-        errors.password = 'Password must be at least 6 characters';
+        errors.password = t('users.errors.passwordMinLength');
         isValid = false;
       }
       if (formData.password !== formData.confirmPassword) {
-        errors.confirmPassword = 'Passwords do not match';
+        errors.confirmPassword = t('users.errors.passwordMismatch');
         isValid = false;
       }
       if (!formData.role) {
-        errors.role = 'Role is required';
+        errors.role = t('users.errors.roleRequired');
         isValid = false;
       }
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -203,35 +206,35 @@ const AddUser = () => {
     let isValid = true;
 
     if (!formData.name.trim()) {
-      errors.name = 'Name is required';
+      errors.name = t('users.errors.nameRequired');
       isValid = false;
     }
     if (!formData.email.trim()) {
-      errors.email = 'Email is required';
+      errors.email = t('users.errors.emailRequired');
       isValid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Invalid email format';
+      errors.email = t('users.errors.emailInvalid');
       isValid = false;
     }
     if (!formData.password) {
-      errors.password = 'Password is required';
+      errors.password = t('users.errors.passwordRequired');
       isValid = false;
     } else if (formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+      errors.password = t('users.errors.passwordMinLength');
       isValid = false;
     }
     if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
+      errors.confirmPassword = t('users.errors.passwordMismatch');
       isValid = false;
     }
     if (!formData.role) {
-      errors.role = 'Role is required';
+      errors.role = t('users.errors.roleRequired');
       isValid = false;
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields');
+      setError(t('common.fillCorrectly'));
     }
     return isValid;
   };
@@ -241,64 +244,62 @@ const AddUser = () => {
     setTimeout(() => setError(''), 5000);
   };
 
- const handleSubmit = async () => {
-  if (!validateAllFields()) return;
+  const handleSubmit = async () => {
+    if (!validateAllFields()) return;
 
-  setLoading(true);
-  setError('');
+    setLoading(true);
+    setError('');
 
-  try {
-    const token = getToken();
-    const userData = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      role: formData.role,
-      phone: formData.phone || undefined,
-      businessName: formData.businessName || undefined,
-      address: formData.address || undefined,
-      city: formData.city || undefined,
-      state: formData.state || undefined,
-      gstNumber: formData.gstNumber || undefined,
-      panNumber: formData.panNumber || undefined,
-      bankAccountNumber: formData.bankAccountNumber || undefined,
-      ifscCode: formData.ifscCode || undefined,
-      bankName: formData.bankName || undefined
-    };
+    try {
+      const token = getToken();
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        phone: formData.phone || undefined,
+        businessName: formData.businessName || undefined,
+        address: formData.address || undefined,
+        city: formData.city || undefined,
+        state: formData.state || undefined,
+        gstNumber: formData.gstNumber || undefined,
+        panNumber: formData.panNumber || undefined,
+        bankAccountNumber: formData.bankAccountNumber || undefined,
+        ifscCode: formData.ifscCode || undefined,
+        bankName: formData.bankName || undefined
+      };
 
-    const response = await axios.post(`${BASE_URL}/auth/register`, userData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+      const response = await axios.post(`${BASE_URL}/auth/register`, userData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        navigate('/login');
+        return;
       }
-    });
 
-    if (response.status === 401) {
-      localStorage.clear();
-      navigate('/login');
-      return;
-    }
-
-    if (response.data.success) {
-      setSuccess(true);
-      setTimeout(() => navigate('/users'), 2000);
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to create user';
+      if (response.data.success) {
+        setSuccess(true);
+        setTimeout(() => navigate('/users'), 2000);
+      } else {
+        const errorMessage = response.data.message || response.data.error || t('users.errors.createFailed');
+        showError(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error creating user:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          t('common.networkError');
       showError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Error creating user:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Network error. Please check your connection.';
-    showError(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Label component
   const Label = ({ children, required }) => (
@@ -332,12 +333,6 @@ const AddUser = () => {
     }
   };
 
-  // Get role icon
-  const getRoleIcon = (roleValue) => {
-    const role = roleOptions.find(r => r.value === roleValue);
-    return role?.icon || <ShieldIcon sx={{ fontSize: '1rem' }} />;
-  };
-
   return (
     <Box sx={{ height: '100%', overflow: 'auto' }}>
       {/* Header */}
@@ -354,10 +349,10 @@ const AddUser = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Add New User
+            {t('users.addTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Create a new system user account
+            {t('users.addSubtitle')}
           </Typography>
         </Box>
         <Box sx={{ ml: 'auto' }}>
@@ -384,7 +379,7 @@ const AddUser = () => {
                 }
               }}
             >
-              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Create User</>}
+              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('users.createUser')}</>}
             </Button>
           )}
         </Box>
@@ -398,7 +393,7 @@ const AddUser = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          User created successfully! Redirecting...
+          {t('users.messages.createSuccess')}
         </Alert>
       )}
 
@@ -425,7 +420,7 @@ const AddUser = () => {
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: currentStep >= index ? '#2E7D32' : '#8D6E63', display: 'block', textAlign: 'left' }}>
-                    Step {index + 1}
+                    {t('common.step')} {index + 1}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500, color: currentStep >= index ? '#1B5E20' : '#8D6E63' }}>
                     {step}
@@ -446,21 +441,21 @@ const AddUser = () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <PersonIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>User Information</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('users.userInformation')}</Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               {/* Name */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label required>FULL NAME</Label>
+                <Label required>{t('users.fullName')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Enter full name"
+                  placeholder={t('users.placeholders.name')}
                   error={!!fieldErrors.name}
                   helperText={fieldErrors.name}
                   sx={inputSx}
@@ -472,7 +467,7 @@ const AddUser = () => {
 
               {/* Email */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label required>EMAIL ADDRESS</Label>
+                <Label required>{t('users.email')}</Label>
                 <TextField
                   fullWidth
                   type="email"
@@ -480,7 +475,7 @@ const AddUser = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Enter email address"
+                  placeholder={t('users.placeholders.email')}
                   error={!!fieldErrors.email}
                   helperText={fieldErrors.email}
                   sx={inputSx}
@@ -492,7 +487,7 @@ const AddUser = () => {
 
               {/* Password */}
               <Box>
-                <Label required>PASSWORD</Label>
+                <Label required>{t('users.password')}</Label>
                 <TextField
                   fullWidth
                   type="password"
@@ -500,7 +495,7 @@ const AddUser = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Enter password"
+                  placeholder={t('users.placeholders.password')}
                   error={!!fieldErrors.password}
                   helperText={fieldErrors.password}
                   sx={inputSx}
@@ -512,7 +507,7 @@ const AddUser = () => {
 
               {/* Confirm Password */}
               <Box>
-                <Label required>CONFIRM PASSWORD</Label>
+                <Label required>{t('users.confirmPassword')}</Label>
                 <TextField
                   fullWidth
                   type="password"
@@ -520,7 +515,7 @@ const AddUser = () => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="Confirm password"
+                  placeholder={t('users.placeholders.confirmPassword')}
                   error={!!fieldErrors.confirmPassword}
                   helperText={fieldErrors.confirmPassword}
                   sx={inputSx}
@@ -532,14 +527,14 @@ const AddUser = () => {
 
               {/* Phone */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label>PHONE NUMBER</Label>
+                <Label>{t('users.phone')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="Enter phone number"
+                  placeholder={t('users.placeholders.phone')}
                   sx={inputSx}
                   InputProps={{
                     startAdornment: <PhoneIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -549,13 +544,13 @@ const AddUser = () => {
 
               {/* Role - Only 2 options now */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label required>USER ROLE</Label>
+                <Label required>{t('users.role')}</Label>
                 <RadioGroup
                   row
                   name="role"
                   value={formData.role}
                   onChange={handleRoleChange}
-                  sx={{ gap: 2, mt: 0.5 }}
+                  sx={{ gap: 2, mt: 0.5, flexWrap: 'wrap' }}
                 >
                   {roleOptions.map((role) => (
                     <FormControlLabel
@@ -597,21 +592,21 @@ const AddUser = () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <BusinessIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Business Details</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('users.businessDetails')}</Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-              {/* Business Name - Optional for both roles now */}
+              {/* Business Name - Optional */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label>BUSINESS NAME</Label>
+                <Label>{t('users.businessName')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="businessName"
                   value={formData.businessName}
                   onChange={handleChange}
-                  placeholder="Enter business name (optional)"
+                  placeholder={t('users.placeholders.businessName')}
                   error={!!fieldErrors.businessName}
                   helperText={fieldErrors.businessName}
                   sx={inputSx}
@@ -620,13 +615,13 @@ const AddUser = () => {
                   }}
                 />
                 <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary, mt: 0.5, display: 'block' }}>
-                  Optional for all users
+                  {t('users.businessOptional')}
                 </Typography>
               </Box>
 
               {/* Address */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label>ADDRESS</Label>
+                <Label>{t('users.address')}</Label>
                 <TextField
                   fullWidth
                   multiline
@@ -635,21 +630,21 @@ const AddUser = () => {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  placeholder="Enter business address"
+                  placeholder={t('users.placeholders.address')}
                   sx={inputSx}
                 />
               </Box>
 
               {/* City */}
               <Box>
-                <Label>CITY</Label>
+                <Label>{t('users.city')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  placeholder="Enter city"
+                  placeholder={t('users.placeholders.city')}
                   sx={inputSx}
                   InputProps={{
                     startAdornment: <LocationIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -659,28 +654,28 @@ const AddUser = () => {
 
               {/* State */}
               <Box>
-                <Label>STATE</Label>
+                <Label>{t('users.state')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="state"
                   value={formData.state}
                   onChange={handleChange}
-                  placeholder="Enter state"
+                  placeholder={t('users.placeholders.state')}
                   sx={inputSx}
                 />
               </Box>
 
               {/* GST Number */}
               <Box>
-                <Label>GST NUMBER</Label>
+                <Label>{t('users.gstNumber')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="gstNumber"
                   value={formData.gstNumber}
                   onChange={handleChange}
-                  placeholder="Enter GST number"
+                  placeholder={t('users.placeholders.gstNumber')}
                   sx={inputSx}
                   InputProps={{
                     startAdornment: <ReceiptIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -690,14 +685,14 @@ const AddUser = () => {
 
               {/* PAN Number */}
               <Box>
-                <Label>PAN NUMBER</Label>
+                <Label>{t('users.panNumber')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="panNumber"
                   value={formData.panNumber}
                   onChange={handleChange}
-                  placeholder="Enter PAN number"
+                  placeholder={t('users.placeholders.panNumber')}
                   sx={inputSx}
                   InputProps={{
                     startAdornment: <CreditCardIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -715,21 +710,21 @@ const AddUser = () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <BankIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Bank Account Details</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('users.bankDetails')}</Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               {/* Bank Name */}
               <Box>
-                <Label>BANK NAME</Label>
+                <Label>{t('users.bankName')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="bankName"
                   value={formData.bankName}
                   onChange={handleChange}
-                  placeholder="Enter bank name"
+                  placeholder={t('users.placeholders.bankName')}
                   sx={inputSx}
                   InputProps={{
                     startAdornment: <BankIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -739,28 +734,28 @@ const AddUser = () => {
 
               {/* IFSC Code */}
               <Box>
-                <Label>IFSC CODE</Label>
+                <Label>{t('users.ifscCode')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="ifscCode"
                   value={formData.ifscCode}
                   onChange={handleChange}
-                  placeholder="Enter IFSC code"
+                  placeholder={t('users.placeholders.ifscCode')}
                   sx={inputSx}
                 />
               </Box>
 
               {/* Bank Account Number */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label>BANK ACCOUNT NUMBER</Label>
+                <Label>{t('users.bankAccountNumber')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="bankAccountNumber"
                   value={formData.bankAccountNumber}
                   onChange={handleChange}
-                  placeholder="Enter bank account number"
+                  placeholder={t('users.placeholders.bankAccountNumber')}
                   sx={inputSx}
                   InputProps={{
                     startAdornment: <CreditCardIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -776,7 +771,7 @@ const AddUser = () => {
       {currentStep === 2 && (
         <Paper sx={{ p: 2.5, bgcolor: '#E3F2FD', borderRadius: 2.5, border: '1px solid #BBDEFB', mt: 2 }}>
           <Typography variant="caption" sx={{ color: '#1565C0', fontSize: '0.7rem' }}>
-            <strong>Note:</strong> The user will receive a welcome email with login credentials. They can change their password after first login.
+            <strong>{t('common.tip')}:</strong> {t('users.welcomeNote')}
           </Typography>
         </Paper>
       )}
@@ -801,7 +796,7 @@ const AddUser = () => {
               }
             }}
           >
-            <ChevronLeft sx={{ fontSize: '1rem', mr: 0.5 }} /> Previous
+            <ChevronLeft sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('common.previous')}
           </Button>
         )}
         {currentStep < 2 && (
@@ -823,7 +818,7 @@ const AddUser = () => {
               }
             }}
           >
-            Next <ChevronRight sx={{ fontSize: '1rem', ml: 0.5 }} />
+            {t('common.next')} <ChevronRight sx={{ fontSize: '1rem', ml: 0.5 }} />
           </Button>
         )}
         {currentStep === 2 && <Box />}

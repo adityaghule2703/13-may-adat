@@ -63,25 +63,25 @@ const COLORS = {
   border: '#E3E8EF'
 };
 
-// Business type options
-const BUSINESS_TYPES = [
-  { value: 'individual', label: 'Individual' },
-  { value: 'proprietorship', label: 'Proprietorship' },
-  { value: 'partnership', label: 'Partnership' },
-  { value: 'private_limited', label: 'Private Limited' },
-  { value: 'public_limited', label: 'Public Limited' },
-  { value: 'llp', label: 'LLP' },
-  { value: 'trust', label: 'Trust' },
-  { value: 'society', label: 'Society' }
+// Business type options with translations
+const getBusinessTypes = (t) => [
+  { value: 'individual', label: t('buyers.businessTypes.individual') },
+  { value: 'proprietorship', label: t('buyers.businessTypes.proprietorship') },
+  { value: 'partnership', label: t('buyers.businessTypes.partnership') },
+  { value: 'private_limited', label: t('buyers.businessTypes.privateLimited') },
+  { value: 'public_limited', label: t('buyers.businessTypes.publicLimited') },
+  { value: 'llp', label: t('buyers.businessTypes.llp') },
+  { value: 'trust', label: t('buyers.businessTypes.trust') },
+  { value: 'society', label: t('buyers.businessTypes.society') }
 ];
 
-// Payment mode options
-const PAYMENT_MODES = [
-  { value: 'cash', label: 'Cash' },
-  { value: 'bank_transfer', label: 'Bank Transfer' },
-  { value: 'cheque', label: 'Cheque' },
-  { value: 'credit', label: 'Credit' },
-  { value: 'online', label: 'Online' }
+// Payment mode options with translations
+const getPaymentModes = (t) => [
+  { value: 'cash', label: t('payments.modes.cash') },
+  { value: 'bank_transfer', label: t('payments.modes.bank') },
+  { value: 'cheque', label: t('payments.modes.cheque') },
+  { value: 'credit', label: t('buyers.paymentModes.credit') },
+  { value: 'online', label: t('buyers.paymentModes.online') }
 ];
 
 // Floating Error Alert Component
@@ -149,6 +149,8 @@ const AddBuyer = () => {
     notes: ''
   });
 
+  const BUSINESS_TYPES = getBusinessTypes(t);
+  const PAYMENT_MODES = getPaymentModes(t);
   const steps = [t('buyers.steps.personalInfo'), t('buyers.steps.businessDetails'), t('buyers.steps.creditTerms')];
 
   const getToken = () => localStorage.getItem('token');

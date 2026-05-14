@@ -6,7 +6,8 @@ import {
   ShoppingBag, Search, Filter, Eye, 
   Plus, Download, Loader, AlertCircle,
   Calendar, DollarSign, X,
-  Package, FileText, Printer, MoreVertical
+  Package, FileText, Printer, MoreVertical,
+  Building2, User, TrendingDown
 } from 'lucide-react';
 import BASE_URL from '../../config/Config';
 
@@ -94,7 +95,7 @@ const Sales = () => {
         setPagination(data.pagination);
         
         // Calculate stats from current page data
-        const totalAmount = data.data.reduce((sum, sale) => sum + (sale.grandTotal || 0), 0);
+        const totalAmount = data.data.reduce((sum, sale) => sum + (sale.finalReceivable || sale.grandTotal || 0), 0);
         const totalItems = data.data.reduce((sum, sale) => sum + (sale.lines?.length || 0), 0);
         
         setStats({
@@ -150,33 +151,42 @@ const Sales = () => {
     return new Intl.NumberFormat('en-IN').format(num || 0);
   };
 
-  // Convert number to Marathi digits
+  // Get buyer display name
+  const getBuyerDisplayName = (sale) => {
+    if (sale.buyer) {
+      return sale.buyer.displayName || sale.buyer.name;
+    }
+    return sale.buyerName || 'N/A';
+  };
+
+  // Get buyer mobile
+  const getBuyerMobile = (sale) => {
+    if (sale.buyer) {
+      return sale.buyer.mobile;
+    }
+    return sale.buyerMobile || 'N/A';
+  };
+
+  // Get status badge configuration
+  const getStatusConfig = (status) => {
+    switch(status) {
+      case 'completed':
+        return { bg: '#E8F5E9', text: '#2E7D32', label: 'Completed', icon: '' };
+      case 'partial':
+        return { bg: '#FFF3E0', text: '#E65100', label: 'Partial', icon: '' };
+      case 'pending':
+        return { bg: '#FFF8E1', text: '#F57C00', label: 'Pending', icon: '' };
+      default:
+        return { bg: '#F3F4F6', text: '#6B7280', label: status || 'Unknown', icon: '' };
+    }
+  };
+
+  // Convert number to Marathi digits (keeping for compatibility)
   const toMarathiDigits = (num) => {
     const marathiDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
     return num.toString().replace(/\d/g, digit => marathiDigits[parseInt(digit)]);
   };
 
-  // Format currency in Marathi
-  const formatCurrencyMarathi = (amount) => {
-    const formatted = new Intl.NumberFormat('en-IN', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount || 0);
-    return `₹ ${toMarathiDigits(formatted)}`;
-  };
-
-  // Format date in Marathi
-  const formatDateMarathi = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    const months = ['जानेवारी', 'फेब्रुवारी', 'मार्च', 'एप्रिल', 'मे', 'जून', 'जुलै', 'ऑगस्ट', 'सप्टेंबर', 'ऑक्टोबर', 'नोव्हेंबर', 'डिसेंबर'];
-    const day = toMarathiDigits(date.getDate());
-    const month = months[date.getMonth()];
-    const year = toMarathiDigits(date.getFullYear());
-    return `${day} ${month} ${year}`;
-  };
-
-  // Convert number to Indian English words
   const numberToIndianWords = (num) => {
     if (num === 0) return 'Zero';
     
@@ -231,43 +241,42 @@ const Sales = () => {
     const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
     
     // Format amounts
-    const formattedSubTotal = formatNumber(sale.subTotal || 0);
-    const formattedGstAmount = formatNumber(sale.gstAmount || 0);
-    const formattedGrandTotal = formatNumber(sale.grandTotal || 0);
+    const formattedSubTotal = formatNumber(sale.grossTotal || sale.subTotal || 0);
+    const formattedTotalDeductions = formatNumber(sale.totalDeductions || 0);
+    const formattedFinalReceivable = formatNumber(sale.finalReceivable || sale.grandTotal || 0);
     
-    // Get payment mode text
-    const getPaymentModeText = () => {
-      switch(sale.paymentMode) {
-        case 'cash': return isMarathi ? 'रोख' : 'Cash';
-        case 'online': return isMarathi ? 'ऑनलाइन' : 'Online';
-        case 'bank': return isMarathi ? 'बँक ट्रान्सफर' : 'Bank Transfer';
-        case 'cheque': return isMarathi ? 'चेक' : 'Cheque';
-        default: return sale.paymentMode || (isMarathi ? 'इतर' : 'Other');
-      }
-    };
-    
-    const paymentModeText = getPaymentModeText();
+    // Get buyer name and mobile
+    const buyerName = getBuyerDisplayName(sale);
+    const buyerMobile = getBuyerMobile(sale);
     
     // Build items table rows
     const itemsRows = sale.lines?.map((line, idx) => {
+      let qtyDisplay = '';
+      if (line.pricingType === 'kg') {
+        qtyDisplay = `${line.bags || 0} bags × ${line.weightPerBag || 0}kg = ${line.billedQty || line.actualQty || 0}kg`;
+      } else if (line.pricingType === 'quintal') {
+        qtyDisplay = `${line.actualQty || 0} quintal = ${(line.actualQty || 0) * 100}kg`;
+      } else if (line.pricingType === 'ton') {
+        qtyDisplay = `${line.actualQty || 0} ton = ${(line.actualQty || 0) * 1000}kg`;
+      } else {
+        qtyDisplay = `${line.actualQty || 0} ${line.unit || line.pricingType || 'units'}`;
+      }
+      
+      const rate = formatNumber(line.rate || line.sellingPrice || 0);
       const lineTotal = formatNumber(line.lineTotal || 0);
-      const rate = formatNumber(line.sellingPrice || 0);
-      const qty = line.qty || 0;
-      const qtyDisplay = `${qty} ${line.unit || ''}`;
       
       return `
         <tr>
           <td style="text-align: center;">${idx + 1}</td>
           <td>${line.productName || '-'}</td>
-          <td style="text-align: center;">${line.warehouse || '-'}</td>
-          <td style="text-align: right;">${qtyDisplay}</td>
+          <td style="text-align: center;">${qtyDisplay}</td>
           <td style="text-align: right;">₹ ${rate}</td>
           <td style="text-align: right;">₹ ${lineTotal}</td>
         </tr>
       `;
     }).join('');
     
-    const amountInWords = `${numberToIndianWords(sale.grandTotal)} Rupees Only`;
+    const amountInWords = `${numberToIndianWords(sale.finalReceivable || sale.grandTotal || 0)} Rupees Only`;
     
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
@@ -282,9 +291,6 @@ const Sales = () => {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
           }
           body {
             background: #e5e5e5;
@@ -367,7 +373,6 @@ const Sales = () => {
             padding: 10px 12px;
             height: 50px;
             font-size: 16px;
-            position: relative;
           }
           .label {
             font-weight: bold;
@@ -404,23 +409,19 @@ const Sales = () => {
             font-size: 14px;
           }
           .col1 { width: 6%; text-align: center; }
-          .col2 { width: 30%; }
-          .col3 { width: 15%; text-align: center; }
-          .col4 { width: 15%; text-align: right; }
-          .col5 { width: 15%; text-align: right; }
-          .col6 { width: 19%; text-align: right; }
+          .col2 { width: 40%; }
+          .col3 { width: 20%; text-align: center; }
+          .col4 { width: 17%; text-align: right; }
+          .col5 { width: 17%; text-align: right; }
           .total-row td {
             font-weight: bold;
-            border-top: 2px solid #b3153f;
-          }
-          .gst-row td {
             border-top: 2px solid #b3153f;
           }
           .footer {
             border-top: 2px solid #b3153f;
             margin-top: 5px;
           }
-            .refno {
+          .refno {
             border-top: 2px solid #b3153f;
             margin-top: 5px;
           }
@@ -479,9 +480,6 @@ const Sales = () => {
             padding-top: 15px;
             border-top: 1px dashed #b3153f;
             min-width: 200px;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
           }
           .sign-mark {
             font-size: 50px;
@@ -499,18 +497,8 @@ const Sales = () => {
             border-top: 1px solid #b3153f;
             color: #555;
           }
-           .refinwords {
+          .refinwords {
             padding: 8px 15px;
-            
-          } 
-          .sale-summary {
-            padding: 10px 15px;
-            background: #f9f9f9;
-            border-top: 1px solid #b3153f;
-            font-size: 14px;
-          }
-          .sale-summary p {
-            margin: 5px 0;
           }
           @media print {
             body { 
@@ -559,21 +547,11 @@ const Sales = () => {
             <tr>
               <td>
                 <span class="label">${isMarathi ? 'खरेदीदार' : 'Buyer Name'}:</span>
-                <span class="value">${sale.buyerName}</span>
+                <span class="value">${buyerName}</span>
               </td>
               <td>
                 <span class="label">${isMarathi ? 'मो. नं.' : 'Mobile'}:</span>
-                <span class="value">${sale.buyerMobile}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span class="label">${isMarathi ? 'पेमेंट पद्धत' : 'Payment Mode'}:</span>
-                <span class="value">${paymentModeText}</span>
-              </td>
-              <td>
-                <span class="label">${isMarathi ? 'जीएसटी' : 'GST'}:</span>
-                <span class="value">${sale.buyerGst || '-'}</span>
+                <span class="value">${buyerMobile}</span>
               </td>
             </tr>
           </table>
@@ -585,14 +563,12 @@ const Sales = () => {
               <col class="col3"/>
               <col class="col4"/>
               <col class="col5"/>
-              <col class="col6"/>
             </colgroup>
             <thead>
               <tr>
                 <th>${isMarathi ? 'क्र.' : 'Sr.'}</th>
                 <th>${isMarathi ? 'उत्पादन' : 'Product'}</th>
-                <th>${isMarathi ? 'गोदाम' : 'Warehouse'}</th>
-                <th>${isMarathi ? 'प्रमाण' : 'Qty'}</th>
+                <th>${isMarathi ? 'प्रमाण' : 'Quantity'}</th>
                 <th>${isMarathi ? 'दर (₹)' : 'Rate (₹)'}</th>
                 <th>${isMarathi ? 'रक्कम (₹)' : 'Amount (₹)'}</th>
               </tr>
@@ -600,16 +576,18 @@ const Sales = () => {
             <tbody>
               ${itemsRows}
               <tr class="total-row">
-                <td colspan="5" style="text-align: right; font-weight: bold;">${isMarathi ? 'उप-एकूण' : 'Sub Total'}:</td>
+                <td colspan="4" style="text-align: right; font-weight: bold;">${isMarathi ? 'एकूण' : 'Gross Total'}:</td>
                 <td style="text-align: right; font-weight: bold;">₹ ${formattedSubTotal}</td>
               </tr>
-              <tr class="gst-row">
-                <td colspan="5" style="text-align: right; font-weight: bold;">${isMarathi ? 'जीएसटी' : 'GST'} (${sale.gstPercent}%):</td>
-                <td style="text-align: right; font-weight: bold;">+ ₹ ${formattedGstAmount}</td>
+              ${sale.totalDeductions > 0 ? `
+              <tr>
+                <td colspan="4" style="text-align: right; font-weight: bold; color: #D32F2F;">${isMarathi ? 'एकूण कपात' : 'Total Deductions'}:</td>
+                <td style="text-align: right; font-weight: bold; color: #D32F2F;">- ₹ ${formattedTotalDeductions}</td>
               </tr>
+              ` : ''}
               <tr class="total-row">
-                <td colspan="5" style="text-align: right; font-weight: bold; color: #b3153f;">${isMarathi ? 'एकूण रक्कम' : 'Grand Total'}:</td>
-                <td style="text-align: right; font-weight: bold; color: #b3153f; font-size: 18px;">₹ ${formattedGrandTotal}</td>
+                <td colspan="4" style="text-align: right; font-weight: bold; color: #b3153f;">${isMarathi ? 'अंतिम देय रक्कम' : 'Final Receivable'}:</td>
+                <td style="text-align: right; font-weight: bold; color: #b3153f; font-size: 18px;">₹ ${formattedFinalReceivable}</td>
               </tr>
             </tbody>
           </table>
@@ -619,13 +597,13 @@ const Sales = () => {
               <strong>${isMarathi ? 'अक्षरी रुपये' : 'Amount in Words'}:</strong> ${amountInWords}
             </div>
             
+            ${sale.notes ? `
             <div class="refno">
-             <div class="refinwords">
-                ${sale.referenceNumber ? `<p> ${isMarathi ? 'संदर्भ क्रमांक' : 'Reference No.'}: ${sale.referenceNumber}</p>` : ''}
-                </div>
+              <div class="refinwords">
+                <strong>${isMarathi ? 'नोंद' : 'Notes'}:</strong> ${sale.notes}
+              </div>
             </div>
-             
-          
+            ` : ''}
             
             <div class="footer-row">
               <div class="footer-left">
@@ -633,7 +611,7 @@ const Sales = () => {
               </div>
               <div class="footer-right">
                 ${isMarathi ? 'एकूण रक्कम' : 'Total Amount'}:
-                <span>₹ ${formattedGrandTotal}</span>
+                <span>₹ ${formattedFinalReceivable}</span>
               </div>
             </div>
             <div class="signature-row">
@@ -854,17 +832,19 @@ const Sales = () => {
                 <thead>
                   <tr style={{ background: '#1B3A1F', borderBottom: '1px solid #2E5A32' }}>
                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.invoiceNo')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.date')}</th>
+                   
                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.buyer')}</th>
                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.items')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.subtotal')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.gst')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.grandTotal')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.grossTotal')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.deductions')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.finalReceivable')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.status')}</th>
                     <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('sales.table.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sales.map((sale, index) => {
+                    const statusConfig = getStatusConfig(sale.status);
                     const isActionMenuOpen = Boolean(actionMenuAnchor) && selectedSale?._id === sale._id;
                     return (
                       <tr 
@@ -880,32 +860,35 @@ const Sales = () => {
                             <span className="text-sm font-medium" style={{ color: '#2E7D32' }}>{sale.invoiceNumber}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4" style={{ color: '#8D6E63' }} />
-                            <span className="text-sm" style={{ color: '#5D4037' }}>{formatDate(sale.saleDate)}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                       
+                        <td className="px-6 py-4">
                           <div>
-                            <p className="text-sm font-medium" style={{ color: '#2E7D32' }}>{sale.buyerName}</p>
-                            <p className="text-xs" style={{ color: '#8D6E63' }}>{sale.buyerMobile}</p>
+                            <p className="text-sm font-medium" style={{ color: '#2E7D32' }}>{getBuyerDisplayName(sale)}</p>
+                            <p className="text-xs" style={{ color: '#8D6E63' }}>{getBuyerMobile(sale)}</p>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm" style={{ color: '#5D4037' }}>{sale.lines?.length || 0} {t('sales.items')}</span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm font-semibold" style={{ color: '#2E7D32' }}>{formatCurrency(sale.subTotal)}</span>
+                          <span className="text-sm font-semibold" style={{ color: '#2E7D32' }}>{formatCurrency(sale.grossTotal || sale.subTotal || 0)}</span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <span className="text-sm">{sale.gstPercent}%</span>
-                            <p className="text-xs" style={{ color: '#8D6E63' }}>{formatCurrency(sale.gstAmount)}</p>
-                          </div>
+                          <span className="text-sm" style={{ color: sale.totalDeductions > 0 ? '#D32F2F' : '#8D6E63' }}>
+                            {sale.totalDeductions > 0 ? formatCurrency(sale.totalDeductions) : '-'}
+                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm font-bold" style={{ color: '#FF6F00' }}>{formatCurrency(sale.grandTotal)}</span>
+                          <span className="text-sm font-bold" style={{ color: '#FF6F00' }}>{formatCurrency(sale.finalReceivable || sale.grandTotal || 0)}</span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className="text-xs px-2 py-1 rounded-full inline-flex items-center gap-1"
+                            style={{ background: statusConfig.bg, color: statusConfig.text }}
+                          >
+                            <span>{statusConfig.icon}</span>
+                            <span>{statusConfig.label}</span>
+                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-center">
                           <div className="flex gap-2 justify-center">

@@ -49,6 +49,7 @@ const COLORS = {
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -126,16 +127,16 @@ const AddProduct = () => {
     let isValid = true;
 
     if (!formData.productName.trim()) {
-      errors.productName = 'Product name is required';
+      errors.productName = t('products.errors.nameRequired');
       isValid = false;
     } else if (!validateProductName(formData.productName)) {
-      errors.productName = 'Product name should only contain letters, numbers, spaces, dots, and hyphens';
+      errors.productName = t('products.errors.nameInvalid');
       isValid = false;
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields correctly');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -179,7 +180,7 @@ const AddProduct = () => {
         setSuccess(true);
         setTimeout(() => navigate('/products'), 2000);
       } else {
-        const errorMessage = response.data.message || response.data.error || 'Failed to add product';
+        const errorMessage = response.data.message || response.data.error || t('products.errors.addFailed');
         showError(errorMessage);
       }
     } catch (error) {
@@ -187,7 +188,7 @@ const AddProduct = () => {
       const errorMessage = error.response?.data?.message || 
                           error.response?.data?.error || 
                           error.message || 
-                          'Network error. Please try again.';
+                          t('common.networkError');
       showError(errorMessage);
     } finally {
       setLoading(false);
@@ -242,10 +243,10 @@ const AddProduct = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Add New Product
+            {t('products.addTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Register a new product in the system
+            {t('products.addSubtitle')}
           </Typography>
         </Box>
       </Box>
@@ -258,7 +259,7 @@ const AddProduct = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Product added successfully! Redirecting...
+          {t('products.messages.addSuccess')}
         </Alert>
       )}
 
@@ -268,7 +269,7 @@ const AddProduct = () => {
           <Stack direction="row" spacing={1} alignItems="center">
             <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
             <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
-              Product Information
+              {t('products.productInformation')}
             </Typography>
           </Stack>
         </Box>
@@ -276,14 +277,14 @@ const AddProduct = () => {
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2 }}>
             {/* Product Name */}
             <Box>
-              <Label required>Product Name</Label>
+              <Label required>{t('products.productName')}</Label>
               <TextField
                 fullWidth
                 size="small"
                 name="productName"
                 value={formData.productName}
                 onChange={handleChange}
-                placeholder="Enter product name"
+                placeholder={t('products.placeholders.productName')}
                 error={!!fieldErrors.productName}
                 helperText={fieldErrors.productName}
                 sx={inputSx}
@@ -292,13 +293,13 @@ const AddProduct = () => {
                 }}
               />
               <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                Enter a unique name for the product (e.g., Wheat, Rice, Onion, etc.)
+                {t('products.productNameHint')}
               </Typography>
             </Box>
 
             {/* Description */}
             <Box>
-              <Label>Description</Label>
+              <Label>{t('products.description')}</Label>
               <TextField
                 fullWidth
                 multiline
@@ -307,14 +308,14 @@ const AddProduct = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Enter product description (optional)"
+                placeholder={t('products.placeholders.description')}
                 sx={inputSx}
                 InputProps={{
                   startAdornment: <InputAdornment position="start"><DescriptionIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary }} /></InputAdornment>
                 }}
               />
               <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                Add any additional details about the product
+                {t('products.descriptionHint')}
               </Typography>
             </Box>
           </Box>
@@ -340,7 +341,7 @@ const AddProduct = () => {
             }
           }}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={handleSubmit}
@@ -364,7 +365,7 @@ const AddProduct = () => {
             }
           }}
         >
-          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Save Product</>}
+          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('products.saveProduct')}</>}
         </Button>
       </Box>
     </Box>

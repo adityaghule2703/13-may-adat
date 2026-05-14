@@ -1,6 +1,7 @@
 // src/pages/inventory/AddWarehouse.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -56,6 +57,7 @@ const COLORS = {
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -92,6 +94,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const AddWarehouse = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -122,12 +125,16 @@ const AddWarehouse = () => {
   });
 
   const unitOptions = [
-    { value: 'KG', label: 'KG (Kilograms)' },
-    { value: 'TON', label: 'TON (Tons)' },
-    { value: 'QUINTAL', label: 'QUINTAL (100 KG)' }
+    { value: 'KG', label: t('warehouses.units.kg', 'KG (Kilograms)') },
+    { value: 'TON', label: t('warehouses.units.ton', 'TON (Tons)') },
+    { value: 'QUINTAL', label: t('warehouses.units.quintal', 'QUINTAL (100 KG)') }
   ];
 
-  const steps = ['Basic Information', 'Location & Manager', 'Capacity & Notes'];
+  const steps = [
+    t('warehouses.steps.basicInfo'),
+    t('warehouses.steps.locationManager'),
+    t('warehouses.steps.capacityNotes')
+  ];
 
   const getToken = () => localStorage.getItem('token');
 
@@ -158,38 +165,38 @@ const AddWarehouse = () => {
 
     if (step === 0) {
       if (!formData.name.trim()) {
-        errors.name = 'Warehouse name is required';
+        errors.name = t('warehouses.errors.nameRequired');
         isValid = false;
       }
       if (!formData.code.trim()) {
-        errors.code = 'Warehouse code is required';
+        errors.code = t('warehouses.errors.codeRequired');
         isValid = false;
       }
     } else if (step === 1) {
       if (!formData.location.city.trim()) {
-        errors['location.city'] = 'City is required';
+        errors['location.city'] = t('warehouses.errors.cityRequired');
         isValid = false;
       }
       if (!formData.location.state.trim()) {
-        errors['location.state'] = 'State is required';
+        errors['location.state'] = t('warehouses.errors.stateRequired');
         isValid = false;
       }
       if (!formData.manager.name.trim()) {
-        errors['manager.name'] = 'Manager name is required';
+        errors['manager.name'] = t('warehouses.errors.managerNameRequired');
         isValid = false;
       }
       if (!formData.manager.phone.trim()) {
-        errors['manager.phone'] = 'Manager phone is required';
+        errors['manager.phone'] = t('warehouses.errors.managerPhoneRequired');
         isValid = false;
       } else if (!/^[0-9]{10}$/.test(formData.manager.phone)) {
-        errors['manager.phone'] = 'Enter valid 10-digit mobile number';
+        errors['manager.phone'] = t('warehouses.errors.invalidPhone');
         isValid = false;
       }
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -212,40 +219,40 @@ const AddWarehouse = () => {
     let isValid = true;
 
     if (!formData.name.trim()) {
-      errors.name = 'Warehouse name is required';
+      errors.name = t('warehouses.errors.nameRequired');
       isValid = false;
     }
     if (!formData.code.trim()) {
-      errors.code = 'Warehouse code is required';
+      errors.code = t('warehouses.errors.codeRequired');
       isValid = false;
     }
     if (!formData.location.city.trim()) {
-      errors['location.city'] = 'City is required';
+      errors['location.city'] = t('warehouses.errors.cityRequired');
       isValid = false;
     }
     if (!formData.location.state.trim()) {
-      errors['location.state'] = 'State is required';
+      errors['location.state'] = t('warehouses.errors.stateRequired');
       isValid = false;
     }
     if (!formData.manager.name.trim()) {
-      errors['manager.name'] = 'Manager name is required';
+      errors['manager.name'] = t('warehouses.errors.managerNameRequired');
       isValid = false;
     }
     if (!formData.manager.phone.trim()) {
-      errors['manager.phone'] = 'Manager phone is required';
+      errors['manager.phone'] = t('warehouses.errors.managerPhoneRequired');
       isValid = false;
     } else if (!/^[0-9]{10}$/.test(formData.manager.phone)) {
-      errors['manager.phone'] = 'Enter a valid 10-digit mobile number';
+      errors['manager.phone'] = t('warehouses.errors.invalidPhone');
       isValid = false;
     }
     if (!formData.capacity.total) {
-      errors['capacity.total'] = 'Total capacity is required';
+      errors['capacity.total'] = t('warehouses.errors.capacityRequired');
       isValid = false;
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -256,54 +263,52 @@ const AddWarehouse = () => {
     setTimeout(() => setError(''), 5000);
   };
 
-const handleSubmit = async () => {
-  if (!validateAllFields()) return;
+  const handleSubmit = async () => {
+    if (!validateAllFields()) return;
 
-  setLoading(true);
-  setError('');
+    setLoading(true);
+    setError('');
 
-  try {
-    const token = getToken();
-    const response = await axios.post(`${BASE_URL}/warehouse`, {
-      ...formData,
-      capacity: { 
-        ...formData.capacity, 
-        total: parseFloat(formData.capacity.total),
-        used: parseFloat(formData.capacity.used) || 0
+    try {
+      const token = getToken();
+      const response = await axios.post(`${BASE_URL}/warehouse`, {
+        ...formData,
+        capacity: { 
+          ...formData.capacity, 
+          total: parseFloat(formData.capacity.total),
+          used: parseFloat(formData.capacity.used) || 0
+        }
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        navigate('/login');
+        return;
       }
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+
+      if (response.data.success) {
+        setSuccess(true);
+        setTimeout(() => navigate('/warehouses'), 2000);
+      } else {
+        const errorMessage = response.data.message || response.data.error || t('warehouses.errors.addFailed');
+        showError(errorMessage);
       }
-    });
-
-    if (response.status === 401) {
-      localStorage.clear();
-      navigate('/login');
-      return;
-    }
-
-    if (response.data.success) {
-      setSuccess(true);
-      setTimeout(() => navigate('/warehouses'), 2000);
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to create warehouse';
+    } catch (error) {
+      console.error('Error creating warehouse:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          t('common.networkError');
       showError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Error creating warehouse:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Network error. Please check your connection.';
-    showError(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Label component
   const Label = ({ children, required }) => (
@@ -356,10 +361,10 @@ const handleSubmit = async () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Add New Warehouse
+            {t('warehouses.addTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Register a new storage facility
+            {t('warehouses.addSubtitle')}
           </Typography>
         </Box>
       </Box>
@@ -372,7 +377,7 @@ const handleSubmit = async () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Warehouse created successfully! Redirecting...
+          {t('warehouses.messages.addSuccess')}
         </Alert>
       )}
 
@@ -399,7 +404,7 @@ const handleSubmit = async () => {
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: currentStep >= index ? '#2E7D32' : '#8D6E63', display: 'block', textAlign: 'left' }}>
-                    Step {index + 1}
+                    {t('common.step')} {index + 1}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500, color: currentStep >= index ? '#1B5E20' : '#8D6E63' }}>
                     {step}
@@ -420,21 +425,21 @@ const handleSubmit = async () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <WarehouseIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Basic Information</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('warehouses.basicInformation')}</Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               {/* Warehouse Name */}
               <Box>
-                <Label required>WAREHOUSE NAME</Label>
+                <Label required>{t('warehouses.warehouseName')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Enter warehouse name"
+                  placeholder={t('warehouses.placeholders.warehouseName')}
                   error={!!fieldErrors.name}
                   helperText={fieldErrors.name}
                   sx={inputSx}
@@ -446,14 +451,14 @@ const handleSubmit = async () => {
 
               {/* Warehouse Code */}
               <Box>
-                <Label required>WAREHOUSE CODE</Label>
+                <Label required>{t('warehouses.warehouseCode')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="code"
                   value={formData.code}
                   onChange={handleChange}
-                  placeholder="e.g., WH001, CS001"
+                  placeholder={t('warehouses.placeholders.warehouseCode')}
                   error={!!fieldErrors.code}
                   helperText={fieldErrors.code}
                   sx={inputSx}
@@ -475,14 +480,14 @@ const handleSubmit = async () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <LocationIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Location Details</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('warehouses.locationDetails')}</Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 {/* Address - spans both columns */}
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label>ADDRESS</Label>
+                  <Label>{t('warehouses.address')}</Label>
                   <TextField
                     fullWidth
                     multiline
@@ -491,21 +496,21 @@ const handleSubmit = async () => {
                     name="location.address"
                     value={formData.location.address}
                     onChange={handleChange}
-                    placeholder="Enter full address"
+                    placeholder={t('warehouses.placeholders.address')}
                     sx={inputSx}
                   />
                 </Box>
 
                 {/* City */}
                 <Box>
-                  <Label required>CITY</Label>
+                  <Label required>{t('warehouses.city')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="location.city"
                     value={formData.location.city}
                     onChange={handleChange}
-                    placeholder="Enter city"
+                    placeholder={t('warehouses.placeholders.city')}
                     error={!!fieldErrors['location.city']}
                     helperText={fieldErrors['location.city']}
                     sx={inputSx}
@@ -514,14 +519,14 @@ const handleSubmit = async () => {
 
                 {/* State */}
                 <Box>
-                  <Label required>STATE</Label>
+                  <Label required>{t('warehouses.state')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="location.state"
                     value={formData.location.state}
                     onChange={handleChange}
-                    placeholder="Enter state"
+                    placeholder={t('warehouses.placeholders.state')}
                     error={!!fieldErrors['location.state']}
                     helperText={fieldErrors['location.state']}
                     sx={inputSx}
@@ -530,14 +535,14 @@ const handleSubmit = async () => {
 
                 {/* Pincode */}
                 <Box>
-                  <Label>PINCODE</Label>
+                  <Label>{t('warehouses.pincode')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="location.pincode"
                     value={formData.location.pincode}
                     onChange={handleChange}
-                    placeholder="Enter pincode"
+                    placeholder={t('warehouses.placeholders.pincode')}
                     sx={inputSx}
                   />
                 </Box>
@@ -550,21 +555,21 @@ const handleSubmit = async () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <PersonIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Manager Details</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('warehouses.managerDetails')}</Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 {/* Manager Name */}
                 <Box>
-                  <Label required>MANAGER NAME</Label>
+                  <Label required>{t('warehouses.managerName')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="manager.name"
                     value={formData.manager.name}
                     onChange={handleChange}
-                    placeholder="Enter manager name"
+                    placeholder={t('warehouses.placeholders.managerName')}
                     error={!!fieldErrors['manager.name']}
                     helperText={fieldErrors['manager.name']}
                     sx={inputSx}
@@ -573,14 +578,14 @@ const handleSubmit = async () => {
 
                 {/* Phone Number */}
                 <Box>
-                  <Label required>PHONE NUMBER</Label>
+                  <Label required>{t('warehouses.phoneNumber')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="manager.phone"
                     value={formData.manager.phone}
                     onChange={handleChange}
-                    placeholder="10-digit mobile number"
+                    placeholder={t('warehouses.placeholders.phoneNumber')}
                     inputProps={{ maxLength: 10 }}
                     error={!!fieldErrors['manager.phone']}
                     helperText={fieldErrors['manager.phone']}
@@ -590,14 +595,14 @@ const handleSubmit = async () => {
 
                 {/* Email - spans both columns */}
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label>EMAIL</Label>
+                  <Label>{t('warehouses.email')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="manager.email"
                     value={formData.manager.email}
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder={t('warehouses.placeholders.email')}
                     type="email"
                     sx={inputSx}
                   />
@@ -616,14 +621,14 @@ const handleSubmit = async () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Capacity Details</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('warehouses.capacityDetails')}</Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 {/* Total Capacity */}
                 <Box>
-                  <Label required>TOTAL CAPACITY</Label>
+                  <Label required>{t('warehouses.totalCapacity')}</Label>
                   <TextField
                     fullWidth
                     type="number"
@@ -631,16 +636,16 @@ const handleSubmit = async () => {
                     name="capacity.total"
                     value={formData.capacity.total}
                     onChange={handleChange}
-                    placeholder="Enter total capacity"
+                    placeholder={t('warehouses.placeholders.totalCapacity')}
                     error={!!fieldErrors['capacity.total']}
                     helperText={fieldErrors['capacity.total']}
                     sx={inputSx}
                   />
                 </Box>
 
-                {/* Unit - Using Autocomplete like farmer dropdown */}
+                {/* Unit - Using Autocomplete */}
                 <Box>
-                  <Label>UNIT</Label>
+                  <Label>{t('warehouses.unit')}</Label>
                   <Autocomplete
                     fullWidth
                     options={unitOptions}
@@ -652,7 +657,7 @@ const handleSubmit = async () => {
                       <TextField
                         {...params}
                         size="small"
-                        placeholder="Select unit"
+                        placeholder={t('warehouses.placeholders.selectUnit')}
                         sx={inputSx}
                       />
                     )}
@@ -676,7 +681,7 @@ const handleSubmit = async () => {
 
                 {/* Used Capacity */}
                 <Box>
-                  <Label>USED CAPACITY (Optional)</Label>
+                  <Label>{t('warehouses.usedCapacity')}</Label>
                   <TextField
                     fullWidth
                     type="number"
@@ -684,11 +689,11 @@ const handleSubmit = async () => {
                     name="capacity.used"
                     value={formData.capacity.used}
                     onChange={handleChange}
-                    placeholder="Currently used capacity"
+                    placeholder={t('warehouses.placeholders.usedCapacity')}
                     sx={inputSx}
                   />
                   <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                    Leave 0 if not known
+                    {t('warehouses.usedCapacityHint')}
                   </Typography>
                 </Box>
               </Box>
@@ -700,7 +705,7 @@ const handleSubmit = async () => {
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <FileTextIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Additional Notes</Typography>
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('warehouses.additionalNotes')}</Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
@@ -712,7 +717,7 @@ const handleSubmit = async () => {
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                placeholder="Enter any additional notes about this warehouse..."
+                placeholder={t('warehouses.placeholders.notes')}
                 sx={inputSx}
               />
             </Box>
@@ -740,7 +745,7 @@ const handleSubmit = async () => {
               }
             }}
           >
-            <ChevronLeft sx={{ fontSize: '1rem', mr: 0.5 }} /> Previous
+            <ChevronLeft sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('common.previous')}
           </Button>
         )}
         {currentStep < 2 && (
@@ -762,7 +767,7 @@ const handleSubmit = async () => {
               }
             }}
           >
-            Next <ChevronRight sx={{ fontSize: '1rem', ml: 0.5 }} />
+            {t('common.next')} <ChevronRight sx={{ fontSize: '1rem', ml: 0.5 }} />
           </Button>
         )}
         {currentStep === 2 && (
@@ -789,7 +794,7 @@ const handleSubmit = async () => {
               }
             }}
           >
-            {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Create Warehouse</>}
+            {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('warehouses.createWarehouse')}</>}
           </Button>
         )}
       </Box>

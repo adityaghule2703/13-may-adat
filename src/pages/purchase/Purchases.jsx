@@ -144,34 +144,43 @@ const Purchases = () => {
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'completed': return { bg: '#E8F5E9', text: '#2E7D32', label: t('purchases.status.completed'), icon: CheckCircle };
-      case 'saved': return { bg: '#FFF3E0', text: '#FF6F00', label: t('purchases.status.saved'), icon: Clock };
-      case 'partial': return { bg: '#E3F2FD', text: '#1976D2', label: t('purchases.status.partial'), icon: TrendingUp };
-      case 'paid': return { bg: '#E8F5E9', text: '#2E7D32', label: t('purchases.status.paid'), icon: CheckCircle };
-      case 'cancelled': return { bg: '#FFEBEE', text: '#D32F2F', label: t('purchases.status.cancelled'), icon: XCircle };
-      default: return { bg: '#E3F2FD', text: '#1976D2', label: status || t('purchases.status.saved'), icon: AlertCircle };
-    }
-  };
+  switch (status) {
+    case 'completed': return { bg: '#E8F5E9', text: '#2E7D32', label: t('purchases.status.completed'), icon: CheckCircle };
+    case 'saved': return { bg: '#FFF3E0', text: '#FF6F00', label: t('purchases.status.saved'), icon: Clock };
+    case 'pending': return { bg: '#E3F2FD', text: '#1976D2', label: t('purchases.status.pending'), icon: Clock };
+    case 'partial': return { bg: '#E3F2FD', text: '#1976D2', label: t('purchases.status.partial'), icon: TrendingUp };
+    case 'paid': return { bg: '#E8F5E9', text: '#2E7D32', label: t('purchases.status.paid'), icon: CheckCircle };
+    case 'cancelled': return { bg: '#FFEBEE', text: '#D32F2F', label: t('purchases.status.cancelled'), icon: XCircle };
+    default: return { bg: '#E3F2FD', text: '#1976D2', label: status || t('purchases.status.saved'), icon: AlertCircle };
+  }
+};
 
-  const handleEditClick = (purchase) => {
-    if (purchase.status === 'draft') {
-      navigate(`/purchases/edit/${purchase._id}`);
-    } else if (purchase.status === 'saved' || purchase.status === 'partial') {
-      navigate(`/purchases/update-status/${purchase._id}`);
-    } else {
-      alert(t('purchases.messages.cannotEdit', { status: purchase.status }));
-    }
-  };
+ const handleEditClick = (purchase) => {
+  // Allow edit for draft, saved, partial, AND pending status
+  if (purchase.status === 'draft' || purchase.status === 'saved' || purchase.status === 'partial' || purchase.status === 'pending') {
+    navigate(`/purchases/edit/${purchase._id}`);
+  } else if (purchase.status === 'completed' || purchase.status === 'paid' || purchase.status === 'cancelled') {
+    alert(t('purchases.messages.cannotEdit', { status: purchase.status }));
+  } else {
+    navigate(`/purchases/update-status/${purchase._id}`);
+  }
+};
 
-  const getEditButtonTitle = (status) => {
-    switch (status) {
-      case 'draft': return t('purchases.tooltips.editFull');
-      case 'saved': return t('purchases.tooltips.updateStatusOnly');
-      case 'partial': return t('purchases.tooltips.updateStatusOnly');
-      default: return t('purchases.tooltips.cannotEdit');
-    }
-  };
+const getEditButtonTitle = (status) => {
+  switch (status) {
+    case 'draft':
+    case 'saved':
+    case 'partial':
+    case 'pending':
+      return t('purchases.tooltips.editFull');
+    case 'completed':
+    case 'paid':
+    case 'cancelled':
+      return t('purchases.tooltips.cannotEdit');
+    default:
+      return t('purchases.tooltips.updateStatusOnly');
+  }
+};
 
   const handleActionMenuOpen = (event, purchase) => {
     setActionMenuAnchor(event.currentTarget);
@@ -907,15 +916,16 @@ const Purchases = () => {
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>{t('purchases.filters.status')}</label>
-                <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" style={{ borderColor: '#C8E6C9' }}>
-                  <option value="all">{t('common.all')}</option>
-                  <option value="draft">{t('purchases.status.draft')}</option>
-                  <option value="saved">{t('purchases.status.saved')}</option>
-                  <option value="partial">{t('purchases.status.partial')}</option>
-                  <option value="paid">{t('purchases.status.paid')}</option>
-                  <option value="completed">{t('purchases.status.completed')}</option>
-                  <option value="cancelled">{t('purchases.status.cancelled')}</option>
-                </select>
+              <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" style={{ borderColor: '#C8E6C9' }}>
+  <option value="all">{t('common.all')}</option>
+  <option value="draft">{t('purchases.status.draft')}</option>
+  <option value="saved">{t('purchases.status.saved')}</option>
+  <option value="pending">{t('purchases.status.pending')}</option>
+  <option value="partial">{t('purchases.status.partial')}</option>
+  <option value="paid">{t('purchases.status.paid')}</option>
+  <option value="completed">{t('purchases.status.completed')}</option>
+  <option value="cancelled">{t('purchases.status.cancelled')}</option>
+</select>
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">

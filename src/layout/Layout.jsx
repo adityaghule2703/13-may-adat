@@ -1,4 +1,3 @@
-// Layout.jsx
 import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
@@ -46,41 +45,35 @@ const Layout = () => {
   }, []);
 
   return (
-    <div style={{ background: '#F5F5DC' }} className="print:bg-white"> {/* Warm earthy background */}
+    <div style={{ background: '#F5F5DC' }} className="print:bg-white">
       <Header onMenuClick={() => setIsMobileSidebarOpen(true)} />
-      
-      {/* Desktop Sidebar */}
+
+      {/* Desktop Sidebar — no isMobileOpen prop so it hits the desktop branch */}
       <Sidebar />
-      
-      {/* Mobile Sidebar Drawer */}
-      <Sidebar 
-        isMobileOpen={isMobileSidebarOpen} 
-        onClose={() => setIsMobileSidebarOpen(false)} 
+
+      {/* Mobile Sidebar Drawer — isMobileOpen defined so it hits the mobile drawer branch */}
+      <Sidebar
+        isMobileOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
       />
-      
-      {/* Main Content - Disabled when mobile sidebar is open */}
-      <main 
+
+      {/* Main Content */}
+      <main
         className={`lg:ml-72 mt-16 p-4 sm:p-6 lg:p-8 transition-all duration-300 print:p-0 print:m-0 ${
-          isMobileSidebarOpen ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'
+          isMobileSidebarOpen
+            ? 'pointer-events-none opacity-50 lg:pointer-events-auto lg:opacity-100'
+            : 'pointer-events-auto opacity-100'
         }`}
-        style={{ 
+        style={{
           overflowY: isMobileSidebarOpen ? 'hidden' : 'auto',
           maxHeight: 'calc(100vh - 64px)',
-          overflowX: 'hidden'
+          overflowX: 'hidden',
         }}
       >
         <div className="max-w-7xl mx-auto print:max-w-none print:mx-0">
           <Outlet />
         </div>
       </main>
-
-      {/* Overlay for mobile when sidebar is open */}
-      {isMobileSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setIsMobileSidebarOpen(false)}
-        />
-      )}
     </div>
   );
 };

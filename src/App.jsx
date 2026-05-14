@@ -83,6 +83,10 @@ import Products from "./pages/products/Products";
 import AddProduct from "./pages/products/AddProduct";
 import EditProduct from "./pages/products/EditProduct";
 import ViewProduct from "./pages/products/ViewProduct";
+import SalePayments from "./pages/salepayments/SalePayments";
+import AddSalePayment from "./pages/salepayments/AddSalePayment";
+import ViewSalePayment from "./pages/salepayments/ViewSalePayment";
+
 
 // Protected Route Component
 const PrivateRoute = ({ children }) => {
@@ -99,6 +103,7 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
   return (
     <BrowserRouter>
+        {/* //  <BrowserRouter basename="/agri_tred-front">  */}
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
@@ -177,6 +182,10 @@ const App = () => {
           <Route path="sales/add" element={<AddSale />} />
           <Route path="sales/view/:id" element={<ViewSale />} />
           {/* <Route path="sales/edit/:id" element={<EditSale />} /> */}
+
+           <Route path="/sale-payments" element={<SalePayments />} />
+<Route path="/sale-payments/add" element={<AddSalePayment />} />
+<Route path="/sale-payments/view/:id" element={<ViewSalePayment />} />
 
           {/* ========== LEDGER MODULE ========== */}
           <Route path="ledger" element={<Ledger />} />

@@ -121,7 +121,9 @@ const AddSale = () => {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [buyers, setBuyers] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loadingBuyers, setLoadingBuyers] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
   const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [calculations, setCalculations] = useState({
     grossTotal: 0,
@@ -134,6 +136,7 @@ const AddSale = () => {
     saleDate: new Date().toISOString().split('T')[0],
     lines: [
       {
+        productId: null,
         productName: '',
         pricingType: 'kg',
         bags: '',
@@ -165,12 +168,14 @@ const AddSale = () => {
 
   useEffect(() => {
     fetchBuyers();
+    fetchProducts();
   }, []);
 
+  // Updated fetchBuyers to use the dropdown API
   const fetchBuyers = async () => {
     try {
       const token = getToken();
-      const response = await axios.get(`${BASE_URL}/buyers?limit=100`, {
+      const response = await axios.get(`${BASE_URL}/buyers/dropdown`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -180,6 +185,24 @@ const AddSale = () => {
       console.error('Error fetching buyers:', error);
     } finally {
       setLoadingBuyers(false);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const token = getToken();
+      const response = await axios.get(`${BASE_URL}/products?limit=100`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        // Filter only active products
+        const activeProducts = response.data.data.filter(p => p.isActive === true);
+        setProducts(activeProducts);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoadingProducts(false);
     }
   };
 
@@ -232,6 +255,25 @@ const AddSale = () => {
     }
   };
 
+  const handleProductChange = (index, product) => {
+    const updatedLines = [...formData.lines];
+    updatedLines[index] = {
+      ...updatedLines[index],
+      productId: product?._id || null,
+      productName: product?.productName || '',
+      rate: '',
+      actualQty: '',
+      qualityDeduction: '',
+      bags: '',
+      weightPerBag: ''
+    };
+    setFormData(prev => ({ ...prev, lines: updatedLines }));
+    
+    if (fieldErrors[`line_${index}_product`]) {
+      setFieldErrors(prev => ({ ...prev, [`line_${index}_product`]: '' }));
+    }
+  };
+
   const handleLineChange = (index, field, value) => {
     const updatedLines = [...formData.lines];
     updatedLines[index][field] = value;
@@ -263,6 +305,7 @@ const AddSale = () => {
     setFormData(prev => ({
       ...prev,
       lines: [...prev.lines, {
+        productId: null,
         productName: '',
         pricingType: 'kg',
         bags: '',
@@ -304,7 +347,7 @@ const AddSale = () => {
     } else if (step === 1) {
       formData.lines.forEach((line, idx) => {
         if (!line.productName) {
-          errors[`line_${idx}_product`] = 'Product name required';
+          errors[`line_${idx}_product`] = 'Please select a product';
           isValid = false;
         }
         if (!line.rate || parseFloat(line.rate) <= 0) {
@@ -528,7 +571,7 @@ const AddSale = () => {
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-              {/* SELECT BUYER - First column */}
+              {/* SELECT BUYER - First column - Using dropdown API */}
               <Box>
                 <Label required>Select Buyer</Label>
                 <Autocomplete
@@ -557,15 +600,7 @@ const AddSale = () => {
                             {option.displayName || option.name}
                           </Typography>
                           <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                            {option.mobile} • {option.businessName || 'Individual'}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ textAlign: 'right' }}>
-                          <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
-                            Credit Limit
-                          </Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#2E7D32' }}>
-                            {formatCurrency(option.creditLimit || 0)}
+                            {option.mobile} • {option.businessName || 'Individual'} • {option.city || 'N/A'}
                           </Typography>
                         </Box>
                       </Box>
@@ -592,7 +627,7 @@ const AddSale = () => {
                       {selectedBuyer.displayName || selectedBuyer.name}
                     </Typography>
                     <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                      {selectedBuyer.businessName || 'Individual'} • Credit: {formatCurrency(selectedBuyer.creditLimit || 0)} • {selectedBuyer.creditDays || 0} days
+                      {selectedBuyer.businessName || 'Individual'} • {selectedBuyer.city || 'Location not specified'}
                     </Typography>
                   </Box>
                 )}
@@ -638,6 +673,7 @@ const AddSale = () => {
           {formData.lines.map((line, index) => {
             const lineTotal = calculateLineTotal(line);
             const selectedPricingType = pricingTypeOptions.find(opt => opt.value === line.pricingType) || null;
+            const selectedProduct = products.find(p => p.productName === line.productName) || null;
             
             return (
               <Paper key={index} sx={{ borderRadius: 2.5, overflow: 'visible', border: `1px solid ${COLORS.border}` }}>
@@ -656,18 +692,57 @@ const AddSale = () => {
                 </Box>
                 <Box sx={{ p: 2.5 }}>
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                    {/* PRODUCT NAME - spans both columns */}
+                    {/* PRODUCT NAME - spans both columns - Now with Autocomplete */}
                     <Box sx={{ gridColumn: 'span 2' }}>
                       <Label required>Product Name</Label>
-                      <TextField
+                      <Autocomplete
                         fullWidth
-                        size="small"
-                        value={line.productName}
-                        onChange={(e) => handleLineChange(index, 'productName', e.target.value)}
-                        placeholder="Enter product name"
-                        error={!!fieldErrors[`line_${index}_product`]}
-                        helperText={fieldErrors[`line_${index}_product`]}
-                        sx={inputSx}
+                        options={products}
+                        loading={loadingProducts}
+                        value={selectedProduct}
+                        onChange={(event, newValue) => handleProductChange(index, newValue)}
+                        getOptionLabel={(option) => option.productName}
+                        isOptionEqualToValue={(option, value) => option._id === value?._id}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            placeholder="Search or select product..."
+                            error={!!fieldErrors[`line_${index}_product`]}
+                            helperText={fieldErrors[`line_${index}_product`]}
+                            sx={inputSx}
+                          />
+                        )}
+                        renderOption={(props, option) => (
+                          <li {...props}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                              <Box>
+                                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem' }}>
+                                  {option.productName}
+                                </Typography>
+                                {option.description && (
+                                  <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
+                                    {option.description}
+                                  </Typography>
+                                )}
+                              </Box>
+                              <Typography variant="caption" sx={{ fontSize: '0.65rem', color: option.isActive ? '#2E7D32' : '#D32F2F' }}>
+                                {option.isActive ? 'Active' : 'Inactive'}
+                              </Typography>
+                            </Box>
+                          </li>
+                        )}
+                        ListboxProps={{
+                          sx: {
+                            maxHeight: '300px',
+                            overflowY: 'auto',
+                            '& .MuiAutocomplete-option': {
+                              fontSize: '0.75rem',
+                              py: 1,
+                              px: 1.5
+                            }
+                          }
+                        }}
                       />
                     </Box>
 

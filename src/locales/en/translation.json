@@ -1,1482 +1,1837 @@
 {
-  "common": {
-    "appName": "AgriBroker",
-    "subtitle": "Finance & Trading",
-    "search": "Search farmers, buyers, transactions...",
-    "searchPlaceholder": "Search transactions...",
-    "logout": "Logout",
-    "save": "Save",
-    "cancel": "Cancel",
-    "edit": "Edit",
-    "delete": "Delete",
-    "view": "View",
-    "print": "Print",
-    "download": "Download",
-    "generate": "Generate",
-    "today": "Today",
-    "all": "All",
-    "moreFilters": "More Filters",
-    "retry": "Retry",
-    "filter": "Filter",
-    "export": "Export",
-    "apply": "Apply",
-    "loading": "Loading...",
-    "actions": "Actions",
-    "previous": "Previous",
-    "next": "Next",
-    "deactivating": "Deactivating...",
-    "refresh": "Refresh",
-    "viewDetails": "View Details",
-    "networkError": "Network error. Please check your connection.",
-    "clearAll": "Clear All",
-    "clearFilters": "Clear filters",
-    "processing": "Processing",
-    "allCategories": "All Categories",
-    "allStatus": "All Status",
-    "deleting": "Deleting...",
-    "updating": "Updating",
-    "locking": "Locking",
-    "deactivate": "Deactivate",
-    "allModes": "All Modes",
-    "allRoles": "All Roles",
-    "close": "Close",
-    "allActions": "All Actions",
-    "allEntities": "All Entities",
-    "error": "Failed to load",
-    "noData": "No data available",
-    "amount": "Amount",
-    "enterAmount": "Enter amount",
-    "notes": "Notes",
-    "optional": "Optional",
-    "back": "Back",
-    "clear": "Clear",
-    "showLess": "Show Less",
-    "viewAll": "View All ({{count}})",
-    "entries": "entries",
-    "entry": "entry",
-    "clearSearch": "Clear search",
-    "transaction": "Transaction",
-    "notProvided": "Not provided",
-    "na": "N/A",
-    "notesPlaceholder": "Any notes...",
-    "by": "By",
-    "system": "System",
-    "other": "Other",
-    "backToInventory": "Back to Inventory",
-    "backToWarehouses": "Back to Warehouses",
-    "backToExpenses": "Back to Expenses",
-    "email": "Email",
-    "status": "Status",
-    "unknown": "Unknown",
-    "tip": "Tip",
-    "backToBudgets": "Back to Budgets",
-    "backToUsers": "Back to Users",
-    "backToPayments": "Back to Payments"
-  },
+    "common": {
+        "appName": "AgriBroker",
+        "subtitle": "Finance & Trading",
+        "search": "Search farmers, buyers, transactions...",
+        "searchPlaceholder": "Search transactions...",
+        "logout": "Logout",
+        "save": "Save",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete",
+        "view": "View",
+        "print": "Print",
+        "download": "Download",
+        "generate": "Generate",
+        "today": "Today",
+        "all": "All",
+        "moreFilters": "More Filters",
+        "retry": "Retry",
+        "filter": "Filter",
+        "export": "Export",
+        "apply": "Apply",
+        "loading": "Loading...",
+        "actions": "Actions",
+        "previous": "Previous",
+        "next": "Next",
+        "deactivating": "Deactivating...",
+        "refresh": "Refresh",
+        "viewDetails": "View Details",
+        "networkError": "Network error. Please check your connection.",
+        "clearAll": "Clear All",
+        "clearFilters": "Clear filters",
+        "processing": "Processing",
+        "allCategories": "All Categories",
+        "allStatus": "All Status",
+        "deleting": "Deleting...",
+        "updating": "Updating",
+        "locking": "Locking",
+        "deactivate": "Deactivate",
+        "allModes": "All Modes",
+        "allRoles": "All Roles",
+        "close": "Close",
+        "allActions": "All Actions",
+        "allEntities": "All Entities",
+        "error": "Failed to load",
+        "noData": "No data available",
+        "amount": "Amount",
+        "enterAmount": "Enter amount",
+        "notes": "Notes",
+        "optional": "Optional",
+        "back": "Back",
+        "clear": "Clear",
+        "showLess": "Show Less",
+        "viewAll": "View All ({{count}})",
+        "entries": "entries",
+        "entry": "entry",
+        "clearSearch": "Clear search",
+        "transaction": "Transaction",
+        "notProvided": "Not provided",
+        "na": "N/A",
+        "notesPlaceholder": "Any notes...",
+        "by": "By",
+        "system": "System",
+        "other": "Other",
+        "backToInventory": "Back to Inventory",
+        "backToWarehouses": "Back to Warehouses",
+        "backToExpenses": "Back to Expenses",
+        "email": "Email",
+        "status": "Status",
+        "unknown": "Unknown",
+        "tip": "Tip",
+        "backToBudgets": "Back to Budgets",
+        "backToUsers": "Back to Users",
+        "backToPayments": "Back to Payments",
+        "step": "Step",
+        "fillCorrectly": "Please fill all required fields correctly",
+        "fixErrors": "Please fix the errors below",
+        "locale": "en"
+    },
 
-  "nav": {
-    "dashboard": "Dashboard",
-    "account": "Account",
-    "receipts": "Receipts",
-    "farmers": "Farmers",
-    "buyers": "Buyers",
-    "transactions": "Transactions",
-    "stock": "Inventory",
-    "orders": "Orders",
-    "deliveries": "Deliveries",
-    "payments": "Payments",
-    "reports": "Reports",
-    "financeTrading": "Finance & Trading",
-    "purchases": "Purchases",
-    "sales": "Sales",
-    "expenses": "Expenses",
-    "inventory": "Inventory",
-    "warehouses": "Warehouses",
-    "ledger": "Ledger",
-    "expenseLedger": "Expense Ledger",
-    "combinedLedger": "Combined Ledger",
-    "budgetAlerts": "Budget Alerts",
-    "auditLogs": "Audit Logs",
-    "usersRoles": "Users & Roles",
-    "settings": "Settings",
-    "mainNav": "Navigation"
-  },
+    "nav": {
+        "dashboard": "Dashboard",
+        "account": "Account",
+        "receipts": "Receipts",
+        "farmers": "Farmers",
+        "buyers": "Buyers",
+        "transactions": "Transactions",
+        "stock": "Inventory",
+        "orders": "Orders",
+        "deliveries": "Deliveries",
+        "payments": "Payments",
+        "reports": "Reports",
+        "financeTrading": "Finance & Trading",
+        "purchases": "Purchases",
+        "sales": "Sales",
+        "expenses": "Expenses",
+        "inventory": "Inventory",
+        "warehouses": "Warehouses",
+        "ledger": "Ledger",
+        "expenseLedger": "Expense Ledger",
+        "combinedLedger": "Combined Ledger",
+        "budgetAlerts": "Budget Alerts",
+        "auditLogs": "Audit Logs",
+        "usersRoles": "Users & Roles",
+        "settings": "Settings",
+        "mainNav": "Navigation"
+    },
 
-  "dashboard": {
-    "title": "Dashboard",
-    "welcome": "Welcome back, {{name}}! Here's your trading summary.",
-    "totalFarmers": "Total Farmers",
-    "totalBuyers": "Total Buyers",
-    "todaysPurchase": "Today's Purchase",
-    "todaysSale": "Today's Sale",
-    "purchaseAmount": "Purchase",
-    "saleAmount": "Sale",
-    "profit": "Profit",
-    "fromYesterday": "from yesterday",
-    "weeklyOverview": "Weekly Trading Overview",
-    "recentTransactions": "Recent Transactions",
-    "topCrops": "Top Trading Crops",
-    "volume": "volume",
-    "status": {
-      "completed": "Completed",
-      "pending": "Pending",
-      "processing": "Processing"
+    "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Real-time trading insights and analytics",
+        "loading": "Loading dashboard data...",
+        "totalFarmers": "Total Farmers",
+        "totalPayments": "Total Payments",
+        "totalWarehouses": "Total Warehouses",
+        "totalRevenue": "Total Revenue",
+        "fromYesterday": "from yesterday",
+        "fromLastMonth": "from last month",
+        "revenueOverview": "Revenue Overview",
+        "chartSubtitle": "Purchase vs Sale trend analysis",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "purchaseAmount": "Purchase",
+        "saleAmount": "Sale",
+        "todaysPerformance": "Today's Performance",
+        "purchaseTarget": "Purchase Target",
+        "saleTarget": "Sale Target",
+        "topProducts": "Top Products",
+        "recentPayments": "Recent Payments",
+        "recentPaymentsSubtitle": "Latest 5 payment transactions",
+        "noPaymentsFound": "No payments found",
+        "topBuyerOfMonth": "Top Buyer of the Month",
+        "individualBuyer": "Individual Buyer",
+        "noBuyersYet": "No buyers yet",
+        "totalPurchases": "Total Purchases",
+        "purchaseValue": "Purchase Value",
+        "totalBuyers": "Total Buyers",
+        "activeBuyers": "Active Buyers",
+        "totalPurchaseValue": "Total Purchase Value",
+        "viewAllBuyers": "View All Buyers",
+        "weekDays": {
+            "mon": "Mon",
+            "tue": "Tue",
+            "wed": "Wed",
+            "thu": "Thu",
+            "fri": "Fri",
+            "sat": "Sat",
+            "sun": "Sun",
+            "week1": "Week 1",
+            "week2": "Week 2",
+            "week3": "Week 3",
+            "week4": "Week 4"
+        },
+        "timeAgo": {
+            "justNow": "Just now",
+            "minutesAgo": "{{count}} min ago",
+            "hoursAgo": "{{count}} hour{{count > 1 ? 's' : ''}} ago",
+            "daysAgo": "{{count}} day{{count > 1 ? 's' : ''}} ago"
+        },
+        "alerts": {
+            "lowStockTitle": "Low Stock Alert",
+            "lowStockMessage": "Wheat stock is below 500kg",
+            "paymentReceivedTitle": "Payment Received",
+            "paymentReceivedMessage": "₹25,000 received from Suresh Patel",
+            "newOrderTitle": "New Order",
+            "newOrderMessage": "New order placed by AgriCorp Ltd",
+            "priceAlertTitle": "Price Alert",
+            "priceAlertMessage": "Rice prices increased by 5%",
+            "fiveMinAgo": "5 min ago",
+            "fifteenMinAgo": "15 min ago",
+            "oneHourAgo": "1 hour ago",
+            "twoHoursAgo": "2 hours ago"
+        },
+        "products": {
+            "wheat": "Wheat",
+            "rice": "Rice",
+            "corn": "Corn"
+        },
+        "errors": {
+            "fetchFailed": "Failed to load dashboard data"
+        }
+    },
+
+    "account": {
+        "title": "Account Settings",
+        "subtitle": "Manage your profile and account details",
+        "editProfile": "Edit Profile",
+        "personalInfo": "Personal Information",
+        "financialSummary": "Financial Summary",
+        "profileSummary": "Profile Summary",
+        "masterDealer": "Master Dealer",
+        "dealerId": "Dealer ID",
+        "memberSince": "Member Since",
+        "totalPurchases": "Total Purchases",
+        "totalSales": "Total Sales",
+        "commissionEarned": "Commission Earned",
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "address": "Address",
+        "gstNumber": "GST Number",
+        "bankAccount": "Bank Account",
+        "ifscCode": "IFSC Code",
+        "loading": "Loading profile...",
+        "member": "Member",
+        "businessName": "Business Name",
+        "city": "City",
+        "state": "State",
+        "panNumber": "PAN Number",
+        "bankName": "Bank Name",
+        "bankAccountNumber": "Bank Account Number",
+        "errors": {
+            "fetchFailed": "Failed to fetch user data",
+            "invalidResponse": "Invalid response structure",
+            "loadError": "Error loading profile"
+        }
+    },
+
+    "receipts": {
+        "title": "Receipts",
+        "subtitle": "Manage and track all your transaction receipts",
+        "generateNew": "Generate New Receipt",
+        "totalReceipts": "Total Receipts",
+        "totalAmount": "Total Amount",
+        "paidReceipts": "Paid Receipts",
+        "pending": "Pending",
+        "searchPlaceholder": "Search by receipt ID, farmer, or buyer...",
+        "receiptId": "Receipt ID",
+        "date": "Date",
+        "partyName": "Party Name",
+        "crop": "Crop",
+        "quantity": "Quantity",
+        "amount": "Amount",
+        "type": "Type",
+        "status": "Status",
+        "actions": "Actions",
+        "purchase": "Purchase",
+        "sale": "Sale",
+        "paid": "Paid"
+    },
+
+    "sidebar": {
+        "todaySummary": "Today's Summary",
+        "marketInsights": "Market Insights",
+        "marketMessage": "Wheat prices expected to rise by 8% this week",
+        "buying": "Buying",
+        "selling": "Selling",
+        "purchases": "Purchases",
+        "expenses": "Expenses",
+        "netProfitLoss": "Net Profit/Loss",
+        "profitMargin": "Profit Margin"
+    },
+
+    "farmers": {
+        "title": "Farmers",
+        "subtitle": "Manage and track all your farmers",
+        "loading": "Loading farmers...",
+        "loadingPayments": "Loading payment history...",
+        "loadingDues": "Loading dues information...",
+        "searchPlaceholder": "Search farmers...",
+        "noFarmersFound": "No farmers found",
+        "farmerId": "Farmer ID",
+        "memberSince": "Member since",
+        "fullName": "Full Name",
+        "mobileNumber": "Mobile Number",
+        "personalInfo": "Personal Information",
+        "financialSummary": "Financial Summary",
+        "bankDetails": "Bank Details",
+        "bankName": "Bank Name",
+        "accountNumber": "Account Number",
+        "ifscCode": "IFSC Code",
+        "address": "Address",
+        "village": "Village",
+        "city": "City",
+        "state": "State",
+        "gstNumber": "GST Number",
+        "totalPurchases": "Total Purchases",
+        "totalPurchaseValue": "Total Purchase Value",
+        "totalPaid": "Total Paid",
+        "advanceBalance": "Advance Balance",
+        "pendingDues": "Pending Dues",
+        "pendingPurchaseDues": "Pending Purchase Dues",
+        "totalPendingPurchases": "Total Pending (Purchases)",
+        "netAmountDue": "Net Amount Due",
+        "netAmountReceivable": "Net Amount Receivable",
+        "overallStatus": "Overall Status",
+        "ledgerStatement": "Ledger Statement",
+        "noLedgerEntries": "No ledger entries found",
+        "paymentHistory": "Payment History",
+        "advanceTransactions": "Advance transactions & ledger",
+        "advancePaymentHistory": "Advance Payment History",
+        "duesTitle": "Farmer Dues",
+        "duesSubtitle": "Pending payments and advance balance",
+        "noAdvanceTransactions": "No advance transactions found",
+        "noPendingDues": "No pending purchase dues",
+        "allSettled": "All purchase payments are settled",
+        "transactionLedger": "Transaction Ledger",
+        "noTransactionsFound": "No transactions found",
+        "noTransactionsMatch": "No transactions match",
+        "by": "By",
+        "currentBalance": "Current Balance",
+        "totalAdvanceGiven": "Total Advance Given",
+        "totalAdjusted": "Total Adjusted",
+        "netOutstanding": "Net Outstanding",
+        "paymentTypes": {
+            "advanceGiven": "Advance Given",
+            "advanceAdjusted": "Advance Adjusted"
+        },
+        "status": {
+            "label": "Status",
+            "active": "Active",
+            "inactive": "Inactive",
+            "advanceExceedsDues": "Advance exceeds dues",
+            "duesPending": "Dues pending",
+            "paymentPending": "Payment pending",
+            "settled": "Settled",
+            "partialPayment": "Partial Payment"
+        },
+        "stats": {
+            "totalFarmers": "Total Farmers",
+            "totalPurchaseValue": "Total Purchase Value",
+            "pendingDues": "Pending Dues",
+            "activeFarmers": "Active Farmers"
+        },
+        "filters": {
+            "status": "Status",
+            "city": "City",
+            "state": "State",
+            "cityPlaceholder": "Filter by city",
+            "statePlaceholder": "Filter by state"
+        },
+        "table": {
+            "name": "Name",
+            "contact": "Contact",
+            "location": "Location",
+            "purchaseValue": "Purchase Value",
+            "pendingDues": "Pending Dues",
+            "status": "Status",
+            "joined": "Joined",
+            "actions": "Actions",
+            "date": "Date",
+            "type": "Type",
+            "description": "Description",
+            "debit": "Debit",
+            "credit": "Credit",
+            "balance": "Balance",
+            "dateTime": "Date & Time",
+            "createdBy": "Created By",
+            "purchaseDate": "Purchase Date",
+            "receiptNo": "Receipt No.",
+            "grossTotal": "Gross Total",
+            "finalPayable": "Final Payable",
+            "paidAmount": "Paid Amount",
+            "pendingAmount": "Pending Amount"
+        },
+        "tabs": {
+            "farmerDetails": "Farmer Details",
+            "ledgerStatement": "Ledger Statement"
+        },
+        "ledgerTypes": {
+            "purchase": "Purchase",
+            "payment": "Payment",
+            "advanceGiven": "Advance Given",
+            "advanceAdjusted": "Advance Adjusted"
+        },
+        "buttons": {
+            "addNew": "Add New Farmer",
+            "clearFilters": "Clear filters",
+            "deactivate": "Deactivate"
+        },
+        "actions": {
+            "viewPayments": "View Payments",
+            "viewDues": "View Dues",
+            "deactivate": "Deactivate",
+            "advancePayment": "Advance Payment"
+        },
+        "modals": {
+            "deactivate": {
+                "title": "Deactivate Farmer",
+                "subtitle": "Confirm deactivation",
+                "confirmMessage": "Are you sure you want to deactivate {{name}}?",
+                "warningMessage": "This action will deactivate the farmer account. They will not be able to make purchases or access their account until reactivated."
+            },
+            "advance": {
+                "title": "Advance Payment for {{name}}",
+                "subtitle": "Record advance payment for farmer",
+                "currentDues": "Current Pending Dues"
+            }
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} farmers",
+            "showingFarmers": "Showing {{start}} to {{end}} of {{total}} farmers",
+            "showingOperators": "Showing {{start}} to {{end}} of {{total}} operators"
+        },
+        "messages": {
+            "deactivateSuccess": "{{name}} has been deactivated successfully",
+            "addSuccess": "Farmer added successfully! Redirecting...",
+            "updateSuccess": "Farmer updated successfully! Redirecting..."
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch farmers",
+            "networkError": "Network error. Please check your connection.",
+            "deactivateFailed": "Failed to deactivate farmer",
+            "validAmountRequired": "Please enter a valid amount",
+            "advanceFailed": "Failed to give advance",
+            "notFound": "Farmer not found",
+            "nameRequired": "Farmer name is required",
+            "nameInvalid": "Name should contain only letters, spaces, dots, and hyphens",
+            "mobileRequired": "Mobile number is required",
+            "mobileInvalid": "Enter a valid 10-digit mobile number starting with 6,7,8, or 9",
+            "villageRequired": "Village name is required",
+            "cityRequired": "City is required",
+            "stateRequired": "State is required",
+            "bankNameInvalid": "Bank name should contain only letters, spaces, dots, and hyphens",
+            "accountNumberInvalid": "Account number should be 9-18 digits",
+            "ifscInvalid": "Enter a valid IFSC code (e.g., SBIN0001234)",
+            "gstInvalid": "Enter a valid GST number",
+            "addFailed": "Failed to add farmer. Please try again.",
+            "updateFailed": "Failed to update farmer. Please try again.",
+            "paymentModeRequired": "Please select a payment mode"
+        },
+        "addTitle": "Add New Farmer",
+        "addSubtitle": "Register a new farmer in the system",
+        "editTitle": "Edit Farmer",
+        "editSubtitle": "Update farmer information in the system",
+        "steps": {
+            "personalInfo": "Personal Information",
+            "bankDetails": "Bank Details"
+        },
+        "placeholders": {
+            "name": "Enter farmer name",
+            "mobile": "10-digit mobile number",
+            "address": "Enter full address",
+            "village": "Enter village name",
+            "city": "Enter city",
+            "state": "Enter state",
+            "bankName": "Enter bank name (e.g., State Bank of India)",
+            "accountNumber": "9-18 digit account number",
+            "ifsc": "Enter IFSC code (e.g., SBIN0001234)",
+            "gst": "Enter GST number (optional)"
+        },
+        "mobileHint": "Must be 10 digits starting with 6,7,8, or 9",
+        "accountHint": "Must be 9-18 digits",
+        "ifscHint": "11 characters: 4 letters, then 0, then 6 alphanumeric",
+        "gstHint": "15-character GSTIN format (optional)",
+        "bankOptional": "Optional - These fields can be added later"
+    },
+
+    "purchases": {
+        "title": "Purchases",
+        "subtitle": "Manage and track all purchase transactions",
+        "loading": "Loading purchases...",
+        "searchPlaceholder": "Search purchases...",
+        "noPurchasesFound": "No purchases found",
+        "items": "item(s)",
+        "stats": {
+            "totalPurchases": "Total Purchases",
+            "grossTotal": "Gross Total",
+            "totalDeductions": "Total Deductions",
+            "finalPayable": "Final Payable"
+        },
+        "status": {
+            "draft": "Draft",
+            "saved": "Saved",
+            "partial": "Partial",
+            "paid": "Paid",
+            "completed": "Completed",
+            "cancelled": "Cancelled"
+        },
+        "filters": {
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "status": "Status"
+        },
+        "table": {
+            "receiptNo": "Receipt No",
+            "date": "Date",
+            "farmer": "Farmer",
+            "products": "Products",
+            "grossTotal": "Gross Total",
+            "deductions": "Deductions",
+            "finalPayable": "Final Payable",
+            "status": "Status",
+            "actions": "Actions",
+            "product": "Product",
+            "bagsWeight": "Bags × Weight",
+            "actualQty": "Actual Qty",
+            "qualityDeduction": "Quality Deduction",
+            "billedQty": "Billed Qty",
+            "rate": "Rate",
+            "total": "Total",
+            "quantity": "Quantity"
+        },
+        "buttons": {
+            "newPurchase": "New Purchase",
+            "editFullDetails": "Edit Full Details",
+            "updateStatus": "Update Status",
+            "lockRate": "Lock Rate",
+            "printReceipt": "Print Receipt"
+        },
+        "modals": {
+            "updateStatus": {
+                "title": "Update Purchase Status",
+                "receiptLabel": "Receipt",
+                "statusLabel": "Status",
+                "notesLabel": "Notes",
+                "notesPlaceholder": "Add any notes about this status update..."
+            },
+            "lockRate": {
+                "title": "Lock Rate",
+                "receiptLabel": "Receipt",
+                "selectProduct": "Select Product",
+                "currentRate": "Current Rate",
+                "newRate": "New Rate (per unit)",
+                "ratePlaceholder": "Enter new rate",
+                "reason": "Reason for Rate Lock",
+                "reasonPlaceholder": "e.g., Market price increased, Special agreement with farmer, etc."
+            }
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} purchases"
+        },
+        "messages": {
+            "cannotEdit": "Cannot edit {{status}} purchase. Only draft, saved, or partial purchases can be edited.",
+            "statusUpdated": "Purchase status updated successfully!",
+            "validRateRequired": "Please enter a valid rate",
+            "reasonRequired": "Please provide a reason for locking the rate",
+            "rateLocked": "Rate locked successfully!",
+            "createSuccess": "Purchase created successfully! Redirecting...",
+            "statusUpdatedMessage": "Purchase status updated successfully! Redirecting...",
+            "updateSuccess": "Purchase updated successfully! Redirecting..."
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch purchases",
+            "statusUpdateFailed": "Failed to update purchase status",
+            "rateLockFailed": "Failed to lock rate",
+            "notFound": "Purchase not found",
+            "farmerRequired": "Please select a farmer",
+            "dateRequired": "Purchase date is required",
+            "productRequired": "Product name required",
+            "rateRequired": "Valid rate required",
+            "qtyRequired": "Valid quantity required",
+            "completeLines": "Please complete all product lines",
+            "createFailed": "Failed to create purchase",
+            "statusRequired": "Please select a status",
+            "editNotAllowed": "This purchase cannot be edited via full update as it is in \"{{status}}\" status. Only \"draft\" purchases can be fully edited. For \"{{status}}\" status, you can only update status/notes using the Update Status option.",
+            "updateFailed": "Failed to update purchase"
+        },
+        "tooltips": {
+            "editFull": "Edit for full update",
+            "updateStatusOnly": "Update status & notes only",
+            "cannotEdit": "Cannot edit this purchase"
+        },
+        "detailsTitle": "Purchase Details",
+        "receipt": "Receipt",
+        "createdBy": "Created by",
+        "on": "on",
+        "amountDue": "Amount Due",
+        "farmerInformation": "Farmer Information",
+        "purchaseInformation": "Purchase Information",
+        "createdOn": "Created On",
+        "productsPurchased": "Products Purchased",
+        "bags": "bags",
+        "deductionsCharges": "Deductions & Charges",
+        "commission": "Commission",
+        "return": "Return",
+        "advanceAdjusted": "Advance Adjusted",
+        "other": "Other",
+        "totalDeductions": "Total Deductions",
+        "paymentSummary": "Payment Summary",
+        "amountPaid": "Amount Paid",
+        "finalPayable": "Final Payable",
+        "grossTotal": "Gross Total",
+        "addTitle": "New Purchase",
+        "addSubtitle": "Record a new purchase transaction",
+        "editTitle": "Edit Purchase",
+        "updateStatusTitle": "Update Purchase Status",
+        "currentPurchaseDetails": "Current Purchase Details",
+        "newStatus": "New Status",
+        "basicInformation": "Basic Information",
+        "selectFarmer": "SELECT FARMER",
+        "purchaseDate": "PURCHASE DATE",
+        "pricingType": "PRICING TYPE",
+        "rate": "RATE",
+        "quantity": "QUANTITY",
+        "qualityDeduction": "QUALITY DEDUCTION",
+        "lineNotes": "LINE NOTES",
+        "lineTotal": "Line Total",
+        "numberOfBags": "NUMBER OF BAGS",
+        "weightPerBag": "WEIGHT PER BAG (KG)",
+        "productName": "PRODUCT NAME",
+        "productLine": "Product Line",
+        "transportCharges": "TRANSPORT CHARGES",
+        "labourCharges": "LABOUR CHARGES",
+        "storageCharges": "STORAGE CHARGES",
+        "returnDeduction": "RETURN DEDUCTION",
+        "otherDeductions": "OTHER DEDUCTIONS",
+        "purchaseSummary": "Purchase Summary",
+        "finalPayableAmount": "Final Payable Amount",
+        "productsSummary": "Products Summary",
+        "selectedFarmer": "Selected Farmer",
+        "autoCalculated": "Auto-calculated",
+        "addAnotherProduct": "Add Another Product",
+        "amountAlreadyPaid": "AMOUNT ALREADY PAID",
+        "amountPaidNote": "This will be added to the payment record",
+        "farmerInfoReadOnly": "Farmer Information (Read-only)",
+        "amountDueAfterUpdate": "Amount Due After Update",
+        "usingBagsCalculation": "Using bags calculation",
+        "pricingTypes": {
+            "kg": "KG (Kilogram)",
+            "quintal": "Quintal (100 KG)",
+            "piece": "Piece",
+            "bunch": "Bunch",
+            "crate": "Crate",
+            "dozen": "Dozen",
+            "flat": "Flat"
+        },
+        "commissionTypes": {
+            "fixed": "Fixed (₹)",
+            "percent": "Percent (%)"
+        },
+        "steps": {
+            "basicInfo": "Basic Information",
+            "productLines": "Product Lines",
+            "deductions": "Deductions & Summary"
+        },
+        "statusDescriptions": {
+            "partial": "Mark purchase as partially paid",
+            "completed": "Mark purchase as fully paid and completed",
+            "cancelled": "Cancel this purchase (cannot be undone)"
+        },
+        "warnings": {
+            "cancelPurchase": "Cancelling this purchase will revert all ledger entries and may affect farmer pending dues.",
+            "amountDueNote": "This purchase has an amount due of {{amount}}. Marking as completed will consider it fully paid."
+        },
+        "info": {
+            "editNote": "Full update mode - You can edit all fields including products, deductions, and amount paid. This will recalculate all totals. Only available for DRAFT status purchases."
+        },
+        "placeholders": {
+            "selectFarmer": "Search and select a farmer",
+            "notes": "Enter any additional notes about this purchase...",
+            "productName": "e.g., Wheat, Rice, Corn",
+            "selectPricingType": "Select pricing type",
+            "rate": "₹/KG or ₹/Quintal",
+            "quantity": "Enter quantity",
+            "qualityDeduction": "Quality deduction (KG/Units)",
+            "lineNotes": "Any notes for this product line",
+            "numberOfBags": "Number of bags",
+            "weightPerBag": "Weight per bag",
+            "transportCharges": "Enter transport charges",
+            "labourCharges": "Enter labour charges",
+            "commissionAmount": "Enter commission amount",
+            "commissionPercent": "Enter commission in %",
+            "commissionType": "Type",
+            "storageCharges": "Enter storage charges",
+            "storageNote": "Storage note",
+            "returnDeduction": "Enter return deduction",
+            "returnNote": "Return reason",
+            "advanceAdjusted": "Advance payment already given",
+            "otherDeductions": "Other charges",
+            "otherNote": "Description",
+            "amountAlreadyPaid": "Amount already paid",
+            "statusNotes": "Add any notes about this status change..."
+        }
+    },
+
+    "inventory": {
+        "title": "Inventory",
+        "subtitle": "Manage and track all stock levels",
+        "loading": "Loading inventory...",
+        "loadingStockDetails": "Loading stock details...",
+        "stockDetailsSubtitle": "Stock details across all warehouses",
+        "totalStockAllWarehouses": "Total Stock Across All Warehouses",
+        "units": "units",
+        "stockByWarehouse": "Stock by Warehouse",
+        "searchPlaceholder": "Search products...",
+        "noItemsFound": "No inventory items found",
+        "stats": {
+            "totalProducts": "Total Products",
+            "totalStock": "Total Stock (Units)",
+            "lowStockItems": "Low Stock Items",
+            "warehouses": "Warehouses"
+        },
+        "status": {
+            "outOfStock": "Out of Stock",
+            "lowStock": "Low Stock",
+            "inStock": "In Stock"
+        },
+        "table": {
+            "product": "Product",
+            "warehouse": "Warehouse",
+            "currentStock": "Current Stock",
+            "unit": "Unit",
+            "status": "Status",
+            "lastUpdated": "Last Updated",
+            "actions": "Actions"
+        },
+        "filters": {
+            "warehouse": "Warehouse",
+            "allWarehouses": "All Warehouses",
+            "lowStockOnly": "Low Stock Only",
+            "lowStockLabel": "Show only products with stock ≤ 10 units"
+        },
+        "buttons": {
+            "adjustStock": "Adjust Stock",
+            "transferStock": "Transfer Stock"
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} items"
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch inventory",
+            "fetchStockFailed": "Failed to fetch stock details",
+            "warehouseRequired": "Please select a warehouse",
+            "productRequired": "Please select a product",
+            "validQuantityRequired": "Please enter a valid adjustment quantity",
+            "reasonRequired": "Please provide a reason for adjustment",
+            "adjustFailed": "Failed to adjust stock",
+            "sourceWarehouseRequired": "Please select source warehouse",
+            "destWarehouseRequired": "Please select destination warehouse",
+            "sameWarehouse": "Source and destination warehouses cannot be the same",
+            "insufficientStock": "Insufficient stock. Only {{stock}} {{unit}} available",
+            "transferFailed": "Failed to transfer stock",
+            "productNotFound": "Product not found in source warehouse"
+        },
+        "adjustTitle": "Adjust Stock",
+        "adjustSubtitle": "Increase or decrease inventory stock",
+        "stockAdjustmentDetails": "Stock Adjustment Details",
+        "warehouse": "WAREHOUSE",
+        "productName": "PRODUCT NAME",
+        "adjustmentType": "ADJUSTMENT TYPE",
+        "addStock": "Add Stock",
+        "removeStock": "Remove Stock",
+        "quantity": "QUANTITY",
+        "reasonForAdjustment": "REASON FOR ADJUSTMENT",
+        "current": "Current",
+        "currentStock": "Current Stock",
+        "unit": "Unit",
+        "adjustmentNote": "Adding stock will increase inventory. Removing stock will decrease inventory. All adjustments are logged for audit purposes.",
+        "noWarehousesFound": "No warehouses found. Please add a warehouse first.",
+        "noProductsInWarehouse": "No products found in this warehouse.",
+        "placeholders": {
+            "selectWarehouse": "Select a warehouse",
+            "selectProduct": "Search and select a product",
+            "selectWarehouseFirst": "Please select a warehouse first",
+            "quantity": "Enter quantity",
+            "reason": "e.g., New harvest received, Damaged goods, Expired products, etc."
+        },
+        "messages": {
+            "adjustSuccess": "Stock adjusted successfully! Redirecting..."
+        },
+        "transferTitle": "Transfer Stock",
+        "transferSubtitle": "Move stock between warehouses",
+        "transferDetails": "Transfer Details",
+        "fromWarehouse": "FROM WAREHOUSE (Source)",
+        "toWarehouse": "TO WAREHOUSE (Destination)",
+        "quantityToTransfer": "QUANTITY TO TRANSFER",
+        "availableStock": "Available Stock",
+        "stock": "Stock",
+        "in": "in",
+        "totalStock": "Total Stock",
+        "transferNote": "Transferring stock will decrease quantity from source warehouse and increase quantity in destination warehouse."
+    },
+
+    "products": {
+        "title": "Products",
+        "subtitle": "Manage and track all your products",
+        "loading": "Loading products...",
+        "searchPlaceholder": "Search products by name...",
+        "noProductsFound": "No products found",
+        "addTitle": "Add New Product",
+        "addSubtitle": "Register a new product in the system",
+        "saveProduct": "Save Product",
+        "productInformation": "Product Information",
+        "productName": "Product Name",
+        "description": "Description",
+        "productNameHint": "Enter a unique name for the product (e.g., Wheat, Rice, Onion, etc.)",
+        "descriptionHint": "Add any additional details about the product",
+        "stats": {
+            "totalProducts": "Total Products",
+            "activeProducts": "Active Products",
+            "inactiveProducts": "Inactive Products"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "filters": {
+            "status": "Status"
+        },
+        "table": {
+            "productInfo": "Product Info",
+            "description": "Description",
+            "createdBy": "Created By",
+            "createdDate": "Created Date",
+            "status": "Status"
+        },
+        "buttons": {
+            "addNew": "Add New Product"
+        },
+        "actions": {
+            "activate": "Activate"
+        },
+        "modals": {
+            "deactivate": {
+                "title": "Deactivate Product",
+                "subtitle": "Confirm deactivation",
+                "confirmMessage": "Are you sure you want to deactivate {{name}}?",
+                "warningMessage": "This product will no longer be available for selection in new purchases/sales."
+            },
+            "activate": {
+                "title": "Activate Product",
+                "subtitle": "Confirm activation",
+                "confirmMessage": "Are you sure you want to activate {{name}}?",
+                "warningMessage": "This product will become available for selection in new purchases/sales."
+            }
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} products"
+        },
+        "messages": {
+            "deactivateSuccess": "{{name}} has been deactivated successfully",
+            "activateSuccess": "{{name}} has been activated successfully",
+            "addSuccess": "Product added successfully! Redirecting..."
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch products",
+            "deactivateFailed": "Failed to deactivate product",
+            "activateFailed": "Failed to activate product",
+            "nameRequired": "Product name is required",
+            "nameInvalid": "Product name should only contain letters, numbers, spaces, dots, and hyphens",
+            "addFailed": "Failed to add product. Please try again."
+        },
+        "placeholders": {
+            "productName": "Enter product name",
+            "description": "Enter product description (optional)"
+        }
+    },
+
+    "warehouses": {
+        "title": "Warehouses",
+        "subtitle": "Manage all storage facilities",
+        "loading": "Loading warehouses...",
+        "searchPlaceholder": "Search by name, code, or city...",
+        "noWarehousesFound": "No warehouses found",
+        "units": "units",
+        "unitLabel": "units",
+        "used": "Used",
+        "productsCount": "products",
+        "code": "Code",
+        "warehouseInformation": "Warehouse Information",
+        "location": "Location",
+        "managerDetails": "Manager Details",
+        "managerName": "Manager Name",
+        "capacityUsage": "Capacity Usage",
+        "total": "Total",
+        "capacityUtilized": "capacity utilized",
+        "inventorySummary": "Inventory Summary",
+        "productsStored": "Products Stored",
+        "totalStockUnits": "Total Stock Units",
+        "stockDetails": "Stock Details",
+        "createdBy": "Created By",
+        "stats": {
+            "totalWarehouses": "Total Warehouses",
+            "activeWarehouses": "Active Warehouses",
+            "totalCapacity": "Total Capacity",
+            "totalStock": "Total Stock"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "label": "Status"
+        },
+        "table": {
+            "code": "Code",
+            "name": "Name",
+            "location": "Location",
+            "manager": "Manager",
+            "capacity": "Capacity",
+            "stock": "Stock",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "filters": {
+            "status": "Status"
+        },
+        "buttons": {
+            "addWarehouse": "Add Warehouse",
+            "deactivate": "Deactivate",
+            "deletePermanently": "Delete Permanently"
+        },
+        "modals": {
+            "deactivate": {
+                "title": "Deactivate Warehouse",
+                "subtitle": "Confirm deactivation",
+                "confirmMessage": "Are you sure you want to deactivate {{name}}?",
+                "warningMessage": "This warehouse will become inactive and cannot be used for future transactions."
+            },
+            "delete": {
+                "title": "Delete Warehouse",
+                "subtitle": "Permanently delete warehouse",
+                "confirmMessage": "Are you sure you want to permanently delete {{name}}?",
+                "warningMessage": "This action cannot be undone. All data related to this warehouse will be permanently removed."
+            }
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} warehouses"
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch warehouses",
+            "deactivateFailed": "Failed to deactivate warehouse",
+            "deleteFailed": "Failed to delete warehouse",
+            "nameRequired": "Warehouse name is required",
+            "codeRequired": "Warehouse code is required",
+            "cityRequired": "City is required",
+            "stateRequired": "State is required",
+            "managerNameRequired": "Manager name is required",
+            "managerPhoneRequired": "Manager phone number is required",
+            "invalidPhone": "Enter a valid 10-digit mobile number",
+            "capacityRequired": "Total capacity is required",
+            "addFailed": "Failed to create warehouse"
+        },
+        "messages": {
+            "addSuccess": "Warehouse created successfully! Redirecting..."
+        },
+        "addTitle": "Add New Warehouse",
+        "addSubtitle": "Register a new storage facility",
+        "createWarehouse": "Create Warehouse",
+        "basicInformation": "Basic Information",
+        "locationDetails": "Location Details",
+        "capacityDetails": "Capacity Details",
+        "additionalNotes": "Additional Notes",
+        "warehouseName": "WAREHOUSE NAME",
+        "warehouseCode": "WAREHOUSE CODE",
+        "address": "ADDRESS",
+        "city": "CITY",
+        "state": "STATE",
+        "pincode": "PINCODE",
+        "phoneNumber": "PHONE NUMBER",
+        "totalCapacity": "TOTAL CAPACITY",
+        "usedCapacity": "USED CAPACITY (Optional)",
+        "unit": "UNIT",
+        "usedCapacityHint": "Leave 0 if not known",
+        "steps": {
+            "basicInfo": "Basic Information",
+            "locationManager": "Location & Manager",
+            "capacityNotes": "Capacity & Notes"
+        },
+        "units": {
+            "kg": "KG (Kilograms)",
+            "ton": "TON (Tons)",
+            "quintal": "QUINTAL (100 KG)"
+        },
+        "placeholders": {
+            "warehouseName": "Enter warehouse name",
+            "warehouseCode": "e.g., WH001, CS001",
+            "address": "Enter full address",
+            "city": "Enter city",
+            "state": "Enter state",
+            "pincode": "Enter pincode",
+            "managerName": "Enter manager name",
+            "phoneNumber": "10-digit mobile number",
+            "email": "Enter email address",
+            "totalCapacity": "Enter total capacity",
+            "usedCapacity": "Currently used capacity",
+            "selectUnit": "Select unit",
+            "notes": "Enter any additional notes about this warehouse..."
+        }
+    },
+
+    "expenses": {
+        "title": "Expenses",
+        "subtitle": "Track and manage all business expenses",
+        "loading": "Loading expenses...",
+        "searchPlaceholder": "Search by description, paid to, or reference...",
+        "noExpensesFound": "No expenses found",
+        "to": "To",
+        "ref": "Ref",
+        "addTitle": "Add Expense",
+        "addSubtitle": "Record a new business expense",
+        "expenseDetails": "Expense Details",
+        "paymentInformation": "Payment Information",
+        "category": "CATEGORY",
+        "description": "DESCRIPTION",
+        "expenseDate": "EXPENSE DATE",
+        "paidBy": "PAID BY",
+        "paidTo": "PAID TO (Vendor/Person)",
+        "referenceNumber": "REFERENCE NUMBER",
+        "step1": "Expense Details",
+        "step2": "Payment Information",
+        "autoApprovalNote": "Expenses under ₹1,000 will be auto-approved. Higher amounts require manager approval.",
+        "stats": {
+            "totalExpenses": "Total Expenses",
+            "totalAmount": "Total Amount",
+            "created": "Created",
+            "cancelled": "Cancelled"
+        },
+        "status": {
+            "created": "Created",
+            "cancelled": "Cancelled",
+            "unknown": "Unknown",
+            "approved": "Approved",
+            "autoApproved": "Auto Approved",
+            "pending": "Pending",
+            "rejected": "Rejected"
+        },
+        "categories": {
+            "transport": "Transport & Logistics",
+            "labour": "Labour & Wages",
+            "marketFees": "Market Fees",
+            "storage": "Storage & Cold Chain",
+            "shopOffice": "Shop & Office",
+            "repairs": "Repairs & Maintenance",
+            "banking": "Banking & Finance",
+            "marketing": "Marketing & Miscellaneous"
+        },
+        "filters": {
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "category": "Category",
+            "status": "Status"
+        },
+        "table": {
+            "date": "Date",
+            "category": "Category",
+            "description": "Description",
+            "amount": "Amount",
+            "paidBy": "Paid By",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "buttons": {
+            "addExpense": "Add Expense",
+            "cancelExpense": "Cancel Expense",
+            "confirmCancellation": "Confirm Cancellation"
+        },
+        "modals": {
+            "cancel": {
+                "title": "Cancel Expense",
+                "subtitle": "Confirm cancellation",
+                "confirmMessage": "Are you sure you want to cancel expense of {{amount}} for '{{description}}'?",
+                "reasonLabel": "Reason for cancellation",
+                "reasonPlaceholder": "Enter reason for cancelling this expense..."
+            }
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} expenses"
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch expenses",
+            "reasonRequired": "Please provide a reason for cancellation",
+            "cancelFailed": "Failed to cancel expense",
+            "approveFailed": "Failed to approve expense",
+            "rejectFailed": "Failed to reject expense",
+            "notFound": "Expense not found",
+            "categoryRequired": "Please select a category",
+            "validAmountRequired": "Please enter a valid amount",
+            "descriptionRequired": "Description is required",
+            "dateRequired": "Expense date is required",
+            "paymentMethodRequired": "Payment method is required",
+            "createFailed": "Failed to create expense"
+        },
+        "messages": {
+            "createSuccess": "Expense created successfully! Redirecting..."
+        },
+        "detailsTitle": "Expense Details",
+        "id": "ID",
+        "approvedBy": "Approved by",
+        "amount": "Amount",
+        "approve": "Approve",
+        "reject": "Reject",
+        "expenseInformation": "Expense Information",
+        "category": "Category",
+        "description": "Description",
+        "expenseDate": "Expense Date",
+        "paidTo": "Paid To",
+        "paymentDetails": "Payment Details",
+        "paymentMethod": "Payment Method",
+        "referenceNumber": "Reference Number",
+        "createdBy": "Created By",
+        "createdAt": "Created At",
+        "approvedAt": "Approved At",
+        "remarks": "Remarks",
+        "rejectExpense": "Reject Expense",
+        "cancelExpense": "Cancel Expense",
+        "rejectionReasonPlaceholder": "Reason for rejection...",
+        "cancellationReasonPlaceholder": "Reason for cancellation...",
+        "confirmReject": "Confirm Reject",
+        "confirmCancel": "Confirm Cancel",
+        "placeholders": {
+            "selectCategory": "Select expense category",
+            "description": "Describe the expense",
+            "paidTo": "Vendor or person name",
+            "referenceNumber": "Bill/Invoice/Transaction No.",
+            "notes": "Additional notes..."
+        }
+    },
+
+
+
+    "budgetAlerts": {
+        "title": "Budget Alerts",
+        "subtitle": "Set monthly budget limits and track expenses",
+        "loading": "Loading budget alerts...",
+        "searchPlaceholder": "Search category...",
+        "noBudgetsFound": "No budget set for this month. Click \"Set Budget\" to create one.",
+        "setBudget": "Set Budget",
+        "setBudgetSubtitle": "Set monthly budget limit for a category",
+        "budgetInformation": "Budget Information",
+        "category": "CATEGORY",
+        "monthlyLimit": "MONTHLY LIMIT",
+        "month": "MONTH",
+        "year": "YEAR",
+        "alertThreshold": "ALERT THRESHOLD (%)",
+        "thresholdHint": "You will be alerted when expenses reach this percentage of your budget",
+        "infoNote": "Budget alerts help you track your expenses. When you reach your alert threshold, you will receive a warning. Exceeding 90% will trigger a critical alert.",
+        "stats": {
+            "totalBudget": "Total Budget",
+            "totalSpend": "Total Spend",
+            "remainingBudget": "Remaining Budget",
+            "utilization": "Utilization"
+        },
+        "alertLevels": {
+            "critical": "Critical",
+            "warning": "Warning",
+            "normal": "Normal"
+        },
+        "table": {
+            "category": "Category",
+            "monthlyLimit": "Monthly Limit",
+            "currentSpend": "Current Spend",
+            "remaining": "Remaining",
+            "usage": "Usage",
+            "status": "Status",
+            "alertThreshold": "Alert Threshold",
+            "actions": "Actions"
+        },
+        "buttons": {
+            "setBudget": "Set Budget",
+            "editBudget": "Edit Budget"
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} budgets"
+        },
+        "errors": {
+            "statusLoadFailed": "Failed to load budget status",
+            "categoryRequired": "Category is required",
+            "validAmountRequired": "Please enter a valid budget amount",
+            "monthRequired": "Month is required",
+            "yearRequired": "Year is required",
+            "thresholdInvalid": "Alert threshold must be between 0 and 100",
+            "createFailed": "Failed to set budget"
+        },
+        "messages": {
+            "createSuccess": "Budget set successfully! Redirecting..."
+        },
+        "detailsTitle": "Budget Details",
+        "detailsSubtitle": "View complete budget information",
+        "currentSpend": "Current Spend",
+        "remainingBudget": "Remaining Budget",
+        "utilization": "Utilization",
+        "budgetUsage": "Budget Usage",
+        "used": "used",
+        "createdOn": "Created On",
+        "lastUpdated": "Last Updated",
+        "createdBy": "Created By",
+        "tipMessage": "Budget alerts are triggered when expenses reach your alert threshold ({{threshold}}%). You'll receive notifications when approaching or exceeding your budget limits.",
+        "messages": {
+            "limitExceeded": "Budget limit exceeded!",
+            "approachingLimit": "Approaching budget limit!",
+            "withinLimits": "Within budget limits"
+        },
+        "placeholders": {
+            "selectCategory": "Select expense category",
+            "monthlyLimit": "Enter budget amount",
+            "selectMonth": "Select month",
+            "selectYear": "Select year",
+            "notes": "Additional notes about this budget..."
+        }
+    },
+    "ledger": {
+        "title": "Ledger",
+        "subtitle": "Track all financial transactions",
+        "loading": "Loading ledger...",
+        "tabs": {
+            "farmersLedger": "Farmers Ledger",
+            "operatorsLedger": "Operators Ledger"
+        },
+        "stats": {
+            "totalFarmers": "Total Farmers",
+            "totalTransactions": "Total Transactions",
+            "totalPayments": "Total Payments",
+            "totalPurchases": "Total Purchases",
+            "totalOperators": "Total Operators",
+            "totalSales": "Total Sales",
+            "totalPurchasesOperator": "Total Purchases",
+            "netProfit": "Net Profit"
+        },
+        "search": {
+            "farmersPlaceholder": "Search by farmer name or mobile...",
+            "operatorsPlaceholder": "Search by operator name, email or phone..."
+        },
+        "filters": {
+            "startDate": "Start Date",
+            "endDate": "End Date"
+        },
+        "table": {
+            "farmer": "Farmer",
+            "operator": "Operator",
+            "contact": "Contact",
+            "totalPaid": "Total Paid",
+            "totalPurchased": "Total Purchased",
+            "totalPurchasedOperator": "Total Purchases",
+            "balance": "Balance",
+            "totalSales": "Total Sales",
+            "netProfit": "Net Profit",
+            "actions": "Actions"
+        },
+        "buttons": {
+            "printSummary": "Print Summary"
+        },
+        "pagination": {
+            "showingFarmers": "Showing {{start}} to {{end}} of {{total}} farmers",
+            "showingOperators": "Showing {{start}} to {{end}} of {{total}} operators"
+        },
+        "noFarmersFound": "No farmers found",
+        "noOperatorsFound": "No operators found",
+        "print": {
+            "farmerTitle": "Farmer Ledger",
+            "farmerStatement": "Farmer Ledger Statement",
+            "operatorTitle": "Operator Ledger",
+            "operatorStatement": "Operator Ledger Statement",
+            "farmerDetails": "Farmer Details",
+            "operatorDetails": "Operator Details",
+            "name": "Name",
+            "mobile": "Mobile",
+            "email": "Email",
+            "phone": "Phone",
+            "role": "Role",
+            "totalReceived": "Total Received",
+            "totalPurchased": "Total Purchased",
+            "currentBalance": "Current Balance",
+            "totalSales": "Total Sales",
+            "totalExpenses": "Total Expenses",
+            "netProfit": "Net Profit",
+            "recentTransactions": "Recent Transactions",
+            "date": "Date",
+            "description": "Description",
+            "debit": "Debit",
+            "credit": "Credit",
+            "balance": "Balance",
+            "farmer": "Farmer"
+        },
+        "errors": {
+            "fetchFarmersFailed": "Failed to fetch farmers ledger",
+            "fetchOperatorsFailed": "Failed to fetch operators ledger"
+        }
+    },
+
+    "payments": {
+        "title": "Payments",
+        "subtitle": "Track and manage all farmer payments",
+        "loading": "Loading payments...",
+        "searchPlaceholder": "Search by receipt number, farmer name...",
+        "noPaymentsFound": "No payments found",
+        "paymentMode": "Payment Mode",
+        "paymentStatus": "Payment Status",
+        "paymentAmount": "Payment Amount",
+        "paymentDate": "Payment Date",
+        "paymentInformation": "Payment Information",
+        "farmerInformation": "Farmer Information",
+        "transactionDetails": "Transaction Details",
+        "chequeDetails": "Cheque Details",
+        "chequeNumber": "Cheque Number",
+        "chequeDate": "Cheque Date",
+        "chequeStatusLabel": "Cheque Status",
+        "purchaseReference": "Purchase Reference",
+        "receiptNumber": "Receipt Number",
+        "purchaseDate": "Purchase Date",
+        "finalPayable": "Final Payable",
+        "purchaseStatus": "Purchase Status",
+        "amountPaid": "Amount Paid",
+        "amountDue": "Amount Due",
+        "lastUpdated": "Last updated",
+        "createdBy": "Created By",
+        "referenceNumber": "Reference Number",
+        "referencePlaceholder": "Transaction ID / Cheque No",
+        "detailsTitle": "Payment Details",
+        "id": "ID",
+        "stats": {
+            "totalAmount": "Total Amount",
+            "cash": "Cash",
+            "upiBank": "UPI / Bank",
+            "cheque": "Cheque"
+        },
+        "modes": {
+            "cash": "Cash",
+            "upi": "UPI",
+            "bank": "Bank Transfer",
+            "cheque": "Cheque",
+            "other": "Other",
+            "paymentMode": "Payment Mode",
+            "creditCard": "Credit Card",
+            "debitCard": "Debit Card"
+        },
+        "chequeStatus": {
+            "cleared": "Cleared",
+            "pending": "Pending Clearance",
+            "bounced": "Bounced",
+            "notUpdated": "Not Updated"
+        },
+        "filters": {
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "paymentMode": "Payment Mode"
+        },
+        "table": {
+            "receiptNo": "Receipt No",
+            "paymentDate": "Payment Date",
+            "farmer": "Farmer",
+            "purchase": "Purchase",
+            "amount": "Amount",
+            "mode": "Mode",
+            "actions": "Actions",
+            "farmerName": "Farmer Name",
+            "purchaseDate": "Purchase Date",
+            "finalPayable": "Final Payable",
+            "amountDue": "Amount Due",
+            "status": "Status",
+            "overdue": "Overdue"
+        },
+        "buttons": {
+            "newPayment": "New Payment",
+            "dueSummary": "Due Summary",
+            "updateChequeStatus": "Update Cheque Status",
+            "updateStatus": "Update Status",
+            "recordPayment": "Record Payment"
+        },
+        "modals": {
+            "cheque": {
+                "title": "Update Cheque Status",
+                "subtitle": "Change the cheque clearance status",
+                "receiptLabel": "Receipt Number",
+                "amountLabel": "Amount",
+                "farmerLabel": "Farmer",
+                "statusLabel": "Cheque Status"
+            }
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} payments"
+        },
+        "messages": {
+            "chequeStatusUpdated": "Cheque status updated successfully!",
+            "createSuccess": "Payment recorded successfully! Redirecting..."
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch payments",
+            "userInfoFailed": "Unable to fetch user information. Please try again.",
+            "statusUpdateFailed": "Failed to update cheque status",
+            "notFound": "Payment not found",
+            "operatorNotFound": "Operator ID not found",
+            "purchaseRequired": "Please select a purchase",
+            "validAmountRequired": "Please enter a valid amount",
+            "dateRequired": "Payment date is required",
+            "referenceRequired": "Reference number is required",
+            "bankNameRequired": "Bank name is required",
+            "chequeNumberRequired": "Cheque number is required",
+            "chequeDateRequired": "Cheque date is required",
+            "amountExceedsPending": "Amount cannot exceed pending amount of {{amount}}",
+            "createFailed": "Failed to record payment"
+        },
+        "status": {
+            "completed": "Completed",
+            "fullyPaid": "Fully Paid",
+            "partialPayment": "Partial Payment",
+            "pending": "Pending"
+        },
+        "loadingDueSummary": "Loading due summary...",
+        "dueSummaryTitle": "Due Summary Report",
+        "dueSummarySubtitle": "Outstanding payments and overdue status",
+        "totalDueAmount": "Total Due Amount",
+        "totalOverdueAmount": "Total Overdue Amount",
+        "overdueAmount": "Overdue Amount",
+        "totalPurchases": "Total Purchases",
+        "duePurchases": "Due Purchases",
+        "summaryOverview": "Summary Overview",
+        "farmerWise": "Farmer Wise",
+        "allPurchases": "All Purchases",
+        "statusBreakdown": "Status Breakdown",
+        "farmersWithDues": "Farmers with Dues",
+        "overdueSummary": "Overdue Summary",
+        "overduePeriod": "Overdue Period (days)",
+        "overduePurchases": "Overdue Purchases",
+        "noFarmersWithDues": "No farmers with dues",
+        "noFarmersFound": "No farmers found",
+        "noPurchasesFound": "No purchases found",
+        "searchFarmerPlaceholder": "Search by farmer name or mobile...",
+        "searchPurchasePlaceholder": "Search by farmer name or receipt number...",
+        "showOnlyOverdue": "Show only overdue purchases",
+        "totalDue": "Total Due",
+        "purchases": "purchases",
+        "overdue": "Overdue",
+        "days": "days",
+        "yes": "Yes",
+        "no": "No",
+        "addTitle": "Record Payment",
+        "addSubtitle": "Record a new payment from farmer",
+        "selectFarmer": "SELECT FARMER",
+        "selectPurchase": "SELECT PURCHASE",
+        "selectedFarmer": "Selected Farmer",
+        "purchaseDetails": "Purchase Details",
+        "dueAmount": "Due Amount",
+        "pendingAmount": "Pending Amount",
+        "due": "Due",
+        "date": "Date",
+        "placeholders": {
+            "selectFarmer": "Search and select a farmer",
+            "selectFarmerFirst": "Select a farmer first",
+            "selectPurchase": "Select a purchase",
+            "upiReference": "UPI Transaction ID",
+            "bankReference": "Transaction Reference Number",
+            "bankName": "Enter bank name",
+            "chequeNumber": "Cheque number"
+        }
+    },
+
+    "sales": {
+        "title": "Sales",
+        "subtitle": "Manage all sales invoices",
+        "loading": "Loading sales...",
+        "searchPlaceholder": "Search by invoice number, buyer name, or mobile...",
+        "noSalesFound": "No sales found",
+        "items": "items",
+        "stats": {
+            "totalSales": "Total Sales",
+            "totalRevenue": "Total Revenue",
+            "itemsSold": "Items Sold"
+        },
+        "filters": {
+            "startDate": "Start Date",
+            "endDate": "End Date"
+        },
+        "table": {
+            "invoiceNo": "Invoice No",
+            "date": "Date",
+            "buyer": "Buyer",
+            "items": "Items",
+            "subtotal": "Subtotal",
+            "gst": "GST",
+            "grandTotal": "Grand Total",
+            "actions": "Actions"
+        },
+        "buttons": {
+            "newSale": "New Sale",
+            "printInvoice": "Print Invoice"
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} sales"
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch sales"
+        }
+    },
+
+    "users": {
+        "title": "Users",
+        "subtitle": "Manage system users and their roles",
+        "loading": "Loading users...",
+        "searchPlaceholder": "Search by name, email, or phone...",
+        "noUsersFound": "No users found",
+        "noPhone": "No phone",
+        "neverLogged": "Never",
+        "addTitle": "Add New User",
+        "addSubtitle": "Create a new system user account",
+        "createUser": "Create User",
+        "userInformation": "User Information",
+        "businessDetails": "Business Details",
+        "bankDetails": "Bank Details",
+        "fullName": "FULL NAME",
+        "email": "EMAIL ADDRESS",
+        "password": "PASSWORD",
+        "confirmPassword": "CONFIRM PASSWORD",
+        "phone": "PHONE NUMBER",
+        "role": "USER ROLE",
+        "businessName": "BUSINESS NAME",
+        "address": "ADDRESS",
+        "city": "CITY",
+        "state": "STATE",
+        "gstNumber": "GST NUMBER",
+        "panNumber": "PAN NUMBER",
+        "bankName": "BANK NAME",
+        "ifscCode": "IFSC CODE",
+        "bankAccountNumber": "BANK ACCOUNT NUMBER",
+        "businessOptional": "Optional for all users",
+        "welcomeNote": "The user will receive a welcome email with login credentials. They can change their password after first login.",
+        "stats": {
+            "totalUsers": "Total Users",
+            "superadmins": "Super Admins",
+            "operators": "Operators",
+            "activeUsers": "Active Users"
+        },
+        "roles": {
+            "superadmin": "Super Admin",
+            "operator": "Operator",
+            "vendor": "Vendor",
+            "superadminDesc": "Full system access with all permissions",
+            "operatorDesc": "Manage day-to-day operations"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "filters": {
+            "role": "Role",
+            "status": "Status"
+        },
+        "table": {
+            "user": "User",
+            "contact": "Contact",
+            "role": "Role",
+            "business": "Business",
+            "status": "Status",
+            "lastLogin": "Last Login",
+            "actions": "Actions"
+        },
+        "buttons": {
+            "addNewUser": "Add New User",
+            "deactivateUser": "Deactivate User",
+            "activateUser": "Activate User",
+            "deactivate": "Deactivate",
+            "activate": "Activate"
+        },
+        "modals": {
+            "deactivate": {
+                "title": "Deactivate User",
+                "subtitle": "Confirm deactivation",
+                "confirmMessage": "Are you sure you want to deactivate {{name}}?",
+                "warningMessage": "This user will not be able to login to the system after deactivation."
+            },
+            "activate": {
+                "title": "Activate User",
+                "subtitle": "Confirm activation",
+                "confirmMessage": "Are you sure you want to activate {{name}}?",
+                "warningMessage": "This user will be able to login to the system after activation."
+            }
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} users"
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch users",
+            "statusToggleFailed": "Failed to change user status",
+            "loadError": "Error loading user",
+            "deleteFailed": "Failed to delete user",
+            "notFound": "User not found",
+            "nameRequired": "Name is required",
+            "emailRequired": "Email is required",
+            "emailInvalid": "Invalid email format",
+            "passwordRequired": "Password is required",
+            "passwordMinLength": "Password must be at least 6 characters",
+            "passwordMismatch": "Passwords do not match",
+            "roleRequired": "Role is required",
+            "createFailed": "Failed to create user"
+        },
+        "messages": {
+            "createSuccess": "User created successfully! Redirecting..."
+        },
+        "detailsTitle": "User Details",
+        "detailsSubtitle": "View complete user information",
+        "personalInfo": "Personal Information",
+        "businessInfo": "Business Information",
+        "systemInfo": "System Information",
+        "createdAt": "Created At",
+        "updatedAt": "Last Updated",
+        "steps": {
+            "userInfo": "User Information",
+            "businessDetails": "Business Details",
+            "bankDetails": "Bank Details"
+        },
+        "placeholders": {
+            "name": "Enter full name",
+            "email": "Enter email address",
+            "password": "Enter password",
+            "confirmPassword": "Confirm password",
+            "phone": "Enter phone number",
+            "businessName": "Enter business name (optional)",
+            "address": "Enter business address",
+            "city": "Enter city",
+            "state": "Enter state",
+            "gstNumber": "Enter GST number",
+            "panNumber": "Enter PAN number",
+            "bankName": "Enter bank name",
+            "ifscCode": "Enter IFSC code",
+            "bankAccountNumber": "Enter bank account number"
+        }
+    },
+
+    "audit": {
+        "title": "Audit Logs",
+        "subtitle": "Track all system activities and user actions",
+        "loading": "Loading audit logs...",
+        "searchPlaceholder": "Search by user, action, entity...",
+        "noLogsFound": "No audit logs found",
+        "unknown": "Unknown",
+        "stats": {
+            "totalLogs": "Total Logs",
+            "pages": "Pages",
+            "currentPage": "Current Page",
+            "perPage": "Per Page"
+        },
+        "filters": {
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "actionType": "Action Type",
+            "entityType": "Entity Type"
+        },
+        "table": {
+            "time": "Time",
+            "user": "User",
+            "action": "Action",
+            "entity": "Entity",
+            "ipAddress": "IP Address",
+            "device": "Device",
+            "actions": "Actions"
+        },
+        "timeAgo": {
+            "justNow": "Just now",
+            "minutesAgo": "{{count}} minute{{count > 1 ? 's' : ''}} ago",
+            "hoursAgo": "{{count}} hour{{count > 1 ? 's' : ''}} ago",
+            "daysAgo": "{{count}} day{{count > 1 ? 's' : ''}} ago"
+        },
+        "actions": {
+            "createPurchase": "Create Purchase",
+            "updatePurchase": "Update Purchase",
+            "deletePurchase": "Delete Purchase",
+            "createSale": "Create Sale",
+            "updateSale": "Update Sale",
+            "deleteSale": "Delete Sale",
+            "createExpense": "Create Expense",
+            "updateExpense": "Update Expense",
+            "deleteExpense": "Delete Expense",
+            "createPayment": "Create Payment",
+            "updatePayment": "Update Payment",
+            "deletePayment": "Delete Payment",
+            "createFarmer": "Create Farmer",
+            "updateFarmer": "Update Farmer",
+            "deleteFarmer": "Delete Farmer",
+            "adjustStock": "Adjust Stock",
+            "transferStock": "Transfer Stock",
+            "setBudget": "Set Budget",
+            "login": "Login",
+            "logout": "Logout",
+            "create": "Create",
+            "update": "Update",
+            "delete": "Delete"
+        },
+        "entities": {
+            "purchase": "Purchase",
+            "sale": "Sale",
+            "expense": "Expense",
+            "payment": "Payment",
+            "farmer": "Farmer",
+            "inventory": "Inventory",
+            "budgetAlert": "Budget Alert",
+            "user": "User"
+        },
+        "modal": {
+            "title": "Audit Log Details",
+            "userInfo": "User Information",
+            "actionDetails": "Action Details",
+            "technicalDetails": "Technical Details",
+            "name": "Name",
+            "email": "Email",
+            "role": "Role",
+            "action": "Action",
+            "entityType": "Entity Type",
+            "entityId": "Entity ID",
+            "ipAddress": "IP Address",
+            "deviceInfo": "Device Info",
+            "notes": "Notes",
+            "changes": "Changes",
+            "beforeValue": "Before Value",
+            "afterValue": "After Value",
+            "createdAt": "Created At",
+            "updatedAt": "Updated At",
+            "systemInfo": "System Information"
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} logs"
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch audit logs"
+        }
+    },
+
+    "buyers": {
+        "title": "Buyers",
+        "subtitle": "Manage and track all your buyers",
+        "loading": "Loading buyers...",
+        "searchPlaceholder": "Search buyers by name, email, mobile, or business...",
+        "noBuyersFound": "No buyers found",
+        "addTitle": "Add New Buyer",
+        "addSubtitle": "Enter buyer details to add them to your network",
+        "personalInfo": "Personal Information",
+        "businessDetails": "Business Details",
+        "creditTerms": "Credit Terms & Additional Info",
+        "steps": {
+            "personalInfo": "Personal Info",
+            "businessDetails": "Business Details",
+            "creditTerms": "Credit Terms"
+        },
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "mobileNumber": "Mobile Number",
+        "alternateMobile": "Alternate Mobile",
+        "address": "Address",
+        "city": "City",
+        "state": "State",
+        "pincode": "Pincode",
+        "businessName": "Business Name",
+        "businessType": "Business Type",
+        "gstNumber": "GST Number",
+        "panNumber": "PAN Number",
+        "creditLimit": "Credit Limit (₹)",
+        "creditDays": "Credit Days",
+        "defaultPaymentMode": "Default Payment Mode",
+        "notes": "Notes",
+        "businessTypes": {
+            "individual": "Individual",
+            "company": "Company",
+            "partnership": "Partnership",
+            "proprietorship": "Proprietorship",
+            "privateLimited": "Private Limited",
+            "publicLimited": "Public Limited",
+            "llp": "LLP",
+            "trust": "Trust",
+            "society": "Society"
+        },
+        "paymentModes": {
+            "credit": "Credit",
+            "online": "Online"
+        },
+        "stats": {
+            "totalBuyers": "Total Buyers",
+            "totalPurchaseValue": "Total Purchase Value",
+            "totalCreditLimit": "Total Credit Limit",
+            "activeBuyers": "Active Buyers"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "filters": {
+            "status": "Status",
+            "businessType": "Business Type",
+            "city": "City",
+            "state": "State",
+            "cityPlaceholder": "Filter by city",
+            "statePlaceholder": "Filter by state"
+        },
+        "table": {
+            "buyerInfo": "Buyer Info",
+            "contact": "Contact",
+            "location": "Location",
+            "business": "Business",
+            "creditLimit": "Credit Limit",
+            "purchaseValue": "Purchase Value",
+            "status": "Status",
+            "daysCredit": "days credit",
+            "purchases": "purchases",
+            "lastPurchase": "Last"
+        },
+        "buttons": {
+            "addNew": "Add New Buyer"
+        },
+        "actions": {
+            "viewPurchases": "View Purchases"
+        },
+        "modals": {
+            "deactivate": {
+                "title": "Deactivate Buyer",
+                "subtitle": "Confirm deactivation",
+                "confirmMessage": "Are you sure you want to deactivate {{name}}?",
+                "warningMessage": "This action will deactivate the buyer account. They will not be able to make purchases until reactivated."
+            }
+        },
+        "pagination": {
+            "showing": "Showing {{start}} to {{end}} of {{total}} buyers"
+        },
+        "messages": {
+            "deactivateSuccess": "{{name}} has been deactivated successfully",
+            "addSuccess": "Buyer added successfully! Redirecting..."
+        },
+        "errors": {
+            "fetchFailed": "Failed to fetch buyers",
+            "deactivateFailed": "Failed to deactivate buyer",
+            "nameRequired": "Name is required",
+            "nameInvalid": "Name should only contain letters, spaces, dots and hyphens",
+            "emailInvalid": "Please enter a valid email address",
+            "mobileInvalid": "Please enter a valid 10-digit mobile number starting with 6-9",
+            "alternateMobileInvalid": "Please enter a valid 10-digit mobile number",
+            "cityRequired": "City is required",
+            "stateRequired": "State is required",
+            "pincodeInvalid": "Please enter a valid 6-digit pincode",
+            "businessNameRequired": "Business name is required",
+            "businessNameInvalid": "Business name contains invalid characters",
+            "gstInvalid": "Please enter a valid GST number (e.g., 27AAAAA0000A1Z)",
+            "panInvalid": "Please enter a valid PAN number (e.g., AAAAA1234A)",
+            "creditLimitInvalid": "Please enter a valid credit limit amount",
+            "creditDaysInvalid": "Please enter valid credit days (0-365)",
+            "addFailed": "Failed to add buyer. Please try again."
+        },
+        "placeholders": {
+            "name": "Enter full name",
+            "email": "Enter email address",
+            "mobile": "Enter 10-digit mobile number",
+            "alternateMobile": "Enter alternate mobile number",
+            "address": "Enter complete address",
+            "city": "Enter city name",
+            "state": "Enter state name",
+            "pincode": "Enter 6-digit pincode",
+            "businessName": "Enter business/company name",
+            "gst": "Enter 15-digit GST number",
+            "pan": "Enter 10-digit PAN number",
+            "creditLimit": "Enter credit limit amount",
+            "creditDays": "Enter number of credit days (1-365)",
+            "notes": "Add any additional notes..."
+        },
+        "mobileHint": "Enter 10-digit mobile number (starts with 6,7,8,9)",
+        "pincodeHint": "Enter 6-digit pincode",
+        "gstHint": "15-character GSTIN (e.g., 27AAAAA0000A1Z)",
+        "panHint": "10-character PAN (e.g., AAAAA1234A)",
+        "creditLimitHint": "Maximum credit amount allowed",
+        "creditDaysHint": "Number of days for credit payment",
+        "creditOptional": "These fields are optional - leave blank if not applicable"
     }
-  },
-
-  "account": {
-    "title": "Account Settings",
-    "subtitle": "Manage your profile and account details",
-    "editProfile": "Edit Profile",
-    "personalInfo": "Personal Information",
-    "financialSummary": "Financial Summary",
-    "profileSummary": "Profile Summary",
-    "masterDealer": "Master Dealer",
-    "dealerId": "Dealer ID",
-    "memberSince": "Member Since",
-    "totalPurchases": "Total Purchases",
-    "totalSales": "Total Sales",
-    "commissionEarned": "Commission Earned",
-    "fullName": "Full Name",
-    "email": "Email Address",
-    "phone": "Phone Number",
-    "address": "Address",
-    "gstNumber": "GST Number",
-    "bankAccount": "Bank Account",
-    "ifscCode": "IFSC Code",
-    "loading": "Loading profile...",
-    "member": "Member",
-    "businessName": "Business Name",
-    "city": "City",
-    "state": "State",
-    "panNumber": "PAN Number",
-    "bankName": "Bank Name",
-    "bankAccountNumber": "Bank Account Number",
-    "errors": {
-      "fetchFailed": "Failed to fetch user data",
-      "invalidResponse": "Invalid response structure",
-      "loadError": "Error loading profile"
-    }
-  },
-
-  "receipts": {
-    "title": "Receipts",
-    "subtitle": "Manage and track all your transaction receipts",
-    "generateNew": "Generate New Receipt",
-    "totalReceipts": "Total Receipts",
-    "totalAmount": "Total Amount",
-    "paidReceipts": "Paid Receipts",
-    "pending": "Pending",
-    "searchPlaceholder": "Search by receipt ID, farmer, or buyer...",
-    "receiptId": "Receipt ID",
-    "date": "Date",
-    "partyName": "Party Name",
-    "crop": "Crop",
-    "quantity": "Quantity",
-    "amount": "Amount",
-    "type": "Type",
-    "status": "Status",
-    "actions": "Actions",
-    "purchase": "Purchase",
-    "sale": "Sale",
-    "paid": "Paid"
-  },
-
-  "sidebar": {
-    "todaySummary": "Today's Summary",
-    "marketInsights": "Market Insights",
-    "marketMessage": "Wheat prices expected to rise by 8% this week",
-    "buying": "Buying",
-    "selling": "Selling",
-    "purchases": "Purchases",
-    "expenses": "Expenses",
-    "netProfitLoss": "Net Profit/Loss",
-    "profitMargin": "Profit Margin"
-  },
-
-  "farmers": {
-  "title": "Farmers",
-  "subtitle": "Manage and track all your farmers",
-  "loading": "Loading farmers...",
-  "loadingPayments": "Loading payment history...",
-  "loadingDues": "Loading dues information...",
-  "searchPlaceholder": "Search farmers...",
-  "noFarmersFound": "No farmers found",
-  "farmerId": "Farmer ID",
-  "memberSince": "Member since",
-  "fullName": "Full Name",
-  "mobileNumber": "Mobile Number",
-  "personalInfo": "Personal Information",
-  "financialSummary": "Financial Summary",
-  "bankDetails": "Bank Details",
-  "bankName": "Bank Name",
-  "accountNumber": "Account Number",
-  "ifscCode": "IFSC Code",
-  "address": "Address",
-  "village": "Village",
-  "city": "City",
-  "state": "State",
-  "gstNumber": "GST Number",
-  "totalPurchases": "Total Purchases",
-  "totalPurchaseValue": "Total Purchase Value",
-  "totalPaid": "Total Paid",
-  "advanceBalance": "Advance Balance",
-  "pendingDues": "Pending Dues",
-  "pendingPurchaseDues": "Pending Purchase Dues",
-  "totalPendingPurchases": "Total Pending (Purchases)",
-  "netAmountDue": "Net Amount Due",
-  "netAmountReceivable": "Net Amount Receivable",
-  "overallStatus": "Overall Status",
-  "ledgerStatement": "Ledger Statement",
-  "noLedgerEntries": "No ledger entries found",
-  "paymentHistory": "Payment History",
-  "advanceTransactions": "Advance transactions & ledger",
-  "advancePaymentHistory": "Advance Payment History",
-  "duesTitle": "Farmer Dues",
-  "duesSubtitle": "Pending payments and advance balance",
-  "noAdvanceTransactions": "No advance transactions found",
-  "noPendingDues": "No pending purchase dues",
-  "allSettled": "All purchase payments are settled",
-  "transactionLedger": "Transaction Ledger",
-  "noTransactionsFound": "No transactions found",
-  "noTransactionsMatch": "No transactions match",
-  "by": "By",
-  "currentBalance": "Current Balance",
-  "totalAdvanceGiven": "Total Advance Given",
-  "totalAdjusted": "Total Adjusted",
-  "netOutstanding": "Net Outstanding",
-  "paymentTypes": {
-    "advanceGiven": "Advance Given",
-    "advanceAdjusted": "Advance Adjusted"
-  },
-  "status": {
-    "label": "Status",
-    "active": "Active",
-    "inactive": "Inactive",
-    "advanceExceedsDues": "Advance exceeds dues",
-    "duesPending": "Dues pending",
-    "paymentPending": "Payment pending",
-    "settled": "Settled",
-    "partialPayment": "Partial Payment"
-  },
-  "stats": {
-    "totalFarmers": "Total Farmers",
-    "totalPurchaseValue": "Total Purchase Value",
-    "pendingDues": "Pending Dues",
-    "activeFarmers": "Active Farmers"
-  },
-  "filters": {
-    "status": "Status",
-    "city": "City",
-    "state": "State",
-    "cityPlaceholder": "Filter by city",
-    "statePlaceholder": "Filter by state"
-  },
-  "table": {
-    "name": "Name",
-    "contact": "Contact",
-    "location": "Location",
-    "purchaseValue": "Purchase Value",
-    "pendingDues": "Pending Dues",
-    "status": "Status",
-    "joined": "Joined",
-    "actions": "Actions",
-    "date": "Date",
-    "type": "Type",
-    "description": "Description",
-    "debit": "Debit",
-    "credit": "Credit",
-    "balance": "Balance",
-    "dateTime": "Date & Time",
-    "createdBy": "Created By",
-    "purchaseDate": "Purchase Date",
-    "receiptNo": "Receipt No.",
-    "grossTotal": "Gross Total",
-    "finalPayable": "Final Payable",
-    "paidAmount": "Paid Amount",
-    "pendingAmount": "Pending Amount"
-  },
-  "tabs": {
-    "farmerDetails": "Farmer Details",
-    "ledgerStatement": "Ledger Statement"
-  },
-  "ledgerTypes": {
-    "purchase": "Purchase",
-    "payment": "Payment",
-    "advanceGiven": "Advance Given",
-    "advanceAdjusted": "Advance Adjusted"
-  },
-  "buttons": {
-    "addNew": "Add New Farmer",
-    "clearFilters": "Clear filters",
-    "deactivate": "Deactivate"
-  },
-  "actions": {
-    "viewPayments": "View Payments",
-    "viewDues": "View Dues",
-    "deactivate": "Deactivate",
-    "advancePayment": "Advance Payment"
-  },
-  "modals": {
-    "deactivate": {
-      "title": "Deactivate Farmer",
-      "subtitle": "Confirm deactivation",
-      "confirmMessage": "Are you sure you want to deactivate {{name}}?",
-      "warningMessage": "This action will deactivate the farmer account. They will not be able to make purchases or access their account until reactivated."
-    },
-    "advance": {
-      "title": "Advance Payment for {{name}}",
-      "subtitle": "Record advance payment for farmer",
-      "currentDues": "Current Pending Dues"
-    }
-  },
-  "pagination": {
-    "showing": "Showing {{start}} to {{end}} of {{total}} farmers",
-    "showingFarmers": "Showing {{start}} to {{end}} of {{total}} farmers",
-    "showingOperators": "Showing {{start}} to {{end}} of {{total}} operators"
-  },
-  "messages": {
-    "deactivateSuccess": "{{name}} has been deactivated successfully",
-    "addSuccess": "Farmer added successfully! Redirecting...",
-    "updateSuccess": "Farmer updated successfully! Redirecting..."
-  },
-  "errors": {
-    "fetchFailed": "Failed to fetch farmers",
-    "networkError": "Network error. Please check your connection.",
-    "deactivateFailed": "Failed to deactivate farmer",
-    "validAmountRequired": "Please enter a valid amount",
-    "advanceFailed": "Failed to give advance",
-    "notFound": "Farmer not found",
-    "nameRequired": "Farmer name is required",
-    "nameInvalid": "Name should contain only letters, spaces, dots, and hyphens",
-    "mobileRequired": "Mobile number is required",
-    "mobileInvalid": "Enter a valid 10-digit mobile number starting with 6,7,8, or 9",
-    "villageRequired": "Village name is required",
-    "cityRequired": "City is required",
-    "stateRequired": "State is required",
-    "bankNameInvalid": "Bank name should contain only letters, spaces, dots, and hyphens",
-    "accountNumberInvalid": "Account number should be 9-18 digits",
-    "ifscInvalid": "Enter a valid IFSC code (e.g., SBIN0001234)",
-    "gstInvalid": "Enter a valid GST number",
-    "addFailed": "Failed to add farmer. Please try again.",
-    "updateFailed": "Failed to update farmer. Please try again.",
-    "paymentModeRequired": "Please select a payment mode"
-  },
-  
-  "addTitle": "Add New Farmer",
-  "addSubtitle": "Register a new farmer in the system",
-  "editTitle": "Edit Farmer",
-  "editSubtitle": "Update farmer information in the system",
-  "steps": {
-    "personalInfo": "Personal Information",
-    "bankDetails": "Bank Details"
-  },
-  "placeholders": {
-    "name": "Enter farmer name",
-    "mobile": "10-digit mobile number",
-    "address": "Enter full address",
-    "village": "Enter village name",
-    "city": "Enter city",
-    "state": "Enter state",
-    "bankName": "Enter bank name (e.g., State Bank of India)",
-    "accountNumber": "9-18 digit account number",
-    "ifsc": "Enter IFSC code (e.g., SBIN0001234)",
-    "gst": "Enter GST number (optional)"
-  },
-  "mobileHint": "Must be 10 digits starting with 6,7,8, or 9",
-  "accountHint": "Must be 9-18 digits",
-  "ifscHint": "11 characters: 4 letters, then 0, then 6 alphanumeric",
-  "gstHint": "15-character GSTIN format (optional)",
-  "bankOptional": "Optional - These fields can be added later"
-},
-
-"purchases": {
-  "title": "Purchases",
-  "subtitle": "Manage and track all purchase transactions",
-  "loading": "Loading purchases...",
-  "searchPlaceholder": "Search purchases...",
-  "noPurchasesFound": "No purchases found",
-  "items": "item(s)",
-  "stats": {
-    "totalPurchases": "Total Purchases",
-    "grossTotal": "Gross Total",
-    "totalDeductions": "Total Deductions",
-    "finalPayable": "Final Payable"
-  },
-  "status": {
-    "draft": "Draft",
-    "saved": "Saved",
-    "partial": "Partial",
-    "paid": "Paid",
-    "completed": "Completed",
-    "cancelled": "Cancelled"
-  },
-  "filters": {
-    "startDate": "Start Date",
-    "endDate": "End Date",
-    "status": "Status"
-  },
-  "table": {
-    "receiptNo": "Receipt No",
-    "date": "Date",
-    "farmer": "Farmer",
-    "products": "Products",
-    "grossTotal": "Gross Total",
-    "deductions": "Deductions",
-    "finalPayable": "Final Payable",
-    "status": "Status",
-    "actions": "Actions",
-    "product": "Product",
-    "bagsWeight": "Bags × Weight",
-    "actualQty": "Actual Qty",
-    "qualityDeduction": "Quality Deduction",
-    "billedQty": "Billed Qty",
-    "rate": "Rate",
-    "total": "Total",
-    "quantity": "Quantity"
-  },
-  "buttons": {
-    "newPurchase": "New Purchase",
-    "editFullDetails": "Edit Full Details",
-    "updateStatus": "Update Status",
-    "lockRate": "Lock Rate",
-    "printReceipt": "Print Receipt"
-  },
-  "modals": {
-    "updateStatus": {
-      "title": "Update Purchase Status",
-      "receiptLabel": "Receipt",
-      "statusLabel": "Status",
-      "notesLabel": "Notes",
-      "notesPlaceholder": "Add any notes about this status update..."
-    },
-    "lockRate": {
-      "title": "Lock Rate",
-      "receiptLabel": "Receipt",
-      "selectProduct": "Select Product",
-      "currentRate": "Current Rate",
-      "newRate": "New Rate (per unit)",
-      "ratePlaceholder": "Enter new rate",
-      "reason": "Reason for Rate Lock",
-      "reasonPlaceholder": "e.g., Market price increased, Special agreement with farmer, etc."
-    }
-  },
-  "pagination": {
-    "showing": "Showing {{start}} to {{end}} of {{total}} purchases"
-  },
-  "messages": {
-    "cannotEdit": "Cannot edit {{status}} purchase. Only draft, saved, or partial purchases can be edited.",
-    "statusUpdated": "Purchase status updated successfully!",
-    "validRateRequired": "Please enter a valid rate",
-    "reasonRequired": "Please provide a reason for locking the rate",
-    "rateLocked": "Rate locked successfully!",
-    "createSuccess": "Purchase created successfully! Redirecting...",
-    "statusUpdatedMessage": "Purchase status updated successfully! Redirecting...",
-    "updateSuccess": "Purchase updated successfully! Redirecting..."
-  },
-  "errors": {
-    "fetchFailed": "Failed to fetch purchases",
-    "statusUpdateFailed": "Failed to update purchase status",
-    "rateLockFailed": "Failed to lock rate",
-    "notFound": "Purchase not found",
-    "farmerRequired": "Please select a farmer",
-    "dateRequired": "Purchase date is required",
-    "productRequired": "Product name required",
-    "rateRequired": "Valid rate required",
-    "qtyRequired": "Valid quantity required",
-    "completeLines": "Please complete all product lines",
-    "createFailed": "Failed to create purchase",
-    "statusRequired": "Please select a status",
-    "editNotAllowed": "This purchase cannot be edited via full update as it is in \"{{status}}\" status. Only \"draft\" purchases can be fully edited. For \"{{status}}\" status, you can only update status/notes using the Update Status option.",
-    "updateFailed": "Failed to update purchase"
-  },
-  "tooltips": {
-    "editFull": "Edit for full update",
-    "updateStatusOnly": "Update status & notes only",
-    "cannotEdit": "Cannot edit this purchase"
-  },
-  "detailsTitle": "Purchase Details",
-  "receipt": "Receipt",
-  "createdBy": "Created by",
-  "on": "on",
-  "amountDue": "Amount Due",
-  "farmerInformation": "Farmer Information",
-  "purchaseInformation": "Purchase Information",
-  "createdOn": "Created On",
-  "productsPurchased": "Products Purchased",
-  "bags": "bags",
-  "deductionsCharges": "Deductions & Charges",
-  "commission": "Commission",
-  "return": "Return",
-  "advanceAdjusted": "Advance Adjusted",
-  "other": "Other",
-  "totalDeductions": "Total Deductions",
-  "paymentSummary": "Payment Summary",
-  "amountPaid": "Amount Paid",
-  "finalPayable": "Final Payable",
-  "grossTotal": "Gross Total",
-  
-  "addTitle": "New Purchase",
-  "addSubtitle": "Record a new purchase transaction",
-  "editTitle": "Edit Purchase",
-  "updateStatusTitle": "Update Purchase Status",
-  "currentPurchaseDetails": "Current Purchase Details",
-  "newStatus": "New Status",
-  "basicInformation": "Basic Information",
-  "selectFarmer": "SELECT FARMER",
-  "purchaseDate": "PURCHASE DATE",
-  "pricingType": "PRICING TYPE",
-  "rate": "RATE",
-  "quantity": "QUANTITY",
-  "qualityDeduction": "QUALITY DEDUCTION",
-  "lineNotes": "LINE NOTES",
-  "lineTotal": "Line Total",
-  "numberOfBags": "NUMBER OF BAGS",
-  "weightPerBag": "WEIGHT PER BAG (KG)",
-  "productName": "PRODUCT NAME",
-  "productLine": "Product Line",
-  "transportCharges": "TRANSPORT CHARGES",
-  "labourCharges": "LABOUR CHARGES",
-  "storageCharges": "STORAGE CHARGES",
-  "returnDeduction": "RETURN DEDUCTION",
-  "otherDeductions": "OTHER DEDUCTIONS",
-  "purchaseSummary": "Purchase Summary",
-  "finalPayableAmount": "Final Payable Amount",
-  "productsSummary": "Products Summary",
-  "selectedFarmer": "Selected Farmer",
-  "autoCalculated": "Auto-calculated",
-  "addAnotherProduct": "Add Another Product",
-  "amountAlreadyPaid": "AMOUNT ALREADY PAID",
-  "amountPaidNote": "This will be added to the payment record",
-  "farmerInfoReadOnly": "Farmer Information (Read-only)",
-  "amountDueAfterUpdate": "Amount Due After Update",
-  "usingBagsCalculation": "Using bags calculation",
-  
-  "pricingTypes": {
-    "kg": "KG (Kilogram)",
-    "quintal": "Quintal (100 KG)",
-    "piece": "Piece",
-    "bunch": "Bunch",
-    "crate": "Crate",
-    "dozen": "Dozen",
-    "flat": "Flat"
-  },
-  "commissionTypes": {
-    "fixed": "Fixed (₹)",
-    "percent": "Percent (%)"
-  },
-  "steps": {
-    "basicInfo": "Basic Information",
-    "productLines": "Product Lines",
-    "deductions": "Deductions & Summary"
-  },
-  "statusDescriptions": {
-    "partial": "Mark purchase as partially paid",
-    "completed": "Mark purchase as fully paid and completed",
-    "cancelled": "Cancel this purchase (cannot be undone)"
-  },
-  "warnings": {
-    "cancelPurchase": "Cancelling this purchase will revert all ledger entries and may affect farmer pending dues.",
-    "amountDueNote": "This purchase has an amount due of {{amount}}. Marking as completed will consider it fully paid."
-  },
-  "info": {
-    "editNote": "Full update mode - You can edit all fields including products, deductions, and amount paid. This will recalculate all totals. Only available for DRAFT status purchases."
-  },
-  "placeholders": {
-    "selectFarmer": "Search and select a farmer",
-    "notes": "Enter any additional notes about this purchase...",
-    "productName": "e.g., Wheat, Rice, Corn",
-    "selectPricingType": "Select pricing type",
-    "rate": "₹/KG or ₹/Quintal",
-    "quantity": "Enter quantity",
-    "qualityDeduction": "Quality deduction (KG/Units)",
-    "lineNotes": "Any notes for this product line",
-    "numberOfBags": "Number of bags",
-    "weightPerBag": "Weight per bag",
-    "transportCharges": "Enter transport charges",
-    "labourCharges": "Enter labour charges",
-    "commissionAmount": "Enter commission amount",
-    "commissionPercent": "Enter commission in %",
-    "commissionType": "Type",
-    "storageCharges": "Enter storage charges",
-    "storageNote": "Storage note",
-    "returnDeduction": "Enter return deduction",
-    "returnNote": "Return reason",
-    "advanceAdjusted": "Advance payment already given",
-    "otherDeductions": "Other charges",
-    "otherNote": "Description",
-    "amountAlreadyPaid": "Amount already paid",
-    "statusNotes": "Add any notes about this status change..."
-  }
-},
-
- "inventory": {
-  "title": "Inventory",
-  "subtitle": "Manage and track all stock levels",
-  "loading": "Loading inventory...",
-  "loadingStockDetails": "Loading stock details...",
-  "stockDetailsSubtitle": "Stock details across all warehouses",
-  "totalStockAllWarehouses": "Total Stock Across All Warehouses",
-  "units": "units",
-  "stockByWarehouse": "Stock by Warehouse",
-  "searchPlaceholder": "Search products...",
-  "noItemsFound": "No inventory items found",
-  "stats": {
-    "totalProducts": "Total Products",
-    "totalStock": "Total Stock (Units)",
-    "lowStockItems": "Low Stock Items",
-    "warehouses": "Warehouses"
-  },
-  "status": {
-    "outOfStock": "Out of Stock",
-    "lowStock": "Low Stock",
-    "inStock": "In Stock"
-  },
-  "table": {
-    "product": "Product",
-    "warehouse": "Warehouse",
-    "currentStock": "Current Stock",
-    "unit": "Unit",
-    "status": "Status",
-    "lastUpdated": "Last Updated",
-    "actions": "Actions"
-  },
-  "filters": {
-    "warehouse": "Warehouse",
-    "allWarehouses": "All Warehouses",
-    "lowStockOnly": "Low Stock Only",
-    "lowStockLabel": "Show only products with stock ≤ 10 units"
-  },
-  "buttons": {
-    "adjustStock": "Adjust Stock",
-    "transferStock": "Transfer Stock"
-  },
-  "pagination": {
-    "showing": "Showing {{start}} to {{end}} of {{total}} items"
-  },
-  "errors": {
-    "fetchFailed": "Failed to fetch inventory",
-    "fetchStockFailed": "Failed to fetch stock details",
-    "warehouseRequired": "Please select a warehouse",
-    "productRequired": "Please select a product",
-    "validQuantityRequired": "Please enter a valid adjustment quantity",
-    "reasonRequired": "Please provide a reason for adjustment",
-    "adjustFailed": "Failed to adjust stock",
-    "sourceWarehouseRequired": "Please select source warehouse",
-    "destWarehouseRequired": "Please select destination warehouse",
-    "sameWarehouse": "Source and destination warehouses cannot be the same",
-    "insufficientStock": "Insufficient stock. Only {{stock}} {{unit}} available",
-    "transferFailed": "Failed to transfer stock",
-    "productNotFound": "Product not found in source warehouse"
-  },
-  
-  "adjustTitle": "Adjust Stock",
-  "adjustSubtitle": "Increase or decrease inventory stock",
-  "stockAdjustmentDetails": "Stock Adjustment Details",
-  "warehouse": "WAREHOUSE",
-  "productName": "PRODUCT NAME",
-  "adjustmentType": "ADJUSTMENT TYPE",
-  "addStock": "Add Stock",
-  "removeStock": "Remove Stock",
-  "quantity": "QUANTITY",
-  "reasonForAdjustment": "REASON FOR ADJUSTMENT",
-  "current": "Current",
-  "currentStock": "Current Stock",
-  "unit": "Unit",
-  "adjustmentNote": "Adding stock will increase inventory. Removing stock will decrease inventory. All adjustments are logged for audit purposes.",
-  "noWarehousesFound": "No warehouses found. Please add a warehouse first.",
-  "noProductsInWarehouse": "No products found in this warehouse.",
-  "placeholders": {
-    "selectWarehouse": "Select a warehouse",
-    "selectProduct": "Search and select a product",
-    "selectWarehouseFirst": "Please select a warehouse first",
-    "quantity": "Enter quantity",
-    "reason": "e.g., New harvest received, Damaged goods, Expired products, etc."
-  },
-  "messages": {
-    "adjustSuccess": "Stock adjusted successfully! Redirecting..."
-  },
-  
-  "transferTitle": "Transfer Stock",
-  "transferSubtitle": "Move stock between warehouses",
-  "transferDetails": "Transfer Details",
-  "fromWarehouse": "FROM WAREHOUSE (Source)",
-  "toWarehouse": "TO WAREHOUSE (Destination)",
-  "quantityToTransfer": "QUANTITY TO TRANSFER",
-  "availableStock": "Available Stock",
-  "stock": "Stock",
-  "in": "in",
-  "totalStock": "Total Stock",
-  "transferNote": "Transferring stock will decrease quantity from source warehouse and increase quantity in destination warehouse."
-
-  
-  
-},
-
-  "warehouses": {
-    "title": "Warehouses",
-    "subtitle": "Manage all storage facilities",
-    "loading": "Loading warehouses...",
-    "searchPlaceholder": "Search by name, code, or city...",
-    "noWarehousesFound": "No warehouses found",
-    "units": "units",
-    "unitLabel": "units",
-    "used": "Used",
-    "productsCount": "products",
-    "code": "Code",
-    "warehouseInformation": "Warehouse Information",
-    "location": "Location",
-    "managerDetails": "Manager Details",
-    "managerName": "Manager Name",
-    "capacityUsage": "Capacity Usage",
-    "total": "Total",
-    "capacityUtilized": "capacity utilized",
-    "inventorySummary": "Inventory Summary",
-    "productsStored": "Products Stored",
-    "totalStockUnits": "Total Stock Units",
-    "stockDetails": "Stock Details",
-    "createdBy": "Created By",
-    "stats": {
-      "totalWarehouses": "Total Warehouses",
-      "activeWarehouses": "Active Warehouses",
-      "totalCapacity": "Total Capacity",
-      "totalStock": "Total Stock"
-    },
-    "status": {
-      "active": "Active",
-      "inactive": "Inactive",
-      "label": "Status"
-    },
-    "table": {
-      "code": "Code",
-      "name": "Name",
-      "location": "Location",
-      "manager": "Manager",
-      "capacity": "Capacity",
-      "stock": "Stock",
-      "status": "Status",
-      "actions": "Actions"
-    },
-    "filters": {
-      "status": "Status"
-    },
-    "buttons": {
-      "addWarehouse": "Add Warehouse",
-      "deactivate": "Deactivate",
-      "deletePermanently": "Delete Permanently"
-    },
-    "modals": {
-      "deactivate": {
-        "title": "Deactivate Warehouse",
-        "subtitle": "Confirm deactivation",
-        "confirmMessage": "Are you sure you want to deactivate {{name}}?",
-        "warningMessage": "This warehouse will become inactive and cannot be used for future transactions."
-      },
-      "delete": {
-        "title": "Delete Warehouse",
-        "subtitle": "Permanently delete warehouse",
-        "confirmMessage": "Are you sure you want to permanently delete {{name}}?",
-        "warningMessage": "This action cannot be undone. All data related to this warehouse will be permanently removed."
-      }
-    },
-    "pagination": {
-      "showing": "Showing {{start}} to {{end}} of {{total}} warehouses"
-    },
-    "errors": {
-      "fetchFailed": "Failed to fetch warehouses",
-      "deactivateFailed": "Failed to deactivate warehouse",
-      "deleteFailed": "Failed to delete warehouse"
-    }
-  },
-
-  "expenses": {
-    "title": "Expenses",
-    "subtitle": "Track and manage all business expenses",
-    "loading": "Loading expenses...",
-    "searchPlaceholder": "Search by description, paid to, or reference...",
-    "noExpensesFound": "No expenses found",
-    "to": "To",
-    "ref": "Ref",
-    "stats": {
-      "totalExpenses": "Total Expenses",
-      "totalAmount": "Total Amount",
-      "created": "Created",
-      "cancelled": "Cancelled"
-    },
-    "status": {
-      "created": "Created",
-      "cancelled": "Cancelled",
-      "unknown": "Unknown",
-      "approved": "Approved",
-      "autoApproved": "Auto Approved",
-      "pending": "Pending",
-      "rejected": "Rejected"
-    },
-    "categories": {
-      "transport": "Transport & Logistics",
-      "labour": "Labour & Wages",
-      "marketFees": "Market Fees",
-      "storage": "Storage & Cold Chain",
-      "shopOffice": "Shop & Office",
-      "repairs": "Repairs & Maintenance",
-      "banking": "Banking & Finance",
-      "marketing": "Marketing & Miscellaneous"
-    },
-    "filters": {
-      "startDate": "Start Date",
-      "endDate": "End Date",
-      "category": "Category",
-      "status": "Status"
-    },
-    "table": {
-      "date": "Date",
-      "category": "Category",
-      "description": "Description",
-      "amount": "Amount",
-      "paidBy": "Paid By",
-      "status": "Status",
-      "actions": "Actions"
-    },
-    "buttons": {
-      "addExpense": "Add Expense",
-      "cancelExpense": "Cancel Expense",
-      "confirmCancellation": "Confirm Cancellation"
-    },
-    "modals": {
-      "cancel": {
-        "title": "Cancel Expense",
-        "subtitle": "Confirm cancellation",
-        "confirmMessage": "Are you sure you want to cancel expense of {{amount}} for '{{description}}'?",
-        "reasonLabel": "Reason for cancellation",
-        "reasonPlaceholder": "Enter reason for cancelling this expense..."
-      }
-    },
-    "pagination": {
-      "showing": "Showing {{start}} to {{end}} of {{total}} expenses"
-    },
-    "errors": {
-      "fetchFailed": "Failed to fetch expenses",
-      "reasonRequired": "Please provide a reason for cancellation",
-      "cancelFailed": "Failed to cancel expense",
-      "approveFailed": "Failed to approve expense",
-      "rejectFailed": "Failed to reject expense",
-      "notFound": "Expense not found"
-    },
-    "detailsTitle": "Expense Details",
-    "id": "ID",
-    "approvedBy": "Approved by",
-    "amount": "Amount",
-    "approve": "Approve",
-    "reject": "Reject",
-    "expenseInformation": "Expense Information",
-    "category": "Category",
-    "description": "Description",
-    "expenseDate": "Expense Date",
-    "paidTo": "Paid To",
-    "paymentDetails": "Payment Details",
-    "paymentMethod": "Payment Method",
-    "referenceNumber": "Reference Number",
-    "createdBy": "Created By",
-    "createdAt": "Created At",
-    "approvedAt": "Approved At",
-    "remarks": "Remarks",
-    "rejectExpense": "Reject Expense",
-    "cancelExpense": "Cancel Expense",
-    "rejectionReasonPlaceholder": "Reason for rejection...",
-    "cancellationReasonPlaceholder": "Reason for cancellation...",
-    "confirmReject": "Confirm Reject",
-    "confirmCancel": "Confirm Cancel"
-  },
-
-  "budgetAlerts": {
-    "title": "Budget Alerts",
-    "subtitle": "Set monthly budget limits and track expenses",
-    "loading": "Loading budget alerts...",
-    "searchPlaceholder": "Search category...",
-    "noBudgetsFound": "No budget set for this month. Click \"Set Budget\" to create one.",
-    "stats": {
-      "totalBudget": "Total Budget",
-      "totalSpend": "Total Spend",
-      "remainingBudget": "Remaining Budget",
-      "utilization": "Utilization"
-    },
-    "alertLevels": {
-      "critical": "Critical",
-      "warning": "Warning",
-      "normal": "Normal"
-    },
-    "table": {
-      "category": "Category",
-      "monthlyLimit": "Monthly Limit",
-      "currentSpend": "Current Spend",
-      "remaining": "Remaining",
-      "usage": "Usage",
-      "status": "Status",
-      "alertThreshold": "Alert Threshold",
-      "actions": "Actions"
-    },
-    "buttons": {
-      "setBudget": "Set Budget",
-      "editBudget": "Edit Budget"
-    },
-    "pagination": {
-      "showing": "Showing {{start}} to {{end}} of {{total}} budgets"
-    },
-    "errors": {
-      "statusLoadFailed": "Failed to load budget status"
-    },
-    "detailsTitle": "Budget Details",
-    "detailsSubtitle": "View complete budget information",
-    "category": "Category",
-    "monthlyLimit": "Monthly Limit",
-    "currentSpend": "Current Spend",
-    "remainingBudget": "Remaining Budget",
-    "utilization": "Utilization",
-    "budgetUsage": "Budget Usage",
-    "used": "used",
-    "month": "Month",
-    "alertThreshold": "Alert Threshold",
-    "createdOn": "Created On",
-    "lastUpdated": "Last Updated",
-    "createdBy": "Created By",
-    "tipMessage": "Budget alerts are triggered when expenses reach your alert threshold ({{threshold}}%). You'll receive notifications when approaching or exceeding your budget limits.",
-    "messages": {
-      "limitExceeded": "Budget limit exceeded!",
-      "approachingLimit": "Approaching budget limit!",
-      "withinLimits": "Within budget limits"
-    }
-  },
-
-  "ledger": {
-    "title": "Ledger",
-    "subtitle": "Track all financial transactions",
-    "loading": "Loading ledger...",
-    "tabs": {
-      "farmersLedger": "Farmers Ledger",
-      "operatorsLedger": "Operators Ledger"
-    },
-    "stats": {
-      "totalFarmers": "Total Farmers",
-      "totalTransactions": "Total Transactions",
-      "totalPayments": "Total Payments",
-      "totalPurchases": "Total Purchases",
-      "totalOperators": "Total Operators",
-      "totalSales": "Total Sales",
-      "totalPurchasesOperator": "Total Purchases",
-      "netProfit": "Net Profit"
-    },
-    "search": {
-      "farmersPlaceholder": "Search by farmer name or mobile...",
-      "operatorsPlaceholder": "Search by operator name, email or phone..."
-    },
-    "filters": {
-      "startDate": "Start Date",
-      "endDate": "End Date"
-    },
-    "table": {
-      "farmer": "Farmer",
-      "operator": "Operator",
-      "contact": "Contact",
-      "totalPaid": "Total Paid",
-      "totalPurchased": "Total Purchased",
-      "totalPurchasedOperator": "Total Purchases",
-      "balance": "Balance",
-      "totalSales": "Total Sales",
-      "netProfit": "Net Profit",
-      "actions": "Actions"
-    },
-    "buttons": {
-      "printSummary": "Print Summary"
-    },
-    "pagination": {
-      "showingFarmers": "Showing {{start}} to {{end}} of {{total}} farmers",
-      "showingOperators": "Showing {{start}} to {{end}} of {{total}} operators"
-    },
-    "noFarmersFound": "No farmers found",
-    "noOperatorsFound": "No operators found",
-    "print": {
-      "farmerTitle": "Farmer Ledger",
-      "farmerStatement": "Farmer Ledger Statement",
-      "operatorTitle": "Operator Ledger",
-      "operatorStatement": "Operator Ledger Statement",
-      "farmerDetails": "Farmer Details",
-      "operatorDetails": "Operator Details",
-      "name": "Name",
-      "mobile": "Mobile",
-      "email": "Email",
-      "phone": "Phone",
-      "role": "Role",
-      "totalReceived": "Total Received",
-      "totalPurchased": "Total Purchased",
-      "currentBalance": "Current Balance",
-      "totalSales": "Total Sales",
-      "totalExpenses": "Total Expenses",
-      "netProfit": "Net Profit",
-      "recentTransactions": "Recent Transactions",
-      "date": "Date",
-      "description": "Description",
-      "debit": "Debit",
-      "credit": "Credit",
-      "balance": "Balance",
-      "farmer": "Farmer"
-    },
-    "errors": {
-      "fetchFarmersFailed": "Failed to fetch farmers ledger",
-      "fetchOperatorsFailed": "Failed to fetch operators ledger"
-    }
-  },
-
-"payments": {
-  "title": "Payments",
-  "subtitle": "Track and manage all farmer payments",
-  "loading": "Loading payments...",
-  "searchPlaceholder": "Search by receipt number, farmer name...",
-  "noPaymentsFound": "No payments found",
-  "paymentMode": "Payment Mode",
-  "paymentStatus": "Payment Status",
-  "paymentAmount": "Payment Amount",
-  "paymentDate": "Payment Date",
-  "paymentInformation": "Payment Information",
-  "farmerInformation": "Farmer Information",
-  "transactionDetails": "Transaction Details",
-  "chequeDetails": "Cheque Details",
-  "chequeNumber": "Cheque Number",
-  "chequeDate": "Cheque Date",
-  "chequeStatusLabel": "Cheque Status",
-  "purchaseReference": "Purchase Reference",
-  "receiptNumber": "Receipt Number",
-  "purchaseDate": "Purchase Date",
-  "finalPayable": "Final Payable",
-  "purchaseStatus": "Purchase Status",
-  "amountPaid": "Amount Paid",
-  "amountDue": "Amount Due",
-  "lastUpdated": "Last updated",
-  "createdBy": "Created By",
-  "referenceNumber": "Reference Number",
-  "referencePlaceholder": "Transaction ID / Cheque No",
-  "detailsTitle": "Payment Details",
-  "id": "ID",
-  "stats": {
-    "totalAmount": "Total Amount",
-    "cash": "Cash",
-    "upiBank": "UPI / Bank",
-    "cheque": "Cheque"
-  },
-  "modes": {
-    "cash": "Cash",
-    "upi": "UPI",
-    "bank": "Bank Transfer",
-    "cheque": "Cheque",
-    "other": "Other",
-    "paymentMode": "Payment Mode",
-    "creditCard": "Credit Card",
-    "debitCard": "Debit Card"
-  },
-  "chequeStatus": {
-    "cleared": "Cleared",
-    "pending": "Pending Clearance",
-    "bounced": "Bounced",
-    "notUpdated": "Not Updated"
-  },
-  "filters": {
-    "startDate": "Start Date",
-    "endDate": "End Date",
-    "paymentMode": "Payment Mode"
-  },
-  "table": {
-    "receiptNo": "Receipt No",
-    "paymentDate": "Payment Date",
-    "farmer": "Farmer",
-    "purchase": "Purchase",
-    "amount": "Amount",
-    "mode": "Mode",
-    "actions": "Actions",
-    "farmerName": "Farmer Name",
-    "purchaseDate": "Purchase Date",
-    "finalPayable": "Final Payable",
-    "amountDue": "Amount Due",
-    "status": "Status",
-    "overdue": "Overdue"
-  },
-  "buttons": {
-    "newPayment": "New Payment",
-    "dueSummary": "Due Summary",
-    "updateChequeStatus": "Update Cheque Status",
-    "updateStatus": "Update Status",
-    "recordPayment": "Record Payment"
-  },
-  "modals": {
-    "cheque": {
-      "title": "Update Cheque Status",
-      "subtitle": "Change the cheque clearance status",
-      "receiptLabel": "Receipt Number",
-      "amountLabel": "Amount",
-      "farmerLabel": "Farmer",
-      "statusLabel": "Cheque Status"
-    }
-  },
-  "pagination": {
-    "showing": "Showing {{start}} to {{end}} of {{total}} payments"
-  },
-  "messages": {
-    "chequeStatusUpdated": "Cheque status updated successfully!",
-    "createSuccess": "Payment recorded successfully! Redirecting..."
-  },
-  "errors": {
-    "fetchFailed": "Failed to fetch payments",
-    "userInfoFailed": "Unable to fetch user information. Please try again.",
-    "statusUpdateFailed": "Failed to update cheque status",
-    "notFound": "Payment not found",
-    "operatorNotFound": "Operator ID not found",
-    "purchaseRequired": "Please select a purchase",
-    "validAmountRequired": "Please enter a valid amount",
-    "dateRequired": "Payment date is required",
-    "referenceRequired": "Reference number is required",
-    "bankNameRequired": "Bank name is required",
-    "chequeNumberRequired": "Cheque number is required",
-    "chequeDateRequired": "Cheque date is required",
-    "amountExceedsPending": "Amount cannot exceed pending amount of {{amount}}",
-    "createFailed": "Failed to record payment"
-  },
-  "status": {
-    "completed": "Completed",
-    "fullyPaid": "Fully Paid",
-    "partialPayment": "Partial Payment",
-    "pending": "Pending"
-  },
-  "loadingDueSummary": "Loading due summary...",
-  "dueSummaryTitle": "Due Summary Report",
-  "dueSummarySubtitle": "Outstanding payments and overdue status",
-  "totalDueAmount": "Total Due Amount",
-  "totalOverdueAmount": "Total Overdue Amount",
-  "overdueAmount": "Overdue Amount",
-  "totalPurchases": "Total Purchases",
-  "duePurchases": "Due Purchases",
-  "summaryOverview": "Summary Overview",
-  "farmerWise": "Farmer Wise",
-  "allPurchases": "All Purchases",
-  "statusBreakdown": "Status Breakdown",
-  "farmersWithDues": "Farmers with Dues",
-  "overdueSummary": "Overdue Summary",
-  "overduePeriod": "Overdue Period (days)",
-  "overduePurchases": "Overdue Purchases",
-  "noFarmersWithDues": "No farmers with dues",
-  "noFarmersFound": "No farmers found",
-  "noPurchasesFound": "No purchases found",
-  "searchFarmerPlaceholder": "Search by farmer name or mobile...",
-  "searchPurchasePlaceholder": "Search by farmer name or receipt number...",
-  "showOnlyOverdue": "Show only overdue purchases",
-  "totalDue": "Total Due",
-  "purchases": "purchases",
-  "overdue": "Overdue",
-  "days": "days",
-  "yes": "Yes",
-  "no": "No",
-  
-  "addTitle": "Record Payment",
-  "addSubtitle": "Record a new payment from farmer",
-  "selectFarmer": "SELECT FARMER",
-  "selectPurchase": "SELECT PURCHASE",
-  "selectedFarmer": "Selected Farmer",
-  "purchaseDetails": "Purchase Details",
-  "dueAmount": "Due Amount",
-  "pendingAmount": "Pending Amount",
-  "due": "Due",
-  "date": "Date",
-  "placeholders": {
-    "selectFarmer": "Search and select a farmer",
-    "selectFarmerFirst": "Select a farmer first",
-    "selectPurchase": "Select a purchase",
-    "upiReference": "UPI Transaction ID",
-    "bankReference": "Transaction Reference Number",
-    "bankName": "Enter bank name",
-    "chequeNumber": "Cheque number"
-  }
-},
-
-  "sales": {
-    "title": "Sales",
-    "subtitle": "Manage all sales invoices",
-    "loading": "Loading sales...",
-    "searchPlaceholder": "Search by invoice number, buyer name, or mobile...",
-    "noSalesFound": "No sales found",
-    "items": "items",
-    "stats": {
-      "totalSales": "Total Sales",
-      "totalRevenue": "Total Revenue",
-      "itemsSold": "Items Sold"
-    },
-    "filters": {
-      "startDate": "Start Date",
-      "endDate": "End Date"
-    },
-    "table": {
-      "invoiceNo": "Invoice No",
-      "date": "Date",
-      "buyer": "Buyer",
-      "items": "Items",
-      "subtotal": "Subtotal",
-      "gst": "GST",
-      "grandTotal": "Grand Total",
-      "actions": "Actions"
-    },
-    "buttons": {
-      "newSale": "New Sale",
-      "printInvoice": "Print Invoice"
-    },
-    "pagination": {
-      "showing": "Showing {{start}} to {{end}} of {{total}} sales"
-    },
-    "errors": {
-      "fetchFailed": "Failed to fetch sales"
-    }
-  },
-
-  "users": {
-    "title": "Users",
-    "subtitle": "Manage system users and their roles",
-    "loading": "Loading users...",
-    "searchPlaceholder": "Search by name, email, or phone...",
-    "noUsersFound": "No users found",
-    "noPhone": "No phone",
-    "neverLogged": "Never",
-    "stats": {
-      "totalUsers": "Total Users",
-      "superadmins": "Super Admins",
-      "operators": "Operators",
-      "activeUsers": "Active Users"
-    },
-    "roles": {
-      "superadmin": "Super Admin",
-      "operator": "Operator",
-      "vendor": "Vendor"
-    },
-    "status": {
-      "active": "Active",
-      "inactive": "Inactive"
-    },
-    "filters": {
-      "role": "Role",
-      "status": "Status"
-    },
-    "table": {
-      "user": "User",
-      "contact": "Contact",
-      "role": "Role",
-      "business": "Business",
-      "status": "Status",
-      "lastLogin": "Last Login",
-      "actions": "Actions"
-    },
-    "buttons": {
-      "addNewUser": "Add New User",
-      "deactivateUser": "Deactivate User",
-      "activateUser": "Activate User",
-      "deactivate": "Deactivate",
-      "activate": "Activate"
-    },
-    "modals": {
-      "deactivate": {
-        "title": "Deactivate User",
-        "subtitle": "Confirm deactivation",
-        "confirmMessage": "Are you sure you want to deactivate {{name}}?",
-        "warningMessage": "This user will not be able to login to the system after deactivation."
-      },
-      "activate": {
-        "title": "Activate User",
-        "subtitle": "Confirm activation",
-        "confirmMessage": "Are you sure you want to activate {{name}}?",
-        "warningMessage": "This user will be able to login to the system after activation."
-      }
-    },
-    "pagination": {
-      "showing": "Showing {{start}} to {{end}} of {{total}} users"
-    },
-    "errors": {
-      "fetchFailed": "Failed to fetch users",
-      "statusToggleFailed": "Failed to change user status",
-      "loadError": "Error loading user",
-      "deleteFailed": "Failed to delete user",
-      "notFound": "User not found"
-    },
-    "detailsTitle": "User Details",
-    "detailsSubtitle": "View complete user information",
-    "personalInfo": "Personal Information",
-    "businessInfo": "Business Information",
-    "systemInfo": "System Information",
-    "createdAt": "Created At",
-    "updatedAt": "Last Updated",
-    "fullName": "Full Name",
-    "role": "Role"
-  },
-
-  "audit": {
-    "title": "Audit Logs",
-    "subtitle": "Track all system activities and user actions",
-    "loading": "Loading audit logs...",
-    "searchPlaceholder": "Search by user, action, entity...",
-    "noLogsFound": "No audit logs found",
-    "unknown": "Unknown",
-    "stats": {
-      "totalLogs": "Total Logs",
-      "pages": "Pages",
-      "currentPage": "Current Page",
-      "perPage": "Per Page"
-    },
-    "filters": {
-      "startDate": "Start Date",
-      "endDate": "End Date",
-      "actionType": "Action Type",
-      "entityType": "Entity Type"
-    },
-    "table": {
-      "time": "Time",
-      "user": "User",
-      "action": "Action",
-      "entity": "Entity",
-      "ipAddress": "IP Address",
-      "device": "Device",
-      "actions": "Actions"
-    },
-    "timeAgo": {
-      "justNow": "Just now",
-      "minutesAgo": "{{count}} minute{{count > 1 ? 's' : ''}} ago",
-      "hoursAgo": "{{count}} hour{{count > 1 ? 's' : ''}} ago",
-      "daysAgo": "{{count}} day{{count > 1 ? 's' : ''}} ago"
-    },
-    "actions": {
-      "createPurchase": "Create Purchase",
-      "updatePurchase": "Update Purchase",
-      "deletePurchase": "Delete Purchase",
-      "createSale": "Create Sale",
-      "updateSale": "Update Sale",
-      "deleteSale": "Delete Sale",
-      "createExpense": "Create Expense",
-      "updateExpense": "Update Expense",
-      "deleteExpense": "Delete Expense",
-      "createPayment": "Create Payment",
-      "updatePayment": "Update Payment",
-      "deletePayment": "Delete Payment",
-      "createFarmer": "Create Farmer",
-      "updateFarmer": "Update Farmer",
-      "deleteFarmer": "Delete Farmer",
-      "adjustStock": "Adjust Stock",
-      "transferStock": "Transfer Stock",
-      "setBudget": "Set Budget",
-      "login": "Login",
-      "logout": "Logout",
-      "create": "Create",
-      "update": "Update",
-      "delete": "Delete"
-    },
-    "entities": {
-      "purchase": "Purchase",
-      "sale": "Sale",
-      "expense": "Expense",
-      "payment": "Payment",
-      "farmer": "Farmer",
-      "inventory": "Inventory",
-      "budgetAlert": "Budget Alert",
-      "user": "User"
-    },
-    "modal": {
-      "title": "Audit Log Details",
-      "userInfo": "User Information",
-      "actionDetails": "Action Details",
-      "technicalDetails": "Technical Details",
-      "name": "Name",
-      "email": "Email",
-      "role": "Role",
-      "action": "Action",
-      "entityType": "Entity Type",
-      "entityId": "Entity ID",
-      "ipAddress": "IP Address",
-      "deviceInfo": "Device Info",
-      "notes": "Notes",
-      "changes": "Changes",
-      "beforeValue": "Before Value",
-      "afterValue": "After Value",
-      "createdAt": "Created At",
-      "updatedAt": "Updated At",
-      "systemInfo": "System Information"
-    },
-    "pagination": {
-      "showing": "Showing {{start}} to {{end}} of {{total}} logs"
-    },
-    "errors": {
-      "fetchFailed": "Failed to fetch audit logs"
-    }
-  },
-  
-  "buyers": {
-  "addTitle": "Add New Buyer",
-  "addSubtitle": "Enter buyer details to add them to your network",
-  "personalInfo": "Personal Information",
-  "businessDetails": "Business Details",
-  "creditTerms": "Credit Terms & Additional Info",
-  "steps": {
-    "personalInfo": "Personal Info",
-    "businessDetails": "Business Details",
-    "creditTerms": "Credit Terms"
-  },
-  "fullName": "Full Name",
-  "email": "Email Address",
-  "mobileNumber": "Mobile Number",
-  "alternateMobile": "Alternate Mobile",
-  "address": "Address",
-  "city": "City",
-  "state": "State",
-  "pincode": "Pincode",
-  "businessName": "Business Name",
-  "businessType": "Business Type",
-  "gstNumber": "GST Number",
-  "panNumber": "PAN Number",
-  "creditLimit": "Credit Limit (₹)",
-  "creditDays": "Credit Days",
-  "defaultPaymentMode": "Default Payment Mode",
-  "notes": "Notes",
-  "placeholders": {
-    "name": "Enter full name",
-    "email": "Enter email address",
-    "mobile": "Enter 10-digit mobile number",
-    "alternateMobile": "Enter alternate mobile number",
-    "address": "Enter complete address",
-    "city": "Enter city name",
-    "state": "Enter state name",
-    "pincode": "Enter 6-digit pincode",
-    "businessName": "Enter business/company name",
-    "gst": "Enter 15-digit GST number",
-    "pan": "Enter 10-digit PAN number",
-    "creditLimit": "Enter credit limit amount",
-    "creditDays": "Enter number of credit days (1-365)",
-    "notes": "Add any additional notes..."
-  },
-  "errors": {
-    "nameRequired": "Name is required",
-    "nameInvalid": "Name should only contain letters, spaces, dots and hyphens",
-    "emailInvalid": "Please enter a valid email address",
-    "mobileInvalid": "Please enter a valid 10-digit mobile number starting with 6-9",
-    "alternateMobileInvalid": "Please enter a valid 10-digit mobile number",
-    "cityRequired": "City is required",
-    "stateRequired": "State is required",
-    "pincodeInvalid": "Please enter a valid 6-digit pincode",
-    "businessNameRequired": "Business name is required",
-    "businessNameInvalid": "Business name contains invalid characters",
-    "gstInvalid": "Please enter a valid GST number (e.g., 27AAAAA0000A1Z)",
-    "panInvalid": "Please enter a valid PAN number (e.g., AAAAA1234A)",
-    "creditLimitInvalid": "Please enter a valid credit limit amount",
-    "creditDaysInvalid": "Please enter valid credit days (0-365)",
-    "addFailed": "Failed to add buyer. Please try again."
-  },
-  "messages": {
-    "addSuccess": "Buyer added successfully! Redirecting..."
-  },
-  "mobileHint": "Enter 10-digit mobile number (starts with 6,7,8,9)",
-  "pincodeHint": "Enter 6-digit pincode",
-  "gstHint": "15-character GSTIN (e.g., 27AAAAA0000A1Z)",
-  "panHint": "10-character PAN (e.g., AAAAA1234A)",
-  "creditLimitHint": "Maximum credit amount allowed",
-  "creditDaysHint": "Number of days for credit payment",
-  "creditOptional": "These fields are optional - leave blank if not applicable"
-}
 }

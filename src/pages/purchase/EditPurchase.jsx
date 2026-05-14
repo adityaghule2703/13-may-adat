@@ -106,6 +106,8 @@ const EditPurchase = () => {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [originalPurchase, setOriginalPurchase] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
   
   const [formData, setFormData] = useState({
     purchaseDate: '',
@@ -164,6 +166,25 @@ const EditPurchase = () => {
     return netQty * (line.rate || 0);
   };
 
+  // Fetch products
+  const fetchProducts = async () => {
+    try {
+      const token = getToken();
+      const response = await axios.get(`${BASE_URL}/products?limit=100`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        // Filter only active products
+        const activeProducts = response.data.data.filter(p => p.isActive === true);
+        setProducts(activeProducts);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
+
   // Fetch purchase details
   const fetchPurchase = async () => {
     try {
@@ -182,8 +203,9 @@ const EditPurchase = () => {
       if (data.success) {
         const purchase = data.data;
         
-        // Check if purchase can be edited (only DRAFT status)
-        if (purchase.status !== 'draft') {
+        // Allow edit for DRAFT, SAVED, PARTIAL, and PENDING status
+        const editableStatuses = ['draft', 'saved', 'partial', 'pending'];
+        if (!editableStatuses.includes(purchase.status)) {
           setError(t('purchases.errors.editNotAllowed', { status: purchase.status }));
           setTimeout(() => navigate('/purchases'), 3000);
           return;
@@ -194,6 +216,7 @@ const EditPurchase = () => {
         
         // Format lines for editing
         const lines = purchase.lines.map(line => ({
+          productId: null,
           productName: line.productName,
           pricingType: line.pricingType || 'kg',
           bags: line.bags || 0,
@@ -234,7 +257,7 @@ const EditPurchase = () => {
   };
 
   useEffect(() => {
-    fetchPurchase();
+    Promise.all([fetchProducts(), fetchPurchase()]);
   }, [id]);
 
   // Calculate all totals
@@ -266,6 +289,25 @@ const EditPurchase = () => {
     });
   }, [formData.lines, formData.deductions]);
 
+  const handleProductChange = (index, product) => {
+    const updatedLines = [...formData.lines];
+    updatedLines[index] = {
+      ...updatedLines[index],
+      productId: product?._id || null,
+      productName: product?.productName || '',
+      rate: '',
+      actualQty: '',
+      qualityDeduction: '',
+      bags: '',
+      weightPerBag: ''
+    };
+    setFormData(prev => ({ ...prev, lines: updatedLines }));
+    
+    if (fieldErrors[`line_${index}_product`]) {
+      setFieldErrors(prev => ({ ...prev, [`line_${index}_product`]: '' }));
+    }
+  };
+
   const handleLineChange = (index, field, value) => {
     const updatedLines = [...formData.lines];
     updatedLines[index][field] = value;
@@ -283,8 +325,15 @@ const EditPurchase = () => {
     setFormData(prev => ({
       ...prev,
       lines: [...prev.lines, {
-        productName: '', pricingType: 'kg', bags: 0, weightPerBag: 0,
-        actualQty: 0, qualityDeduction: 0, rate: 0, notes: ''
+        productId: null,
+        productName: '', 
+        pricingType: 'kg', 
+        bags: 0, 
+        weightPerBag: 0,
+        actualQty: 0, 
+        qualityDeduction: 0, 
+        rate: 0, 
+        notes: ''
       }]
     }));
   };
@@ -487,6 +536,11 @@ const EditPurchase = () => {
     );
   }
 
+  // Helper function to find product by name for existing lines
+  const getSelectedProduct = (productName) => {
+    return products.find(p => p.productName === productName) || null;
+  };
+
   return (
     <Box sx={{ height: '100%', overflow: 'auto' }}>
       {/* Header */}
@@ -640,12 +694,14 @@ const EditPurchase = () => {
         </Paper>
       )}
 
-      {/* Step 2: Product Lines */}
+      {/* Step 2: Product Lines - With Product Dropdown */}
       {currentStep === 1 && (
         <Stack spacing={2.5}>
           {formData.lines.map((line, index) => {
             const lineTotal = calculateLineTotal(line);
             const selectedPricingType = pricingTypeOptions.find(opt => opt.value === line.pricingType) || null;
+            // Find the product by name from the products list
+            const selectedProduct = getSelectedProduct(line.productName);
             
             return (
               <Paper key={index} sx={{ borderRadius: 2.5, overflow: 'visible', border: `1px solid ${COLORS.border}` }}>
@@ -664,20 +720,61 @@ const EditPurchase = () => {
                 </Box>
                 <Box sx={{ p: 2.5 }}>
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                    {/* PRODUCT NAME - spans both columns - With Autocomplete */}
                     <Box sx={{ gridColumn: 'span 2' }}>
                       <Label required>{t('purchases.productName')}</Label>
-                      <TextField
+                      <Autocomplete
                         fullWidth
-                        size="small"
-                        value={line.productName}
-                        onChange={(e) => handleLineChange(index, 'productName', e.target.value)}
-                        placeholder={t('purchases.placeholders.productName')}
-                        error={!!fieldErrors[`line_${index}_product`]}
-                        helperText={fieldErrors[`line_${index}_product`]}
-                        sx={inputSx}
+                        options={products}
+                        loading={loadingProducts}
+                        value={selectedProduct}
+                        onChange={(event, newValue) => handleProductChange(index, newValue)}
+                        getOptionLabel={(option) => option.productName}
+                        isOptionEqualToValue={(option, value) => option._id === value?._id}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            placeholder="Search or select product..."
+                            error={!!fieldErrors[`line_${index}_product`]}
+                            helperText={fieldErrors[`line_${index}_product`]}
+                            sx={inputSx}
+                          />
+                        )}
+                        renderOption={(props, option) => (
+                          <li {...props}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                              <Box>
+                                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem' }}>
+                                  {option.productName}
+                                </Typography>
+                                {option.description && (
+                                  <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
+                                    {option.description}
+                                  </Typography>
+                                )}
+                              </Box>
+                              <Typography variant="caption" sx={{ fontSize: '0.65rem', color: option.isActive ? '#2E7D32' : '#D32F2F' }}>
+                                {option.isActive ? 'Active' : 'Inactive'}
+                              </Typography>
+                            </Box>
+                          </li>
+                        )}
+                        ListboxProps={{
+                          sx: {
+                            maxHeight: '300px',
+                            overflowY: 'auto',
+                            '& .MuiAutocomplete-option': {
+                              fontSize: '0.75rem',
+                              py: 1,
+                              px: 1.5
+                            }
+                          }
+                        }}
                       />
                     </Box>
 
+                    {/* PRICING TYPE - first column */}
                     <Box>
                       <Label required>{t('purchases.pricingType')}</Label>
                       <Autocomplete
@@ -715,6 +812,7 @@ const EditPurchase = () => {
                       />
                     </Box>
 
+                    {/* RATE - second column */}
                     <Box>
                       <Label required>{t('purchases.rate')}</Label>
                       <TextField
@@ -733,6 +831,7 @@ const EditPurchase = () => {
                       />
                     </Box>
 
+                    {/* Bags and Weight - only for KG pricing */}
                     {line.pricingType === 'kg' && (
                       <>
                         <Box>
@@ -762,6 +861,7 @@ const EditPurchase = () => {
                       </>
                     )}
 
+                    {/* QUANTITY - first column */}
                     <Box>
                       <Label required>{t('purchases.quantity')}</Label>
                       <TextField
@@ -782,6 +882,7 @@ const EditPurchase = () => {
                       )}
                     </Box>
 
+                    {/* QUALITY DEDUCTION - second column */}
                     <Box>
                       <Label>{t('purchases.qualityDeduction')}</Label>
                       <TextField
@@ -795,6 +896,7 @@ const EditPurchase = () => {
                       />
                     </Box>
 
+                    {/* LINE NOTES - spans both columns */}
                     <Box sx={{ gridColumn: 'span 2' }}>
                       <Label>{t('purchases.lineNotes')}</Label>
                       <TextField
@@ -807,6 +909,7 @@ const EditPurchase = () => {
                       />
                     </Box>
 
+                    {/* LINE TOTAL - spans both columns */}
                     <Box sx={{ gridColumn: 'span 2' }}>
                       <Box sx={{ p: 2, bgcolor: COLORS.primaryLight, borderRadius: 1.5 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -846,6 +949,7 @@ const EditPurchase = () => {
       {/* Step 3: Deductions & Summary */}
       {currentStep === 2 && (
         <Stack spacing={2.5}>
+          {/* Deductions Section */}
           <Paper sx={{ borderRadius: 2.5, overflow: 'visible', border: `1px solid ${COLORS.border}` }}>
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
@@ -1022,6 +1126,7 @@ const EditPurchase = () => {
             </Box>
           </Paper>
 
+          {/* Summary Section */}
           <Paper sx={{ p: 2.5, bgcolor: COLORS.primaryLight, borderRadius: 2.5, border: `1px solid ${COLORS.primary}` }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, color: COLORS.primaryDark, mb: 2, fontSize: '0.85rem' }}>
               {t('purchases.purchaseSummary')}
@@ -1062,6 +1167,7 @@ const EditPurchase = () => {
             </Stack>
           </Paper>
 
+          {/* Products Summary Table */}
           <Paper sx={{ borderRadius: 2.5, overflow: 'hidden', border: `1px solid ${COLORS.border}` }}>
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
@@ -1130,6 +1236,7 @@ const EditPurchase = () => {
             onClick={handleNext}
             variant="contained"
             sx={{
+              ml: 'auto',
               height: 32,
               px: 2,
               borderRadius: 1.5,

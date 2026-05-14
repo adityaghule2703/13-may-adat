@@ -1,6 +1,7 @@
 // src/pages/buyers/Buyers.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   Users, Search, Filter, Eye, Edit2, 
   Download, UserPlus, Phone, 
@@ -13,6 +14,7 @@ import {
 import BASE_URL from '../../config/Config';
 
 const Buyers = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -104,7 +106,6 @@ const Buyers = () => {
         setBuyers(data.data);
         setPagination(data.pagination);
         
-        // Calculate stats from fetched data
         const totalPurchaseValue = data.data.reduce((sum, b) => sum + (b.totalPurchaseValue || 0), 0);
         const totalCreditLimit = data.data.reduce((sum, b) => sum + (b.creditLimit || 0), 0);
         const activeBuyers = data.data.filter(b => b.isActive).length;
@@ -116,15 +117,15 @@ const Buyers = () => {
           activeBuyers
         });
       } else {
-        setError(data.message || 'Failed to fetch buyers');
+        setError(data.message || t('buyers.errors.fetchFailed'));
       }
     } catch (error) {
       console.error('Error fetching buyers:', error);
-      setError('Network error. Please check your connection.');
+      setError(t('common.networkError'));
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, debouncedSearchTerm, filters.status, filters.businessType, filters.city, filters.state, navigate]);
+  }, [pagination.page, pagination.limit, debouncedSearchTerm, filters.status, filters.businessType, filters.city, filters.state, navigate, t]);
 
   const handleDeactivateBuyer = async (buyer) => {
     setDeactivating(true);
@@ -150,14 +151,14 @@ const Buyers = () => {
         setShowDeactivateModal(false);
         setSelectedBuyer(null);
         fetchBuyers();
-        alert(`${buyer.displayName || buyer.name} has been deactivated successfully`);
+        alert(t('buyers.messages.deactivateSuccess', { name: buyer.displayName || buyer.name }));
       } else {
-        setError(data.message || 'Failed to deactivate buyer');
+        setError(data.message || t('buyers.errors.deactivateFailed'));
         setShowDeactivateModal(false);
       }
     } catch (error) {
       console.error('Error deactivating buyer:', error);
-      setError('Network error. Please try again.');
+      setError(t('common.networkError'));
     } finally {
       setDeactivating(false);
       setActionMenuAnchor(null);
@@ -201,22 +202,22 @@ const Buyers = () => {
 
   const getStatusColor = (isActive) =>
     isActive
-      ? { bg: '#E8F5E9', text: '#2E7D32', label: 'Active' }
-      : { bg: '#FFEBEE', text: '#D32F2F', label: 'Inactive' };
+      ? { bg: '#E8F5E9', text: '#2E7D32', label: t('buyers.status.active') }
+      : { bg: '#FFEBEE', text: '#D32F2F', label: t('buyers.status.inactive') };
 
   const getBusinessTypeLabel = (type) => {
     const types = {
-      individual: 'Individual',
-      company: 'Company',
-      partnership: 'Partnership',
-      proprietorship: 'Proprietorship'
+      individual: t('buyers.businessTypes.individual'),
+      company: t('buyers.businessTypes.company'),
+      partnership: t('buyers.businessTypes.partnership'),
+      proprietorship: t('buyers.businessTypes.proprietorship')
     };
-    return types[type] || type || 'N/A';
+    return types[type] || type || t('common.na');
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-IN', {
+    if (!dateString) return t('common.na');
+    return new Date(dateString).toLocaleDateString(t('common.locale') === 'mr' ? 'mr-IN' : 'en-IN', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
@@ -224,13 +225,12 @@ const Buyers = () => {
   };
 
   const formatCurrency = (amount) =>
-    new Intl.NumberFormat('en-IN', {
+    new Intl.NumberFormat(t('common.locale') === 'mr' ? 'mr-IN' : 'en-IN', {
       style: 'currency',
       currency: 'INR',
       minimumFractionDigits: 0
     }).format(amount || 0);
 
-  // Smart dropdown positioning
   const MENU_HEIGHT = 200;
   const anchorRect = actionMenuAnchor?.getBoundingClientRect();
   const spaceBelow = anchorRect ? window.innerHeight - anchorRect.bottom : 0;
@@ -240,7 +240,7 @@ const Buyers = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <Loader className="w-8 h-8 animate-spin" style={{ color: '#2E7D32' }} />
-        <span className="ml-2" style={{ color: '#2E7D32' }}>Loading buyers...</span>
+        <span className="ml-2" style={{ color: '#2E7D32' }}>{t('buyers.loading')}</span>
       </div>
     );
   }
@@ -250,8 +250,8 @@ const Buyers = () => {
       {/* Page Header */}
       <div className="flex justify-between items-center flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: '#1B5E20' }}>Buyers</h1>
-          <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>Manage and track all your buyers</p>
+          <h1 className="text-2xl font-bold" style={{ color: '#1B5E20' }}>{t('buyers.title')}</h1>
+          <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>{t('buyers.subtitle')}</p>
         </div>
       </div>
 
@@ -260,7 +260,7 @@ const Buyers = () => {
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Total Buyers</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('buyers.stats.totalBuyers')}</p>
               <p className="text-2xl font-bold mt-1" style={{ color: '#2E7D32' }}>{stats.totalBuyers}</p>
             </div>
             <Users className="w-8 h-8" style={{ color: '#43A047' }} />
@@ -269,7 +269,7 @@ const Buyers = () => {
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Total Purchase Value</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('buyers.stats.totalPurchaseValue')}</p>
               <p className="text-2xl font-bold mt-1" style={{ color: '#2E7D32' }}>{formatCurrency(stats.totalPurchaseValue)}</p>
             </div>
             <DollarSign className="w-8 h-8" style={{ color: '#FF8F00' }} />
@@ -278,7 +278,7 @@ const Buyers = () => {
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Total Credit Limit</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('buyers.stats.totalCreditLimit')}</p>
               <p className="text-2xl font-bold mt-1" style={{ color: '#FF6F00' }}>{formatCurrency(stats.totalCreditLimit)}</p>
             </div>
             <CreditCard className="w-8 h-8" style={{ color: '#FF6F00' }} />
@@ -287,7 +287,7 @@ const Buyers = () => {
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Active Buyers</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('buyers.stats.activeBuyers')}</p>
               <p className="text-2xl font-bold mt-1" style={{ color: '#2E7D32' }}>{stats.activeBuyers}</p>
             </div>
             <CheckCircle className="w-8 h-8" style={{ color: '#2E7D32' }} />
@@ -300,7 +300,7 @@ const Buyers = () => {
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-red-500" />
           <span className="text-sm text-red-600">{error}</span>
-          <button onClick={fetchBuyers} className="ml-auto text-sm text-red-600 hover:underline">Retry</button>
+          <button onClick={fetchBuyers} className="ml-auto text-sm text-red-600 hover:underline">{t('common.retry')}</button>
         </div>
       )}
 
@@ -313,7 +313,7 @@ const Buyers = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#8D6E63' }} />
               <input
                 type="text"
-                placeholder="Search buyers by name, email, mobile, or business..."
+                placeholder={t('buyers.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
@@ -334,7 +334,7 @@ const Buyers = () => {
               style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}
             >
               <Filter className="w-4 h-4" />
-              Filters
+              {t('common.filter')}
               {(filters.status !== 'all' || filters.businessType !== 'all' || filters.city || filters.state) && (
                 <span className="w-2 h-2 rounded-full bg-[#FF6F00]"></span>
               )}
@@ -342,7 +342,7 @@ const Buyers = () => {
             
             <button className="px-4 py-2 border rounded-lg flex items-center gap-2 hover:bg-gray-50 transition-all" style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}>
               <Download className="w-4 h-4" />
-              Export
+              {t('common.export')}
             </button>
             <button
               onClick={() => navigate('/buyers/add')}
@@ -350,7 +350,7 @@ const Buyers = () => {
               style={{ background: 'linear-gradient(135deg, #2E7D32, #43A047)' }}
             >
               <UserPlus className="w-4 h-4" />
-              Add New Buyer
+              {t('buyers.buttons.addNew')}
             </button>
           </div>
         </div>
@@ -359,51 +359,51 @@ const Buyers = () => {
           <div className="mt-4 p-4 border rounded-lg" style={{ borderColor: '#E8F5E9', background: '#FAFAFA' }}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>Status</label>
+                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>{t('buyers.filters.status')}</label>
                 <select
                   value={filters.status}
                   onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                   className="w-full px-3 py-2 border rounded-lg text-sm"
                   style={{ borderColor: '#C8E6C9' }}
                 >
-                  <option value="all">All</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="all">{t('common.allStatus')}</option>
+                  <option value="active">{t('buyers.status.active')}</option>
+                  <option value="inactive">{t('buyers.status.inactive')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>Business Type</label>
+                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>{t('buyers.filters.businessType')}</label>
                 <select
                   value={filters.businessType}
                   onChange={(e) => setFilters({ ...filters, businessType: e.target.value })}
                   className="w-full px-3 py-2 border rounded-lg text-sm"
                   style={{ borderColor: '#C8E6C9' }}
                 >
-                  <option value="all">All</option>
-                  <option value="individual">Individual</option>
-                  <option value="company">Company</option>
-                  <option value="partnership">Partnership</option>
-                  <option value="proprietorship">Proprietorship</option>
+                  <option value="all">{t('common.all')}</option>
+                  <option value="individual">{t('buyers.businessTypes.individual')}</option>
+                  <option value="company">{t('buyers.businessTypes.company')}</option>
+                  <option value="partnership">{t('buyers.businessTypes.partnership')}</option>
+                  <option value="proprietorship">{t('buyers.businessTypes.proprietorship')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>City</label>
+                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>{t('buyers.filters.city')}</label>
                 <input
                   type="text"
                   value={filters.city}
                   onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-                  placeholder="Filter by city"
+                  placeholder={t('buyers.filters.cityPlaceholder')}
                   className="w-full px-3 py-2 border rounded-lg text-sm"
                   style={{ borderColor: '#C8E6C9' }}
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>State</label>
+                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>{t('buyers.filters.state')}</label>
                 <input
                   type="text"
                   value={filters.state}
                   onChange={(e) => setFilters({ ...filters, state: e.target.value })}
-                  placeholder="Filter by state"
+                  placeholder={t('buyers.filters.statePlaceholder')}
                   className="w-full px-3 py-2 border rounded-lg text-sm"
                   style={{ borderColor: '#C8E6C9' }}
                 />
@@ -415,14 +415,14 @@ const Buyers = () => {
                 className="px-3 py-1 border rounded-lg text-sm"
                 style={{ borderColor: '#C8E6C9', color: '#8D6E63' }}
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={applyFilters}
                 className="px-3 py-1 rounded-lg text-white text-sm"
                 style={{ background: '#2E7D32' }}
               >
-                Apply Filters
+                {t('common.apply')}
               </button>
             </div>
           </div>
@@ -434,15 +434,15 @@ const Buyers = () => {
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader className="w-6 h-6 animate-spin" style={{ color: '#2E7D32' }} />
-            <span className="ml-2 text-sm" style={{ color: '#2E7D32' }}>Loading...</span>
+            <span className="ml-2 text-sm" style={{ color: '#2E7D32' }}>{t('common.loading')}</span>
           </div>
         ) : buyers.length === 0 ? (
           <div className="text-center py-12">
             <Building2 className="w-12 h-12 mx-auto mb-3" style={{ color: '#C8E6C9' }} />
-            <p className="text-sm" style={{ color: '#8D6E63' }}>No buyers found</p>
+            <p className="text-sm" style={{ color: '#8D6E63' }}>{t('buyers.noBuyersFound')}</p>
             {(searchTerm || filters.status !== 'all' || filters.businessType !== 'all' || filters.city || filters.state) && (
               <button onClick={clearFilters} className="mt-2 text-sm text-[#2E7D32] hover:underline">
-                Clear filters
+                {t('common.clearFilters')}
               </button>
             )}
           </div>
@@ -452,14 +452,14 @@ const Buyers = () => {
               <table className="w-full">
                 <thead>
                   <tr style={{ background: '#1B3A1F', borderBottom: '1px solid #2E5A32' }}>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Buyer Info</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Contact</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Location</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Business</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Credit Limit</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Purchase Value</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Status</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('buyers.table.buyerInfo')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('buyers.table.contact')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('buyers.table.location')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('buyers.table.business')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('buyers.table.creditLimit')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('buyers.table.purchaseValue')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('buyers.table.status')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('common.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -501,7 +501,7 @@ const Buyers = () => {
                         </td>
                         <td className="px-6 py-4">
                           <div>
-                            <p className="text-sm" style={{ color: '#5D4037' }}>{buyer.address?.split(',')[0] || 'N/A'}</p>
+                            <p className="text-sm" style={{ color: '#5D4037' }}>{buyer.address?.split(',')[0] || t('common.na')}</p>
                             <p className="text-xs" style={{ color: '#8D6E63' }}>{buyer.city}, {buyer.state} - {buyer.pincode}</p>
                           </div>
                         </td>
@@ -515,7 +515,7 @@ const Buyers = () => {
                             <span className="text-sm font-semibold" style={{ color: '#2E7D32' }}>
                               {formatCurrency(buyer.creditLimit)}
                             </span>
-                            <p className="text-xs" style={{ color: '#8D6E63' }}>{buyer.creditDays} days credit</p>
+                            <p className="text-xs" style={{ color: '#8D6E63' }}>{buyer.creditDays || 0} {t('buyers.table.daysCredit')}</p>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -524,7 +524,7 @@ const Buyers = () => {
                               {formatCurrency(buyer.totalPurchaseValue)}
                             </span>
                             <p className="text-xs" style={{ color: '#8D6E63' }}>
-                              {buyer.totalPurchases || 0} purchases
+                              {buyer.totalPurchases || 0} {t('buyers.table.purchases')}
                             </p>
                           </div>
                         </td>
@@ -539,7 +539,7 @@ const Buyers = () => {
                           {buyer.lastPurchaseDate && (
                             <p className="text-xs mt-1 flex items-center gap-1" style={{ color: '#8D6E63' }}>
                               <Calendar className="w-2 h-2" />
-                              Last: {formatDate(buyer.lastPurchaseDate)}
+                              {t('buyers.table.lastPurchase')}: {formatDate(buyer.lastPurchaseDate)}
                             </p>
                           )}
                         </td>
@@ -550,7 +550,7 @@ const Buyers = () => {
                             style={{ color: '#2E7D32' }}
                           >
                             <MoreVertical className="w-4 h-4" />
-                            <span className="text-xs font-medium">Actions</span>
+                            <span className="text-xs font-medium">{t('common.actions')}</span>
                           </button>
 
                           {/* Dropdown */}
@@ -576,7 +576,7 @@ const Buyers = () => {
                                 style={{ color: '#2E7D32' }}
                               >
                                 <Eye className="w-4 h-4" />
-                                View Details
+                                {t('common.viewDetails')}
                               </button>
 
                               <button
@@ -588,7 +588,7 @@ const Buyers = () => {
                                 style={{ color: '#FF6F00' }}
                               >
                                 <Edit2 className="w-4 h-4" />
-                                Edit
+                                {t('common.edit')}
                               </button>
 
                               <button
@@ -600,7 +600,7 @@ const Buyers = () => {
                                 style={{ color: '#1565C0', borderColor: '#E8F5E9' }}
                               >
                                 <DollarSign className="w-4 h-4" />
-                                View Purchases
+                                {t('buyers.actions.viewPurchases')}
                               </button>
 
                               {buyer.isActive && (
@@ -610,7 +610,7 @@ const Buyers = () => {
                                   style={{ color: '#D32F2F' }}
                                 >
                                   <PowerOff className="w-4 h-4" />
-                                  Deactivate
+                                  {t('common.deactivate')}
                                 </button>
                               )}
                             </div>
@@ -627,8 +627,11 @@ const Buyers = () => {
             {pagination.pages > 1 && (
               <div className="px-6 py-4 border-t flex justify-between items-center flex-wrap gap-4" style={{ borderColor: '#E8F5E9' }}>
                 <div className="text-xs" style={{ color: '#8D6E63' }}>
-                  Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                  {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} buyers
+                  {t('buyers.pagination.showing', {
+                    start: (pagination.page - 1) * pagination.limit + 1,
+                    end: Math.min(pagination.page * pagination.limit, pagination.total),
+                    total: pagination.total
+                  })}
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -637,7 +640,7 @@ const Buyers = () => {
                     className="px-3 py-1 rounded border text-sm disabled:opacity-50 hover:bg-gray-50 transition-all"
                     style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}
                   >
-                    Previous
+                    {t('common.previous')}
                   </button>
                   <div className="flex gap-1">
                     {[...Array(Math.min(pagination.pages, 5))].map((_, i) => {
@@ -668,7 +671,7 @@ const Buyers = () => {
                     className="px-3 py-1 rounded border text-sm disabled:opacity-50 hover:bg-gray-50 transition-all"
                     style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}
                   >
-                    Next
+                    {t('common.next')}
                   </button>
                 </div>
               </div>
@@ -701,8 +704,8 @@ const Buyers = () => {
             <div className="relative bg-white rounded-xl shadow-xl w-full" style={{ maxWidth: '400px' }}>
               <div className="flex justify-between items-center p-6 border-b" style={{ borderColor: '#E8F5E9' }}>
                 <div>
-                  <h3 className="text-lg font-semibold" style={{ color: '#D32F2F' }}>Deactivate Buyer</h3>
-                  <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>Confirm deactivation</p>
+                  <h3 className="text-lg font-semibold" style={{ color: '#D32F2F' }}>{t('buyers.modals.deactivate.title')}</h3>
+                  <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>{t('buyers.modals.deactivate.subtitle')}</p>
                 </div>
                 <button
                   onClick={() => { setShowDeactivateModal(false); setSelectedBuyer(null); }}
@@ -718,10 +721,10 @@ const Buyers = () => {
                   </div>
                 </div>
                 <p className="text-center text-sm mb-2" style={{ color: '#5D4037' }}>
-                  Are you sure you want to deactivate <strong>{selectedBuyer.displayName || selectedBuyer.name}</strong>?
+                  {t('buyers.modals.deactivate.confirmMessage', { name: selectedBuyer.displayName || selectedBuyer.name })}
                 </p>
                 <p className="text-center text-xs" style={{ color: '#8D6E63' }}>
-                  This action will deactivate the buyer account. They will not be able to make purchases until reactivated.
+                  {t('buyers.modals.deactivate.warningMessage')}
                 </p>
               </div>
               <div className="flex justify-end gap-3 p-6 border-t" style={{ borderColor: '#E8F5E9' }}>
@@ -730,7 +733,7 @@ const Buyers = () => {
                   className="px-4 py-2 rounded-lg border text-sm font-medium transition-all hover:bg-gray-50"
                   style={{ borderColor: '#C8E6C9', color: '#8D6E63' }}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={() => handleDeactivateBuyer(selectedBuyer)}
@@ -739,9 +742,9 @@ const Buyers = () => {
                   style={{ background: '#D32F2F' }}
                 >
                   {deactivating ? (
-                    <><Loader className="w-4 h-4 animate-spin" /> Deactivating...</>
+                    <><Loader className="w-4 h-4 animate-spin" /> {t('common.deactivating')}</>
                   ) : (
-                    <><PowerOff className="w-4 h-4" /> Deactivate</>
+                    <><PowerOff className="w-4 h-4" /> {t('common.deactivate')}</>
                   )}
                 </button>
               </div>

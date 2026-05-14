@@ -5,7 +5,7 @@ import {
   Package, Search, Filter, Eye, Edit2, 
   Download, UserPlus, CheckCircle, XCircle, 
   Loader, AlertCircle,
-  X, MoreVertical, PowerOff, Box as BoxIcon,
+  X, MoreVertical, Trash2,
   Tag, Calendar, User
 } from 'lucide-react';
 import BASE_URL from '../../config/Config';
@@ -36,8 +36,8 @@ const Products = () => {
   const [actionMenuAnchor, setActionMenuAnchor] = useState(null);
   const [selectedProductForMenu, setSelectedProductForMenu] = useState(null);
   
-  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
-  const [deactivating, setDeactivating] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
@@ -115,12 +115,12 @@ const Products = () => {
     }
   }, [pagination.page, pagination.limit, debouncedSearchTerm, filters.status, navigate]);
 
-  const handleDeactivateProduct = async (product) => {
-    setDeactivating(true);
+  const handleDeleteProduct = async (product) => {
+    setDeleting(true);
     try {
       const token = getToken();
-      const response = await fetch(`${BASE_URL}/products/${product._id}/deactivate`, {
-        method: 'PATCH',
+      const response = await fetch(`${BASE_URL}/products/${product._id}`, {
+        method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -136,58 +136,19 @@ const Products = () => {
       }
       const data = await response.json();
       if (data.success) {
-        setShowDeactivateModal(false);
+        setShowDeleteModal(false);
         setSelectedProduct(null);
         fetchProducts();
-        alert(`${product.productName} has been deactivated successfully`);
+        alert(`${product.productName} has been deleted successfully`);
       } else {
-        setError(data.message || 'Failed to deactivate product');
-        setShowDeactivateModal(false);
+        setError(data.message || 'Failed to delete product');
+        setShowDeleteModal(false);
       }
     } catch (error) {
-      console.error('Error deactivating product:', error);
+      console.error('Error deleting product:', error);
       setError('Network error. Please try again.');
     } finally {
-      setDeactivating(false);
-      setActionMenuAnchor(null);
-      setSelectedProductForMenu(null);
-    }
-  };
-
-  const handleActivateProduct = async (product) => {
-    setDeactivating(true);
-    try {
-      const token = getToken();
-      const response = await fetch(`${BASE_URL}/products/${product._id}/activate`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      if (response.status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('user');
-        navigate('/login');
-        return;
-      }
-      const data = await response.json();
-      if (data.success) {
-        setShowDeactivateModal(false);
-        setSelectedProduct(null);
-        fetchProducts();
-        alert(`${product.productName} has been activated successfully`);
-      } else {
-        setError(data.message || 'Failed to activate product');
-        setShowDeactivateModal(false);
-      }
-    } catch (error) {
-      console.error('Error activating product:', error);
-      setError('Network error. Please try again.');
-    } finally {
-      setDeactivating(false);
+      setDeleting(false);
       setActionMenuAnchor(null);
       setSelectedProductForMenu(null);
     }
@@ -221,9 +182,9 @@ const Products = () => {
     setSelectedProductForMenu(null);
   };
 
-  const openDeactivateModal = (product) => {
+  const openDeleteModal = (product) => {
     setSelectedProduct(product);
-    setShowDeactivateModal(true);
+    setShowDeleteModal(true);
     handleActionMenuClose();
   };
 
@@ -242,7 +203,7 @@ const Products = () => {
   };
 
   // Smart dropdown positioning
-  const MENU_HEIGHT = 200;
+  const MENU_HEIGHT = 150;
   const anchorRect = actionMenuAnchor?.getBoundingClientRect();
   const spaceBelow = anchorRect ? window.innerHeight - anchorRect.bottom : 0;
   const openUpward = anchorRect ? spaceBelow < MENU_HEIGHT + 8 : false;
@@ -490,7 +451,7 @@ const Products = () => {
                             <span className="text-xs font-medium">Actions</span>
                           </button>
 
-                          {/* Dropdown */}
+                          {/* Dropdown - Only View, Edit, Delete */}
                           {isActionMenuOpen && anchorRect && (
                             <div
                               className="fixed bg-white rounded-lg shadow-xl border overflow-hidden z-50"
@@ -528,25 +489,14 @@ const Products = () => {
                                 Edit
                               </button>
 
-                              {product.isActive ? (
-                                <button
-                                  onClick={() => openDeactivateModal(product)}
-                                  className="w-full px-4 py-2.5 text-left text-sm hover:bg-red-50 flex items-center gap-2 transition-colors border-t"
-                                  style={{ color: '#D32F2F', borderColor: '#E8F5E9' }}
-                                >
-                                  <PowerOff className="w-4 h-4" />
-                                  Deactivate
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => handleActivateProduct(product)}
-                                  className="w-full px-4 py-2.5 text-left text-sm hover:bg-green-50 flex items-center gap-2 transition-colors border-t"
-                                  style={{ color: '#2E7D32', borderColor: '#E8F5E9' }}
-                                >
-                                  <CheckCircle className="w-4 h-4" />
-                                  Activate
-                                </button>
-                              )}
+                              <button
+                                onClick={() => openDeleteModal(product)}
+                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-red-50 flex items-center gap-2 transition-colors border-t"
+                                style={{ color: '#D32F2F', borderColor: '#E8F5E9' }}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                Delete
+                              </button>
                             </div>
                           )}
                         </td>
@@ -620,8 +570,8 @@ const Products = () => {
         />
       )}
 
-      {/* Deactivate/Activate Confirmation Modal */}
-      {showDeactivateModal && selectedProduct && (
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedProduct && (
         <div className="fixed inset-0 z-50">
           <div
             className="absolute inset-0"
@@ -629,21 +579,17 @@ const Products = () => {
               backgroundColor: 'rgba(0, 0, 0, 0.6)',
               backdropFilter: 'blur(4px)'
             }}
-            onClick={() => { setShowDeactivateModal(false); setSelectedProduct(null); }}
+            onClick={() => { setShowDeleteModal(false); setSelectedProduct(null); }}
           />
           <div className="flex items-center justify-center min-h-screen p-4">
             <div className="relative bg-white rounded-xl shadow-xl w-full" style={{ maxWidth: '400px' }}>
               <div className="flex justify-between items-center p-6 border-b" style={{ borderColor: '#E8F5E9' }}>
                 <div>
-                  <h3 className="text-lg font-semibold" style={{ color: selectedProduct.isActive ? '#D32F2F' : '#2E7D32' }}>
-                    {selectedProduct.isActive ? 'Deactivate Product' : 'Activate Product'}
-                  </h3>
-                  <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>
-                    {selectedProduct.isActive ? 'Confirm deactivation' : 'Confirm activation'}
-                  </p>
+                  <h3 className="text-lg font-semibold" style={{ color: '#D32F2F' }}>Delete Product</h3>
+                  <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>Confirm deletion</p>
                 </div>
                 <button
-                  onClick={() => { setShowDeactivateModal(false); setSelectedProduct(null); }}
+                  onClick={() => { setShowDeleteModal(false); setSelectedProduct(null); }}
                   className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <X className="w-5 h-5" style={{ color: '#8D6E63' }} />
@@ -651,43 +597,34 @@ const Products = () => {
               </div>
               <div className="p-6">
                 <div className="flex items-center justify-center mb-4">
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center ${selectedProduct.isActive ? 'bg-red-100' : 'bg-green-100'}`}>
-                    {selectedProduct.isActive ? (
-                      <PowerOff className="w-8 h-8 text-red-600" />
-                    ) : (
-                      <CheckCircle className="w-8 h-8 text-green-600" />
-                    )}
+                  <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                    <Trash2 className="w-8 h-8 text-red-600" />
                   </div>
                 </div>
                 <p className="text-center text-sm mb-2" style={{ color: '#5D4037' }}>
-                  Are you sure you want to {selectedProduct.isActive ? 'deactivate' : 'activate'} <strong>{selectedProduct.productName}</strong>?
+                  Are you sure you want to delete <strong>{selectedProduct.productName}</strong>?
                 </p>
                 <p className="text-center text-xs" style={{ color: '#8D6E63' }}>
-                  {selectedProduct.isActive 
-                    ? 'This product will no longer be available for selection in new purchases/sales.'
-                    : 'This product will become available for selection in new purchases/sales.'}
+                  This action cannot be undone. The product will be permanently removed from the system.
                 </p>
               </div>
               <div className="flex justify-end gap-3 p-6 border-t" style={{ borderColor: '#E8F5E9' }}>
                 <button
-                  onClick={() => { setShowDeactivateModal(false); setSelectedProduct(null); }}
+                  onClick={() => { setShowDeleteModal(false); setSelectedProduct(null); }}
                   className="px-4 py-2 rounded-lg border text-sm font-medium transition-all hover:bg-gray-50"
                   style={{ borderColor: '#C8E6C9', color: '#8D6E63' }}
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={() => selectedProduct.isActive 
-                    ? handleDeactivateProduct(selectedProduct) 
-                    : handleActivateProduct(selectedProduct)
-                  }
-                  disabled={deactivating}
-                  className={`px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all hover:scale-105 ${selectedProduct.isActive ? 'bg-red-600' : 'bg-green-600'}`}
+                  onClick={() => handleDeleteProduct(selectedProduct)}
+                  disabled={deleting}
+                  className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all hover:scale-105 bg-red-600"
                 >
-                  {deactivating ? (
-                    <><Loader className="w-4 h-4 animate-spin" /> Processing...</>
+                  {deleting ? (
+                    <><Loader className="w-4 h-4 animate-spin" /> Deleting...</>
                   ) : (
-                    <>{selectedProduct.isActive ? <PowerOff className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />} {selectedProduct.isActive ? 'Deactivate' : 'Activate'}</>
+                    <><Trash2 className="w-4 h-4" /> Delete Product</>
                   )}
                 </button>
               </div>
