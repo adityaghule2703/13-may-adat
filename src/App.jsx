@@ -78,6 +78,11 @@ import ViewAuditLog from "./pages/auditlogs/ViewAuditLog";
 import Buyers from "./pages/buyers/Buyers";
 import AddBuyer from "./pages/buyers/AddBuyer";
 import EditBuyer from "./pages/buyers/EditBuyer";
+import ViewBuyer from "./pages/buyers/ViewBuyer";
+import Products from "./pages/products/Products";
+import AddProduct from "./pages/products/AddProduct";
+import EditProduct from "./pages/products/EditProduct";
+import ViewProduct from "./pages/products/ViewProduct";
 
 // Protected Route Component
 const PrivateRoute = ({ children }) => {
@@ -159,6 +164,13 @@ const App = () => {
           <Route path="buyers" element={<Buyers />} />
            <Route path="/buyers/add" element={<AddBuyer />} />
            <Route path="/buyers/edit/:id" element={<EditBuyer />}  />
+           <Route path="/buyers/view/:id" element={<ViewBuyer />} />
+
+
+           <Route path="/products" element={<Products />} />
+<Route path="/products/add" element={<AddProduct />} />
+<Route path="/products/edit/:id" element={<EditProduct />} />
+<Route path="/products/view/:id" element={<ViewProduct />} />
 
           {/* ========== SALES MODULE ========== */}
           <Route path="sales" element={<Sales />} />

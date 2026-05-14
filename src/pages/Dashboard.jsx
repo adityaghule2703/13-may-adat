@@ -9,7 +9,7 @@ import {
   BarChart3, PieChart, Activity, Wallet, Truck, Zap,
   Bell, AlertCircle, TrendingUp as TrendUp, 
   TrendingDown as TrendDown, ChevronLeft, Maximize2,
-  Download as DownloadIcon, Filter, Settings
+  Download as DownloadIcon, Filter, Settings, Trophy
 } from 'lucide-react';
 import BASE_URL from '../config/Config';
 
@@ -28,6 +28,12 @@ const Dashboard = () => {
     totalRevenue: 0
   });
   const [recentPayments, setRecentPayments] = useState([]);
+  const [topBuyers, setTopBuyers] = useState([]);
+  const [buyersSummary, setBuyersSummary] = useState({
+    totalBuyers: 0,
+    activeBuyers: 0,
+    totalPurchaseValue: 0
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -125,9 +131,17 @@ const Dashboard = () => {
 
       const data = await response.json();
       if (data.success) {
+        // Get all payments and sort by createdAt (newest first)
+        const allPayments = data.data || [];
+        const sortedPayments = allPayments.sort((a, b) => 
+          new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        // Take only the latest 5 payments
+        const latest5Payments = sortedPayments.slice(0, 5);
+        
         return {
           total: data.summary?.totalAmount || 0,
-          recent: data.data || []
+          recent: latest5Payments
         };
       }
       return { total: 0, recent: [] };
@@ -187,6 +201,37 @@ const Dashboard = () => {
     }
   };
 
+  // Fetch Buyers Summary and Top Buyers
+  const fetchBuyersSummary = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${BASE_URL}/buyers/summary`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.status === 401) {
+        localStorage.clear();
+        return { topBuyers: [], summary: { totalBuyers: 0, activeBuyers: 0, totalPurchaseValue: 0 } };
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        return {
+          topBuyers: data.data?.topBuyers || [],
+          summary: {
+            totalBuyers: data.data?.totalBuyers || 0,
+            activeBuyers: data.data?.activeBuyers || 0,
+            totalPurchaseValue: data.data?.totalPurchaseValue || 0
+          }
+        };
+      }
+      return { topBuyers: [], summary: { totalBuyers: 0, activeBuyers: 0, totalPurchaseValue: 0 } };
+    } catch (error) {
+      console.error('Error fetching buyers summary:', error);
+      return { topBuyers: [], summary: { totalBuyers: 0, activeBuyers: 0, totalPurchaseValue: 0 } };
+    }
+  };
+
   // Fetch all dashboard data
   const fetchDashboardData = async () => {
     if (!isAuthenticated()) return;
@@ -195,11 +240,12 @@ const Dashboard = () => {
     setError(null);
     
     try {
-      const [farmersCount, paymentsData, warehousesCount, revenueTotal] = await Promise.all([
+      const [farmersCount, paymentsData, warehousesCount, revenueTotal, buyersData] = await Promise.all([
         fetchFarmers(),
         fetchPayments(),
         fetchWarehouses(),
-        fetchSalesRevenue()
+        fetchSalesRevenue(),
+        fetchBuyersSummary()
       ]);
       
       setStatsData({
@@ -210,6 +256,8 @@ const Dashboard = () => {
       });
       
       setRecentPayments(paymentsData.recent || []);
+      setTopBuyers(buyersData.topBuyers || []);
+      setBuyersSummary(buyersData.summary);
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
       setError('Failed to load dashboard data');
@@ -377,6 +425,9 @@ const Dashboard = () => {
       </div>
     );
   }
+
+  // Get the top buyer (first one from the list)
+  const topBuyer = topBuyers.length > 0 ? topBuyers[0] : null;
 
   return (
     <div className="space-y-6">
@@ -640,7 +691,7 @@ const Dashboard = () => {
           <div className="px-6 py-4 border-b flex justify-between items-center" style={{ borderColor: '#E8F5E9' }}>
             <div>
               <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Recent Payments</h3>
-              <p className="text-xs mt-1" style={{ color: '#8D6E63' }}>Latest payment transactions</p>
+              <p className="text-xs mt-1" style={{ color: '#8D6E63' }}>Latest 5 payment transactions</p>
             </div>
             <button className="text-sm flex items-center gap-1" style={{ color: '#2E7D32' }}>
               View All <ChevronRight className="w-4 h-4" />
@@ -684,27 +735,56 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Mini Performance Card */}
+        {/* Top Buyer Section - Replacing Today's Commission */}
         <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-sm">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <p className="text-xs opacity-90">Today's Commission</p>
-              <p className="text-3xl font-bold mt-1">₹12,400</p>
+              <div className="flex items-center gap-2 mb-2">
+                <Trophy className="w-5 h-5 text-yellow-300" />
+                <p className="text-xs font-medium uppercase tracking-wider opacity-90">Top Buyer of the Month</p>
+              </div>
+              {topBuyer ? (
+                <>
+                  <p className="text-2xl font-bold mt-1">{topBuyer.displayName || topBuyer.name}</p>
+                  <p className="text-sm mt-1 opacity-90">{topBuyer.businessName || 'Individual Buyer'}</p>
+                </>
+              ) : (
+                <p className="text-xl font-bold mt-1">No buyers yet</p>
+              )}
             </div>
-            <Zap className="w-8 h-8 opacity-90" />
+            <Award className="w-8 h-8 text-yellow-300" />
           </div>
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div>
-              <p className="text-xs opacity-80">Avg. Order Value</p>
-              <p className="text-lg font-semibold mt-1">₹42,500</p>
+          
+          {topBuyer && (
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="bg-white/20 backdrop-blur rounded-xl p-3">
+                <p className="text-xs opacity-80">Total Purchases</p>
+                <p className="text-xl font-semibold mt-1">{topBuyer.totalPurchases || 0}</p>
+              </div>
+              <div className="bg-white/20 backdrop-blur rounded-xl p-3">
+                <p className="text-xs opacity-80">Purchase Value</p>
+                <p className="text-xl font-semibold mt-1">{formatCurrency(topBuyer.totalPurchaseValue || 0)}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs opacity-80">Active Orders</p>
-              <p className="text-lg font-semibold mt-1">24</p>
+          )}
+          
+          <div className="mt-4 pt-3 border-t border-white/20">
+            <div className="flex justify-between items-center text-sm">
+              <span className="opacity-80">Total Buyers</span>
+              <span className="font-semibold">{buyersSummary.totalBuyers}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm mt-2">
+              <span className="opacity-80">Active Buyers</span>
+              <span className="font-semibold">{buyersSummary.activeBuyers}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm mt-2">
+              <span className="opacity-80">Total Purchase Value</span>
+              <span className="font-semibold">{formatCurrency(buyersSummary.totalPurchaseValue)}</span>
             </div>
           </div>
+          
           <button className="w-full mt-4 bg-white/20 backdrop-blur rounded-xl py-2 text-sm font-medium hover:bg-white/30 transition-all">
-            View Detailed Report
+            View All Buyers
           </button>
         </div>
       </div>

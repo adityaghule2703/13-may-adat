@@ -1,6 +1,7 @@
 // src/pages/sales/AddSale.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -8,31 +9,33 @@ import {
   Typography,
   Box,
   FormControl,
-  Select,
-  MenuItem,
+  Autocomplete,
   IconButton,
   Collapse,
   Alert,
   Paper,
-  InputAdornment,
-  CircularProgress,
-  Autocomplete
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  InputAdornment
 } from '@mui/material';
 import { 
   Add as AddIcon, 
   Error as ErrorIcon, 
-  Close as CloseIcon,
-  ArrowBack as ArrowBackIcon,
-  Save as SaveIcon,
-  Person as PersonIcon,
-  Inventory as PackageIcon,
-  Percent as PercentIcon,
-  Payment as PaymentIcon,
-  Description as FileTextIcon,
   Delete as DeleteIcon,
+  Settings,
+  ShoppingCart,
   Check as CheckIcon,
-  ChevronLeft,
-  ChevronRight
+  Inventory as PackageIcon,
+  ArrowBack as ArrowBackIcon,
+  LocalShipping as TransportIcon,
+  Build as LabourIcon,
+  MonetizationOn as CommissionIcon,
+  Storage as StorageIcon,
+  AccountBalance as AdvanceIcon
 } from '@mui/icons-material';
 import axios from 'axios';
 import BASE_URL from '../../config/Config';
@@ -57,6 +60,20 @@ const COLORS = {
   },
   border: '#E3E8EF'
 };
+
+// Pricing types
+const pricingTypeOptions = [
+  { value: 'kg', label: 'Per KG' },
+  { value: 'quintal', label: 'Per Quintal' },
+  { value: 'ton', label: 'Per Ton' },
+  { value: 'bag', label: 'Per Bag' }
+];
+
+// Commission types
+const commissionTypeOptions = [
+  { value: 'fixed', label: 'Fixed Amount' },
+  { value: 'percent', label: 'Percentage' }
+];
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
@@ -96,183 +113,164 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const AddSale = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
-  const [warehouses, setWarehouses] = useState([]);
-  const [loadingData, setLoadingData] = useState(true);
-  
+  const [buyers, setBuyers] = useState([]);
+  const [loadingBuyers, setLoadingBuyers] = useState(true);
+  const [selectedBuyer, setSelectedBuyer] = useState(null);
+  const [calculations, setCalculations] = useState({
+    grossTotal: 0,
+    totalDeductions: 0,
+    netAmount: 0
+  });
+
   const [formData, setFormData] = useState({
-    buyerName: '',
-    buyerMobile: '',
-    buyerGst: '',
+    buyerId: '',
     saleDate: new Date().toISOString().split('T')[0],
     lines: [
       {
-        warehouseId: null,
-        warehouseName: '',
-        productId: null,
         productName: '',
-        qty: 1,
-        sellingPrice: 0,
-        lineTotal: 0,
-        availableStock: 0,
-        unit: ''
+        pricingType: 'kg',
+        bags: '',
+        weightPerBag: '',
+        actualQty: '',
+        qualityDeduction: '',
+        rate: '',
+        notes: ''
       }
     ],
-    gstPercent: 18,
-    paymentMode: 'cash',
-    referenceNumber: '',
+    deductions: {
+      transport: '',
+      labour: '',
+      commission: '',
+      commissionType: 'fixed',
+      storage: '',
+      advanceAdjusted: ''
+    },
     notes: ''
   });
 
-  const [calculations, setCalculations] = useState({
-    subTotal: 0,
-    gstAmount: 0,
-    grandTotal: 0
-  });
-
-  const steps = ['Buyer Information', 'Products', 'GST & Payment'];
+  const steps = [
+    'Buyer Information',
+    'Product Lines',
+    'Deductions & Summary'
+  ];
 
   const getToken = () => localStorage.getItem('token');
 
- // Fetch warehouses with their products
-const fetchWarehouses = async () => {
-  try {
-    const token = getToken();
-    const response = await axios.get(`${BASE_URL}/warehouse`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (response.data.success && response.data.data) {
-      setWarehouses(response.data.data);
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to load warehouse data';
-      setError(errorMessage);
-    }
-  } catch (error) {
-    console.error('Error fetching warehouses:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Failed to load warehouse data';
-    setError(errorMessage);
-  } finally {
-    setLoadingData(false);
-  }
-};
-
   useEffect(() => {
-    fetchWarehouses();
+    fetchBuyers();
   }, []);
 
-  // Calculate totals whenever lines or GST changes
+  const fetchBuyers = async () => {
+    try {
+      const token = getToken();
+      const response = await axios.get(`${BASE_URL}/buyers?limit=100`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        setBuyers(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching buyers:', error);
+    } finally {
+      setLoadingBuyers(false);
+    }
+  };
+
+  const calculateLineTotal = (line) => {
+    let quantity = parseFloat(line.actualQty) || 0;
+    if (line.pricingType === 'quintal') quantity = (parseFloat(line.actualQty) || 0) * 100;
+    if (line.pricingType === 'ton') quantity = (parseFloat(line.actualQty) || 0) * 1000;
+    const netQty = quantity - (parseFloat(line.qualityDeduction) || 0);
+    let total = netQty * (parseFloat(line.rate) || 0);
+    
+    // For bag pricing, calculate differently
+    if (line.pricingType === 'bag') {
+      total = (parseFloat(line.bags) || 0) * (parseFloat(line.rate) || 0);
+    }
+    
+    return total;
+  };
+
   useEffect(() => {
-    let subTotal = 0;
-    const updatedLines = [...formData.lines];
-    
-    updatedLines.forEach((line, idx) => {
-      const total = (line.qty || 0) * (line.sellingPrice || 0);
-      updatedLines[idx].lineTotal = total;
-      subTotal += total;
+    let grossTotal = 0;
+    formData.lines.forEach(line => {
+      grossTotal += calculateLineTotal(line);
     });
-    
-    const gstAmount = (subTotal * formData.gstPercent) / 100;
-    const grandTotal = subTotal + gstAmount;
-    
-    setCalculations({ subTotal, gstAmount, grandTotal });
-    
-    // Update lines without triggering infinite loop
-    if (JSON.stringify(updatedLines) !== JSON.stringify(formData.lines)) {
-      setFormData(prev => ({ ...prev, lines: updatedLines }));
-    }
-  }, [formData.lines, formData.gstPercent]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (fieldErrors[name]) setFieldErrors(prev => ({ ...prev, [name]: '' }));
-  };
+    const commissionValue = parseFloat(formData.deductions.commission) || 0;
+    const calculatedCommission =
+      formData.deductions.commissionType === 'percent'
+        ? (grossTotal * commissionValue) / 100
+        : commissionValue;
 
-  // Handle warehouse selection for a line
-  const handleWarehouseChange = (index, warehouse) => {
-    const updatedLines = [...formData.lines];
-    updatedLines[index] = {
-      ...updatedLines[index],
-      warehouseId: warehouse?._id || null,
-      warehouseName: warehouse?.name || '',
-      productId: null,
-      productName: '',
-      availableStock: 0,
-      unit: '',
-      qty: 1,
-      sellingPrice: 0,
-      lineTotal: 0
-    };
-    setFormData(prev => ({ ...prev, lines: updatedLines }));
-    
-    if (fieldErrors[`line_${index}_warehouse`]) {
-      setFieldErrors(prev => ({ ...prev, [`line_${index}_warehouse`]: '' }));
-    }
-    if (fieldErrors[`line_${index}_product`]) {
-      setFieldErrors(prev => ({ ...prev, [`line_${index}_product`]: '' }));
-    }
-  };
+    const totalDeductions =
+      (parseFloat(formData.deductions.transport) || 0) +
+      (parseFloat(formData.deductions.labour) || 0) +
+      calculatedCommission +
+      (parseFloat(formData.deductions.storage) || 0) +
+      (parseFloat(formData.deductions.advanceAdjusted) || 0);
 
-  // Handle product selection for a line
-  const handleProductChange = (index, product) => {
-    const updatedLines = [...formData.lines];
-    updatedLines[index] = {
-      ...updatedLines[index],
-      productId: product?._id || null,
-      productName: product?.productName || '',
-      availableStock: product?.currentStock || 0,
-      unit: product?.unit || 'units',
-      qty: 1,
-      sellingPrice: 0,
-      lineTotal: 0
-    };
-    setFormData(prev => ({ ...prev, lines: updatedLines }));
-    
-    if (fieldErrors[`line_${index}_product`]) {
-      setFieldErrors(prev => ({ ...prev, [`line_${index}_product`]: '' }));
+    setCalculations({
+      grossTotal,
+      totalDeductions,
+      netAmount: grossTotal - totalDeductions
+    });
+  }, [formData.lines, formData.deductions]);
+
+  const handleBuyerChange = (event, newValue) => {
+    setSelectedBuyer(newValue);
+    setFormData(prev => ({ ...prev, buyerId: newValue?._id || '' }));
+    if (fieldErrors.buyerId) {
+      setFieldErrors(prev => ({ ...prev, buyerId: '' }));
     }
   };
 
   const handleLineChange = (index, field, value) => {
     const updatedLines = [...formData.lines];
     updatedLines[index][field] = value;
-    
-    // Validate quantity against available stock
-    if (field === 'qty' && value > updatedLines[index].availableStock) {
-      setFieldErrors(prev => ({ 
-        ...prev, 
-        [`line_${index}_qty`]: `Only ${updatedLines[index].availableStock} ${updatedLines[index].unit} available` 
-      }));
-    } else if (field === 'qty') {
-      setFieldErrors(prev => ({ ...prev, [`line_${index}_qty`]: '' }));
+
+    // Auto-calculate actualQty when bags and weightPerBag are both present (for kg pricing)
+    if ((field === 'bags' || field === 'weightPerBag') &&
+      updatedLines[index].bags && updatedLines[index].bags !== '' &&
+      updatedLines[index].weightPerBag && updatedLines[index].weightPerBag !== '' &&
+      updatedLines[index].pricingType === 'kg') {
+      const bags = parseFloat(updatedLines[index].bags) || 0;
+      const weightPerBag = parseFloat(updatedLines[index].weightPerBag) || 0;
+      updatedLines[index].actualQty = (bags * weightPerBag).toString();
     }
-    
+
+    // Auto-calculate bags when actualQty and weightPerBag are present
+    if (field === 'actualQty' && updatedLines[index].pricingType === 'kg' &&
+      updatedLines[index].weightPerBag && updatedLines[index].weightPerBag !== '') {
+      const actualQty = parseFloat(updatedLines[index].actualQty) || 0;
+      const weightPerBag = parseFloat(updatedLines[index].weightPerBag) || 0;
+      if (weightPerBag > 0) {
+        updatedLines[index].bags = Math.ceil(actualQty / weightPerBag).toString();
+      }
+    }
+
     setFormData(prev => ({ ...prev, lines: updatedLines }));
   };
 
   const addLine = () => {
     setFormData(prev => ({
       ...prev,
-      lines: [...prev.lines, { 
-        warehouseId: null,
-        warehouseName: '',
-        productId: null,
+      lines: [...prev.lines, {
         productName: '',
-        qty: 1,
-        sellingPrice: 0,
-        lineTotal: 0,
-        availableStock: 0,
-        unit: ''
+        pricingType: 'kg',
+        bags: '',
+        weightPerBag: '',
+        actualQty: '',
+        qualityDeduction: '',
+        rate: '',
+        notes: ''
       }]
     }));
   };
@@ -283,20 +281,20 @@ const fetchWarehouses = async () => {
     }
   };
 
+  const handleDeductionChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      deductions: { ...prev.deductions, [field]: value }
+    }));
+  };
+
   const validateStep = (step) => {
     const errors = {};
     let isValid = true;
 
     if (step === 0) {
-      if (!formData.buyerName) {
-        errors.buyerName = 'Buyer name is required';
-        isValid = false;
-      }
-      if (!formData.buyerMobile) {
-        errors.buyerMobile = 'Mobile number is required';
-        isValid = false;
-      } else if (!/^[0-9]{10}$/.test(formData.buyerMobile)) {
-        errors.buyerMobile = 'Enter valid 10-digit mobile number';
+      if (!formData.buyerId) {
+        errors.buyerId = 'Please select a buyer';
         isValid = false;
       }
       if (!formData.saleDate) {
@@ -305,24 +303,23 @@ const fetchWarehouses = async () => {
       }
     } else if (step === 1) {
       formData.lines.forEach((line, idx) => {
-        if (!line.warehouseName) errors[`line_${idx}_warehouse`] = 'Warehouse required';
-        if (!line.productName) errors[`line_${idx}_product`] = 'Product required';
-        if (!line.qty || line.qty <= 0) errors[`line_${idx}_qty`] = 'Valid quantity required';
-        if (line.qty > line.availableStock) errors[`line_${idx}_qty`] = `Only ${line.availableStock} ${line.unit} available`;
-        if (!line.sellingPrice || line.sellingPrice <= 0) errors[`line_${idx}_price`] = 'Valid price required';
+        if (!line.productName) {
+          errors[`line_${idx}_product`] = 'Product name required';
+          isValid = false;
+        }
+        if (!line.rate || parseFloat(line.rate) <= 0) {
+          errors[`line_${idx}_rate`] = 'Valid rate required';
+          isValid = false;
+        }
+        if (!line.actualQty || parseFloat(line.actualQty) <= 0) {
+          errors[`line_${idx}_qty`] = 'Valid quantity required';
+          isValid = false;
+        }
       });
-    } else if (step === 2) {
-      if ((formData.paymentMode === 'upi' || formData.paymentMode === 'bank') && !formData.referenceNumber) {
-        errors.referenceNumber = 'Reference number is required';
-        isValid = false;
-      }
     }
 
     setFieldErrors(errors);
-    if (!isValid) {
-      setError('Please fill all required fields correctly');
-      setTimeout(() => setError(''), 3000);
-    }
+    if (!isValid) setError('Please fill all required fields correctly');
     return isValid;
   };
 
@@ -338,114 +335,78 @@ const fetchWarehouses = async () => {
     setError('');
   };
 
-  const validateAllFields = () => {
-    const errors = {};
-    let isValid = true;
-
-    if (!formData.buyerName) {
-      errors.buyerName = 'Buyer name is required';
-      isValid = false;
-    }
-    if (!formData.buyerMobile) {
-      errors.buyerMobile = 'Mobile number is required';
-      isValid = false;
-    } else if (!/^[0-9]{10}$/.test(formData.buyerMobile)) {
-      errors.buyerMobile = 'Enter valid 10-digit mobile number';
-      isValid = false;
-    }
-    if (!formData.saleDate) {
-      errors.saleDate = 'Sale date is required';
-      isValid = false;
-    }
-    
-    formData.lines.forEach((line, idx) => {
-      if (!line.warehouseName) errors[`line_${idx}_warehouse`] = 'Warehouse required';
-      if (!line.productName) errors[`line_${idx}_product`] = 'Product required';
-      if (!line.qty || line.qty <= 0) errors[`line_${idx}_qty`] = 'Valid quantity required';
-      if (line.qty > line.availableStock) errors[`line_${idx}_qty`] = `Only ${line.availableStock} ${line.unit} available`;
-      if (!line.sellingPrice || line.sellingPrice <= 0) errors[`line_${idx}_price`] = 'Valid price required';
-    });
-
-    if ((formData.paymentMode === 'upi' || formData.paymentMode === 'bank') && !formData.referenceNumber) {
-      errors.referenceNumber = 'Reference number is required';
-      isValid = false;
-    }
-
-    setFieldErrors(errors);
-    if (!isValid) {
-      setError('Please fill all required fields correctly');
-    }
-    return isValid;
-  };
-
   const showError = (message) => {
     setError(message);
     setTimeout(() => setError(''), 5000);
   };
 
- const handleSubmit = async () => {
-  if (!validateAllFields()) return;
-
-  setLoading(true);
-  setError('');
-
-  try {
-    const token = getToken();
-    
-    const saleData = {
-      buyerName: formData.buyerName,
-      buyerMobile: formData.buyerMobile,
-      buyerGst: formData.buyerGst || undefined,
-      saleDate: formData.saleDate,
-      lines: formData.lines.map(line => ({
-        productName: line.productName,
-        warehouse: line.warehouseName,
-        qty: parseFloat(line.qty),
-        sellingPrice: parseFloat(line.sellingPrice)
-      })),
-      gstPercent: parseFloat(formData.gstPercent),
-      paymentMode: formData.paymentMode,
-      referenceNumber: formData.referenceNumber || undefined,
-      notes: formData.notes || undefined
-    };
-
-    const response = await axios.post(`${BASE_URL}/sales`, saleData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.status === 401) {
-      localStorage.clear();
-      navigate('/login');
+  const handleSubmit = async () => {
+    if (!formData.buyerId) {
+      showError('Please select a buyer');
+      return;
+    }
+    if (formData.lines.some(line => !line.productName || !line.rate || parseFloat(line.rate) <= 0 || !line.actualQty || parseFloat(line.actualQty) <= 0)) {
+      showError('Please complete all product lines');
       return;
     }
 
-    if (response.data.success) {
-      setSuccess(true);
-      setTimeout(() => navigate('/sales'), 2000);
-    } else {
-      // FIX: Check for both 'message' and 'error' fields
-      const errorMessage = response.data.message || response.data.error || 'Failed to create sale';
+    setLoading(true);
+
+    try {
+      const token = getToken();
+      const saleData = {
+        buyerId: formData.buyerId,
+        saleDate: formData.saleDate,
+        lines: formData.lines.map(line => ({
+          productName: line.productName,
+          pricingType: line.pricingType,
+          bags: parseInt(line.bags) || 0,
+          weightPerBag: parseInt(line.weightPerBag) || 0,
+          actualQty: parseFloat(line.actualQty) || 0,
+          qualityDeduction: parseFloat(line.qualityDeduction) || 0,
+          rate: parseFloat(line.rate) || 0,
+          notes: line.notes || ''
+        })),
+        deductions: {
+          transport: parseFloat(formData.deductions.transport) || 0,
+          labour: parseFloat(formData.deductions.labour) || 0,
+          commission: parseFloat(formData.deductions.commission) || 0,
+          commissionType: formData.deductions.commissionType,
+          storage: parseFloat(formData.deductions.storage) || 0,
+          advanceAdjusted: parseFloat(formData.deductions.advanceAdjusted) || 0
+        },
+        notes: formData.notes || ''
+      };
+
+      const response = await axios.post(`${BASE_URL}/sales`, saleData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.data.success) {
+        setSuccess(true);
+        setTimeout(() => navigate('/sales'), 2000);
+      } else {
+        const errorMessage = response.data.message || response.data.error || 'Failed to create sale';
+        showError(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error creating sale:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          'Network error. Please check your connection.';
       showError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Error creating sale:', error);
-    // FIX: Better error extraction from catch block
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        'Network error. Please check your connection.';
-    showError(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
-      style: 'currency', currency: 'INR', minimumFractionDigits: 2
+      style: 'currency', currency: 'INR', minimumFractionDigits: 0
     }).format(amount || 0);
   };
 
@@ -462,6 +423,7 @@ const fetchWarehouses = async () => {
     </Typography>
   );
 
+  // Input styling
   const inputSx = {
     '& .MuiOutlinedInput-root': {
       borderRadius: 1.5,
@@ -481,20 +443,9 @@ const fetchWarehouses = async () => {
     }
   };
 
-  const paymentModes = ['cash', 'upi', 'bank', 'cheque'];
-
-  if (loadingData) {
-    return (
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '96vh' }}>
-        <CircularProgress sx={{ color: '#2E7D32' }} />
-        <Typography sx={{ ml: 2, color: '#2E7D32' }}>Loading data...</Typography>
-      </Box>
-    );
-  }
-
   return (
     <Box sx={{ height: '100%', overflow: 'auto' }}>
-      {/* Header */}
+      {/* Header with Back Button */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
         <IconButton 
           onClick={() => navigate('/sales')} 
@@ -514,34 +465,6 @@ const fetchWarehouses = async () => {
             Create a new sale invoice
           </Typography>
         </Box>
-        <Box sx={{ ml: 'auto' }}>
-          {currentStep === 2 && (
-            <Button
-              onClick={handleSubmit}
-              disabled={loading}
-              variant="contained"
-              sx={{
-                height: 32,
-                px: 2,
-                borderRadius: 1.5,
-                bgcolor: COLORS.primary,
-                fontSize: '0.7rem',
-                fontWeight: 500,
-                textTransform: 'none',
-                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-                '&:hover': {
-                  bgcolor: COLORS.primaryDark,
-                },
-                '&:disabled': {
-                  bgcolor: COLORS.border,
-                  color: COLORS.text.tertiary
-                }
-              }}
-            >
-              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Create Sale</>}
-            </Button>
-          )}
-        </Box>
       </Box>
 
       {/* Floating Error Alert */}
@@ -556,7 +479,7 @@ const fetchWarehouses = async () => {
         </Alert>
       )}
 
-      {/* Stepper */}
+      {/* Stepper - Centered */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
         <Stack direction="row" spacing={3} alignItems="center">
           {steps.map((step, index) => (
@@ -596,70 +519,111 @@ const fetchWarehouses = async () => {
 
       {/* Step 1: Buyer Information */}
       {currentStep === 0 && (
-        <Paper sx={{ borderRadius: 2.5, overflow: 'hidden', border: `1px solid ${COLORS.border}` }}>
+        <Paper sx={{ borderRadius: 2.5, overflow: 'visible', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)', border: `1px solid ${COLORS.border}` }}>
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
-              <PersonIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Buyer Information</Typography>
+              <ShoppingCart sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Sale Information</Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+              {/* SELECT BUYER - First column */}
               <Box>
-                <Label required>BUYER NAME</Label>
-                <TextField
+                <Label required>Select Buyer</Label>
+                <Autocomplete
                   fullWidth
-                  size="small"
-                  name="buyerName"
-                  value={formData.buyerName}
-                  onChange={handleChange}
-                  placeholder="Enter buyer name"
-                  error={!!fieldErrors.buyerName}
-                  helperText={fieldErrors.buyerName}
-                  sx={inputSx}
+                  options={buyers}
+                  loading={loadingBuyers}
+                  value={selectedBuyer}
+                  onChange={handleBuyerChange}
+                  getOptionLabel={(option) => `${option.displayName || option.name} - ${option.mobile}`}
+                  isOptionEqualToValue={(option, value) => option._id === value?._id}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      placeholder="Search buyer by name or mobile..."
+                      error={!!fieldErrors.buyerId}
+                      helperText={fieldErrors.buyerId}
+                      sx={inputSx}
+                    />
+                  )}
+                  renderOption={(props, option) => (
+                    <li {...props}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                        <Box>
+                          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem' }}>
+                            {option.displayName || option.name}
+                          </Typography>
+                          <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
+                            {option.mobile} • {option.businessName || 'Individual'}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ textAlign: 'right' }}>
+                          <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
+                            Credit Limit
+                          </Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.75rem', color: '#2E7D32' }}>
+                            {formatCurrency(option.creditLimit || 0)}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </li>
+                  )}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: '300px',
+                      overflowY: 'auto',
+                      '& .MuiAutocomplete-option': {
+                        fontSize: '0.75rem',
+                        py: 1,
+                        px: 1.5
+                      }
+                    }
+                  }}
                 />
+                {selectedBuyer && (
+                  <Box sx={{ mt: 2, p: 1.5, bgcolor: COLORS.primaryLight, borderRadius: 1.5 }}>
+                    <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
+                      Selected Buyer
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem', color: COLORS.text.primary }}>
+                      {selectedBuyer.displayName || selectedBuyer.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
+                      {selectedBuyer.businessName || 'Individual'} • Credit: {formatCurrency(selectedBuyer.creditLimit || 0)} • {selectedBuyer.creditDays || 0} days
+                    </Typography>
+                  </Box>
+                )}
               </Box>
 
+              {/* SALE DATE - Second column */}
               <Box>
-                <Label required>MOBILE NUMBER</Label>
-                <TextField
-                  fullWidth
-                  size="small"
-                  name="buyerMobile"
-                  value={formData.buyerMobile}
-                  onChange={handleChange}
-                  placeholder="10-digit mobile number"
-                  inputProps={{ maxLength: 10 }}
-                  error={!!fieldErrors.buyerMobile}
-                  helperText={fieldErrors.buyerMobile}
-                  sx={inputSx}
-                />
-              </Box>
-
-              <Box>
-                <Label>GST NUMBER (Optional)</Label>
-                <TextField
-                  fullWidth
-                  size="small"
-                  name="buyerGst"
-                  value={formData.buyerGst}
-                  onChange={handleChange}
-                  placeholder="Enter GST number"
-                  sx={inputSx}
-                />
-              </Box>
-
-              <Box>
-                <Label required>SALE DATE</Label>
+                <Label required>Sale Date</Label>
                 <TextField
                   fullWidth
                   type="date"
                   size="small"
-                  name="saleDate"
                   value={formData.saleDate}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData(prev => ({ ...prev, saleDate: e.target.value }))}
                   error={!!fieldErrors.saleDate}
                   helperText={fieldErrors.saleDate}
+                  sx={inputSx}
+                />
+              </Box>
+
+              {/* ADDITIONAL NOTES - spans both columns */}
+              <Box sx={{ gridColumn: 'span 2' }}>
+                <Label>Notes</Label>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  size="small"
+                  value={formData.notes}
+                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Additional notes about this sale..."
                   sx={inputSx}
                 />
               </Box>
@@ -668,69 +632,73 @@ const fetchWarehouses = async () => {
         </Paper>
       )}
 
-      {/* Step 2: Products - Warehouse first, then Products */}
+      {/* Step 2: Product Lines */}
       {currentStep === 1 && (
         <Stack spacing={2.5}>
-          {formData.lines.map((line, idx) => {
-            // Find selected warehouse object
-            const selectedWarehouse = warehouses.find(w => w._id === line.warehouseId);
-            // Get products for selected warehouse
-            const warehouseProducts = selectedWarehouse?.products || [];
-            // Find selected product
-            const selectedProduct = warehouseProducts.find(p => p.productName === line.productName);
-            const lineTotal = (line.qty || 0) * (line.sellingPrice || 0);
+          {formData.lines.map((line, index) => {
+            const lineTotal = calculateLineTotal(line);
+            const selectedPricingType = pricingTypeOptions.find(opt => opt.value === line.pricingType) || null;
             
             return (
-              <Paper key={idx} sx={{ borderRadius: 2.5, overflow: 'hidden', border: `1px solid ${COLORS.border}` }}>
+              <Paper key={index} sx={{ borderRadius: 2.5, overflow: 'visible', border: `1px solid ${COLORS.border}` }}>
                 <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Stack direction="row" spacing={1} alignItems="center">
                     <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                    <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Product {idx + 1}</Typography>
+                    <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+                      Product Line {index + 1}
+                    </Typography>
                   </Stack>
                   {formData.lines.length > 1 && (
-                    <IconButton size="small" onClick={() => removeLine(idx)} sx={{ color: '#EF4444' }}>
+                    <IconButton size="small" onClick={() => removeLine(index)} sx={{ color: '#EF4444' }}>
                       <DeleteIcon sx={{ fontSize: '1rem' }} />
                     </IconButton>
                   )}
                 </Box>
                 <Box sx={{ p: 2.5 }}>
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                    {/* Warehouse Selection - First */}
+                    {/* PRODUCT NAME - spans both columns */}
+                    <Box sx={{ gridColumn: 'span 2' }}>
+                      <Label required>Product Name</Label>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        value={line.productName}
+                        onChange={(e) => handleLineChange(index, 'productName', e.target.value)}
+                        placeholder="Enter product name"
+                        error={!!fieldErrors[`line_${index}_product`]}
+                        helperText={fieldErrors[`line_${index}_product`]}
+                        sx={inputSx}
+                      />
+                    </Box>
+
+                    {/* PRICING TYPE - first column */}
                     <Box>
-                      <Label required>WAREHOUSE</Label>
+                      <Label required>Pricing Type</Label>
                       <Autocomplete
                         fullWidth
-                        options={warehouses}
-                        value={selectedWarehouse || null}
-                        onChange={(event, newValue) => handleWarehouseChange(idx, newValue)}
-                        getOptionLabel={(option) => `${option.name} (${option.location?.city || 'N/A'})`}
-                        isOptionEqualToValue={(option, value) => option._id === value?._id}
+                        options={pricingTypeOptions}
+                        value={selectedPricingType}
+                        onChange={(event, newValue) => {
+                          handleLineChange(index, 'pricingType', newValue?.value || 'kg');
+                        }}
+                        getOptionLabel={(option) => option.label}
+                        isOptionEqualToValue={(option, value) => option.value === value?.value}
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             size="small"
-                            placeholder="Select warehouse"
-                            error={!!fieldErrors[`line_${idx}_warehouse`]}
-                            helperText={fieldErrors[`line_${idx}_warehouse`]}
+                            placeholder="Select pricing type"
                             sx={inputSx}
                           />
                         )}
                         renderOption={(props, option) => (
                           <li {...props}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                              <Typography variant="body2" sx={{ fontSize: '0.75rem', fontWeight: 500 }}>
-                                {option.name}
-                              </Typography>
-                              <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                                {option.location?.city || 'No location'}
-                              </Typography>
-                            </Box>
+                            <Typography sx={{ fontSize: '0.75rem' }}>{option.label}</Typography>
                           </li>
                         )}
                         ListboxProps={{
                           sx: {
                             maxHeight: '300px',
-                            overflowY: 'auto',
                             '& .MuiAutocomplete-option': {
                               fontSize: '0.75rem',
                               py: 1,
@@ -741,114 +709,117 @@ const fetchWarehouses = async () => {
                       />
                     </Box>
 
-                    {/* Product Selection - Second (only shows products from selected warehouse) */}
+                    {/* RATE - second column */}
                     <Box>
-                      <Label required>PRODUCT NAME</Label>
-                      <Autocomplete
-                        fullWidth
-                        options={warehouseProducts}
-                        value={selectedProduct || null}
-                        onChange={(event, newValue) => handleProductChange(idx, newValue)}
-                        disabled={!line.warehouseName}
-                        getOptionLabel={(option) => `${option.productName} (Stock: ${option.currentStock} ${option.unit})`}
-                        isOptionEqualToValue={(option, value) => option.productName === value?.productName}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            size="small"
-                            placeholder={line.warehouseName ? "Search product..." : "Select warehouse first"}
-                            error={!!fieldErrors[`line_${idx}_product`]}
-                            helperText={fieldErrors[`line_${idx}_product`]}
-                            sx={inputSx}
-                          />
-                        )}
-                        renderOption={(props, option) => (
-                          <li {...props}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                              <Typography variant="body2" sx={{ fontSize: '0.75rem', fontWeight: 500 }}>
-                                {option.productName}
-                              </Typography>
-                              <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                                Stock: {option.currentStock} {option.unit}
-                              </Typography>
-                            </Box>
-                          </li>
-                        )}
-                        ListboxProps={{
-                          sx: {
-                            maxHeight: '300px',
-                            overflowY: 'auto',
-                            '& .MuiAutocomplete-option': {
-                              fontSize: '0.75rem',
-                              py: 1,
-                              px: 1.5
-                            }
-                          }
-                        }}
-                      />
-                      {line.warehouseName && warehouseProducts.length === 0 && (
-                        <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#FF6F00', fontSize: '0.65rem' }}>
-                          No products found in this warehouse.
-                        </Typography>
-                      )}
-                    </Box>
-
-                    {/* Quantity */}
-                    <Box>
-                      <Label required>QUANTITY</Label>
+                      <Label required>Rate</Label>
                       <TextField
                         fullWidth
                         type="number"
                         size="small"
-                        value={line.qty}
-                        onChange={(e) => handleLineChange(idx, 'qty', parseFloat(e.target.value))}
-                        disabled={!line.productName}
-                        placeholder="Enter quantity"
-                        error={!!fieldErrors[`line_${idx}_qty`]}
-                        helperText={fieldErrors[`line_${idx}_qty`]}
+                        value={line.rate}
+                        onChange={(e) => handleLineChange(index, 'rate', e.target.value)}
+                        placeholder="Enter rate"
+                        error={!!fieldErrors[`line_${index}_rate`]}
+                        helperText={fieldErrors[`line_${index}_rate`]}
                         sx={inputSx}
                         InputProps={{
-                          endAdornment: line.unit && line.productName ? (
+                          startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                          endAdornment: line.pricingType && (
                             <InputAdornment position="end">
                               <Typography sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
-                                {line.unit}
+                                /{line.pricingType === 'kg' ? 'kg' : line.pricingType === 'quintal' ? 'quintal' : line.pricingType === 'ton' ? 'ton' : 'bag'}
                               </Typography>
                             </InputAdornment>
-                          ) : null
+                          )
                         }}
                       />
-                      {line.availableStock > 0 && line.qty > line.availableStock && (
-                        <Typography variant="caption" sx={{ color: '#FF6F00', fontSize: '0.65rem', display: 'block', mt: 0.5 }}>
-                          Only {line.availableStock} {line.unit} available
-                        </Typography>
-                      )}
                     </Box>
 
-                    {/* Selling Price */}
+                    {/* Bags and Weight - only for KG pricing */}
+                    {line.pricingType === 'kg' && (
+                      <>
+                        <Box>
+                          <Label>Number of Bags</Label>
+                          <TextField
+                            fullWidth
+                            type="number"
+                            size="small"
+                            value={line.bags}
+                            onChange={(e) => handleLineChange(index, 'bags', e.target.value)}
+                            placeholder="Number of bags"
+                            sx={inputSx}
+                          />
+                        </Box>
+                        <Box>
+                          <Label>Weight Per Bag (kg)</Label>
+                          <TextField
+                            fullWidth
+                            type="number"
+                            size="small"
+                            value={line.weightPerBag}
+                            onChange={(e) => handleLineChange(index, 'weightPerBag', e.target.value)}
+                            placeholder="Weight per bag"
+                            sx={inputSx}
+                          />
+                        </Box>
+                      </>
+                    )}
+
+                    {/* QUANTITY - first column */}
                     <Box>
-                      <Label required>SELLING PRICE</Label>
+                      <Label required>Quantity</Label>
                       <TextField
                         fullWidth
                         type="number"
                         size="small"
-                        value={line.sellingPrice}
-                        onChange={(e) => handleLineChange(idx, 'sellingPrice', parseFloat(e.target.value))}
-                        disabled={!line.productName}
-                        placeholder="Enter price"
-                        error={!!fieldErrors[`line_${idx}_price`]}
-                        helperText={fieldErrors[`line_${idx}_price`]}
+                        value={line.actualQty}
+                        onChange={(e) => handleLineChange(index, 'actualQty', e.target.value)}
+                        placeholder="Enter quantity"
+                        error={!!fieldErrors[`line_${index}_qty`]}
+                        helperText={fieldErrors[`line_${index}_qty`]}
                         sx={inputSx}
-                        InputProps={{
-                          startAdornment: <InputAdornment position="start">₹</InputAdornment>
-                        }}
+                      />
+                      {line.pricingType === 'kg' && line.bags && line.bags !== '' && line.weightPerBag && line.weightPerBag !== '' && (
+                        <Typography variant="caption" sx={{ mt: 0.5, display: 'block', color: '#8D6E63', fontSize: '0.65rem' }}>
+                          Auto-calculated: {line.bags} bags × {line.weightPerBag} kg = {parseFloat(line.bags) * parseFloat(line.weightPerBag)} kg
+                        </Typography>
+                      )}
+                    </Box>
+
+                    {/* QUALITY DEDUCTION - second column */}
+                    <Box>
+                      <Label>Quality Deduction (kg)</Label>
+                      <TextField
+                        fullWidth
+                        type="number"
+                        size="small"
+                        value={line.qualityDeduction}
+                        onChange={(e) => handleLineChange(index, 'qualityDeduction', e.target.value)}
+                        placeholder="Quality deduction"
+                        sx={inputSx}
                       />
                     </Box>
 
-                    {/* Line Total - spans both columns */}
+                    {/* LINE NOTES - spans both columns */}
+                    <Box sx={{ gridColumn: 'span 2' }}>
+                      <Label>Line Notes</Label>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        value={line.notes}
+                        onChange={(e) => handleLineChange(index, 'notes', e.target.value)}
+                        placeholder="Notes for this product line"
+                        sx={inputSx}
+                      />
+                    </Box>
+
+                    {/* LINE TOTAL - spans both columns */}
                     <Box sx={{ gridColumn: 'span 2' }}>
                       <Box sx={{ p: 2, bgcolor: COLORS.primaryLight, borderRadius: 1.5 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
-                          <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>Line Total:</Typography>
+                          <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>
+                            Line Total:
+                          </Typography>
                           <Typography sx={{ fontSize: '0.9rem', fontWeight: 700, color: COLORS.primaryDark }}>
                             {formatCurrency(lineTotal)}
                           </Typography>
@@ -881,92 +852,125 @@ const fetchWarehouses = async () => {
         </Stack>
       )}
 
-      {/* Step 3: GST & Payment */}
+      {/* Step 3: Deductions & Summary */}
       {currentStep === 2 && (
         <Stack spacing={2.5}>
-          {/* GST Details */}
-          <Paper sx={{ borderRadius: 2.5, overflow: 'hidden', border: `1px solid ${COLORS.border}` }}>
+          {/* Deductions Section */}
+          <Paper sx={{ borderRadius: 2.5, overflow: 'visible', border: `1px solid ${COLORS.border}` }}>
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
-                <PercentIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>GST Details</Typography>
+                <Settings sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+                  Deductions & Charges
+                </Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 <Box>
-                  <Label required>GST PERCENTAGE (%)</Label>
-                  <FormControl fullWidth size="small" sx={inputSx}>
-                    <Select
-                      name="gstPercent"
-                      value={formData.gstPercent}
-                      onChange={handleChange}
-                    >
-                      <MenuItem value={0} sx={{ fontSize: '0.75rem' }}>0%</MenuItem>
-                      <MenuItem value={5} sx={{ fontSize: '0.75rem' }}>5%</MenuItem>
-                      <MenuItem value={12} sx={{ fontSize: '0.75rem' }}>12%</MenuItem>
-                      <MenuItem value={18} sx={{ fontSize: '0.75rem' }}>18%</MenuItem>
-                      <MenuItem value={28} sx={{ fontSize: '0.75rem' }}>28%</MenuItem>
-                    </Select>
-                  </FormControl>
+                  <Label>Transport Charges</Label>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    size="small"
+                    value={formData.deductions.transport}
+                    onChange={(e) => handleDeductionChange('transport', e.target.value)}
+                    placeholder="Transport charges"
+                    sx={inputSx}
+                    InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
+                  />
                 </Box>
-              </Box>
-            </Box>
-          </Paper>
 
-          {/* Payment Details */}
-          <Paper sx={{ borderRadius: 2.5, overflow: 'hidden', border: `1px solid ${COLORS.border}` }}>
-            <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <PaymentIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Payment Details</Typography>
-              </Stack>
-            </Box>
-            <Box sx={{ p: 2.5 }}>
-              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                <Box>
+                  <Label>Labour Charges</Label>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    size="small"
+                    value={formData.deductions.labour}
+                    onChange={(e) => handleDeductionChange('labour', e.target.value)}
+                    placeholder="Labour charges"
+                    sx={inputSx}
+                    InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
+                  />
+                </Box>
+
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label required>PAYMENT MODE</Label>
-                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1.5 }}>
-                    {paymentModes.map(mode => (
-                      <Button
-                        key={mode}
-                        variant={formData.paymentMode === mode ? 'contained' : 'outlined'}
-                        onClick={() => setFormData(prev => ({ ...prev, paymentMode: mode }))}
-                        sx={{
-                          py: 0.75,
-                          borderRadius: 1.5,
-                          textTransform: 'capitalize',
-                          fontSize: '0.7rem',
-                          fontWeight: 500,
-                          borderColor: COLORS.border,
-                          ...(formData.paymentMode === mode && {
-                            bgcolor: COLORS.primary,
-                            '&:hover': { bgcolor: COLORS.primaryDark }
-                          })
-                        }}
-                      >
-                        {mode}
-                      </Button>
-                    ))}
-                  </Box>
-                </Box>
-
-                {(formData.paymentMode === 'upi' || formData.paymentMode === 'bank') && (
-                  <Box sx={{ gridColumn: 'span 2' }}>
-                    <Label required>REFERENCE NUMBER</Label>
+                  <Label>Commission</Label>
+                  <Stack direction="row" spacing={1}>
                     <TextField
                       fullWidth
+                      type="number"
                       size="small"
-                      name="referenceNumber"
-                      value={formData.referenceNumber}
-                      onChange={handleChange}
-                      placeholder={formData.paymentMode === 'upi' ? 'UPI Transaction ID' : 'Bank Reference Number'}
-                      error={!!fieldErrors.referenceNumber}
-                      helperText={fieldErrors.referenceNumber}
-                      sx={inputSx}
+                      value={formData.deductions.commission}
+                      onChange={(e) => handleDeductionChange('commission', e.target.value)}
+                      placeholder={formData.deductions.commissionType === 'percent' 
+                        ? 'Commission percentage' 
+                        : 'Commission amount'}
+                      sx={{ ...inputSx, flex: 2 }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            {formData.deductions.commissionType === 'percent' ? '%' : '₹'}
+                          </InputAdornment>
+                        )
+                      }}
                     />
-                  </Box>
-                )}
+                    <Box sx={{ flex: 1 }}>
+                      <Autocomplete
+                        fullWidth
+                        options={commissionTypeOptions}
+                        value={commissionTypeOptions.find(opt => opt.value === formData.deductions.commissionType) || null}
+                        onChange={(event, newValue) => {
+                          handleDeductionChange('commissionType', newValue?.value || 'fixed');
+                        }}
+                        getOptionLabel={(option) => option.label}
+                        isOptionEqualToValue={(option, value) => option.value === value?.value}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            placeholder="Type"
+                            sx={inputSx}
+                          />
+                        )}
+                        renderOption={(props, option) => (
+                          <li {...props}>
+                            <Typography sx={{ fontSize: '0.75rem' }}>{option.label}</Typography>
+                          </li>
+                        )}
+                      />
+                    </Box>
+                  </Stack>
+                </Box>
+
+                <Box>
+                  <Label>Storage Charges</Label>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    size="small"
+                    value={formData.deductions.storage}
+                    onChange={(e) => handleDeductionChange('storage', e.target.value)}
+                    placeholder="Storage charges"
+                    sx={inputSx}
+                    InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
+                  />
+                </Box>
+
+                <Box>
+                  <Label>Advance Adjusted</Label>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    size="small"
+                    value={formData.deductions.advanceAdjusted}
+                    onChange={(e) => handleDeductionChange('advanceAdjusted', e.target.value)}
+                    placeholder="Advance amount to adjust"
+                    sx={inputSx}
+                    InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
+                  />
+                </Box>
               </Box>
             </Box>
           </Paper>
@@ -978,55 +982,100 @@ const fetchWarehouses = async () => {
             </Typography>
             <Stack spacing={1.5}>
               <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>Subtotal</Typography>
+                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>
+                  Gross Total
+                </Typography>
                 <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: COLORS.text.primary }}>
-                  {formatCurrency(calculations.subTotal)}
+                  {formatCurrency(calculations.grossTotal)}
                 </Typography>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>GST ({formData.gstPercent}%)</Typography>
-                <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: COLORS.text.primary }}>
-                  {formatCurrency(calculations.gstAmount)}
+                <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>
+                  Total Deductions
+                </Typography>
+                <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: '#D32F2F' }}>
+                  - {formatCurrency(calculations.totalDeductions)}
                 </Typography>
               </Stack>
               <Box sx={{ pt: 1, mt: 1, borderTop: `1px solid ${COLORS.primary}` }}>
                 <Stack direction="row" justifyContent="space-between">
-                  <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: COLORS.primaryDark }}>Grand Total</Typography>
+                  <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: COLORS.primaryDark }}>
+                    Net Amount
+                  </Typography>
                   <Typography sx={{ fontSize: '0.9rem', fontWeight: 700, color: COLORS.primaryDark }}>
-                    {formatCurrency(calculations.grandTotal)}
+                    {formatCurrency(calculations.netAmount)}
                   </Typography>
                 </Stack>
               </Box>
             </Stack>
           </Paper>
 
-          {/* Notes */}
+          {/* Products Summary Table */}
           <Paper sx={{ borderRadius: 2.5, overflow: 'hidden', border: `1px solid ${COLORS.border}` }}>
             <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
               <Stack direction="row" spacing={1} alignItems="center">
-                <FileTextIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Notes</Typography>
+                <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
+                <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
+                  Products Summary
+                </Typography>
               </Stack>
             </Box>
-            <Box sx={{ p: 2.5 }}>
-              <TextField
-                fullWidth
-                multiline
-                rows={3}
-                size="small"
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                placeholder="Any additional notes..."
-                sx={inputSx}
-              />
-            </Box>
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: COLORS.primaryLight }}>
+                    <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>
+                      Product
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>
+                      Quantity
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>
+                      Rate
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>
+                      Total
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {formData.lines.map((line, idx) => {
+                    let quantity = parseFloat(line.actualQty) || 0;
+                    if (line.pricingType === 'quintal') quantity = (parseFloat(line.actualQty) || 0) * 100;
+                    if (line.pricingType === 'ton') quantity = (parseFloat(line.actualQty) || 0) * 1000;
+                    const netQty = quantity - (parseFloat(line.qualityDeduction) || 0);
+                    let displayQty = netQty;
+                    let displayUnit = line.pricingType;
+                    
+                    if (line.pricingType === 'quintal') displayUnit = 'kg';
+                    if (line.pricingType === 'ton') displayUnit = 'kg';
+                    
+                    return (
+                      <TableRow key={idx} sx={{ '&:hover': { bgcolor: COLORS.primaryLight } }}>
+                        <TableCell sx={{ fontSize: '0.7rem' }}>{line.productName || '-'}</TableCell>
+                        <TableCell sx={{ fontSize: '0.7rem' }}>
+                          {line.pricingType === 'bag' 
+                            ? `${line.bags || 0} bags`
+                            : `${displayQty.toFixed(2)} ${displayUnit}`}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: '0.7rem' }}>
+                          {formatCurrency(parseFloat(line.rate) || 0)}/{line.pricingType === 'kg' ? 'kg' : line.pricingType === 'quintal' ? 'quintal' : line.pricingType === 'ton' ? 'ton' : 'bag'}
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontSize: '0.7rem', fontWeight: 600, color: COLORS.primaryDark }}>
+                          {formatCurrency(calculateLineTotal(line))}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Paper>
         </Stack>
       )}
 
       {/* Navigation Buttons */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, pt: 3, pb: 2, mt: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, pt: 3, pb: 2, mt: 2 }}>
         {currentStep > 0 && (
           <Button
             onClick={handlePrevious}
@@ -1045,7 +1094,7 @@ const fetchWarehouses = async () => {
               }
             }}
           >
-            <ChevronLeft sx={{ fontSize: '1rem', mr: 0.5 }} /> Previous
+            Previous
           </Button>
         )}
         {currentStep < 2 && (
@@ -1067,10 +1116,35 @@ const fetchWarehouses = async () => {
               }
             }}
           >
-            Next <ChevronRight sx={{ fontSize: '1rem', ml: 0.5 }} />
+            Next
           </Button>
         )}
-        {currentStep === 2 && <Box />}
+        {currentStep === 2 && (
+          <Button
+            onClick={handleSubmit}
+            disabled={loading}
+            variant="contained"
+            sx={{
+              height: 32,
+              px: 2,
+              borderRadius: 1.5,
+              bgcolor: COLORS.primary,
+              fontSize: '0.7rem',
+              fontWeight: 500,
+              textTransform: 'none',
+              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+              '&:hover': {
+                bgcolor: COLORS.primaryDark,
+              },
+              '&:disabled': {
+                bgcolor: COLORS.border,
+                color: COLORS.text.tertiary
+              }
+            }}
+          >
+            {loading ? 'Creating...' : 'Create Sale'}
+          </Button>
+        )}
       </Box>
     </Box>
   );

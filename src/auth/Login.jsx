@@ -153,7 +153,7 @@ const Login = () => {
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-4 mb-8">
+              {/* <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
                   <div className="flex items-center gap-2 mb-2">
                     <DollarSign className="w-4 h-4 text-[#FF8F00]" />
@@ -170,7 +170,7 @@ const Login = () => {
                   <p className="text-2xl font-bold text-white">500+</p>
                   <p className="text-xs text-green-300 mt-1">↑ 18% new</p>
                 </div>
-              </div>
+              </div> */}
 
              
             </div>

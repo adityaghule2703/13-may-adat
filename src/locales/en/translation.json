@@ -1406,5 +1406,77 @@
     "errors": {
       "fetchFailed": "Failed to fetch audit logs"
     }
-  }
+  },
+  
+  "buyers": {
+  "addTitle": "Add New Buyer",
+  "addSubtitle": "Enter buyer details to add them to your network",
+  "personalInfo": "Personal Information",
+  "businessDetails": "Business Details",
+  "creditTerms": "Credit Terms & Additional Info",
+  "steps": {
+    "personalInfo": "Personal Info",
+    "businessDetails": "Business Details",
+    "creditTerms": "Credit Terms"
+  },
+  "fullName": "Full Name",
+  "email": "Email Address",
+  "mobileNumber": "Mobile Number",
+  "alternateMobile": "Alternate Mobile",
+  "address": "Address",
+  "city": "City",
+  "state": "State",
+  "pincode": "Pincode",
+  "businessName": "Business Name",
+  "businessType": "Business Type",
+  "gstNumber": "GST Number",
+  "panNumber": "PAN Number",
+  "creditLimit": "Credit Limit (₹)",
+  "creditDays": "Credit Days",
+  "defaultPaymentMode": "Default Payment Mode",
+  "notes": "Notes",
+  "placeholders": {
+    "name": "Enter full name",
+    "email": "Enter email address",
+    "mobile": "Enter 10-digit mobile number",
+    "alternateMobile": "Enter alternate mobile number",
+    "address": "Enter complete address",
+    "city": "Enter city name",
+    "state": "Enter state name",
+    "pincode": "Enter 6-digit pincode",
+    "businessName": "Enter business/company name",
+    "gst": "Enter 15-digit GST number",
+    "pan": "Enter 10-digit PAN number",
+    "creditLimit": "Enter credit limit amount",
+    "creditDays": "Enter number of credit days (1-365)",
+    "notes": "Add any additional notes..."
+  },
+  "errors": {
+    "nameRequired": "Name is required",
+    "nameInvalid": "Name should only contain letters, spaces, dots and hyphens",
+    "emailInvalid": "Please enter a valid email address",
+    "mobileInvalid": "Please enter a valid 10-digit mobile number starting with 6-9",
+    "alternateMobileInvalid": "Please enter a valid 10-digit mobile number",
+    "cityRequired": "City is required",
+    "stateRequired": "State is required",
+    "pincodeInvalid": "Please enter a valid 6-digit pincode",
+    "businessNameRequired": "Business name is required",
+    "businessNameInvalid": "Business name contains invalid characters",
+    "gstInvalid": "Please enter a valid GST number (e.g., 27AAAAA0000A1Z)",
+    "panInvalid": "Please enter a valid PAN number (e.g., AAAAA1234A)",
+    "creditLimitInvalid": "Please enter a valid credit limit amount",
+    "creditDaysInvalid": "Please enter valid credit days (0-365)",
+    "addFailed": "Failed to add buyer. Please try again."
+  },
+  "messages": {
+    "addSuccess": "Buyer added successfully! Redirecting..."
+  },
+  "mobileHint": "Enter 10-digit mobile number (starts with 6,7,8,9)",
+  "pincodeHint": "Enter 6-digit pincode",
+  "gstHint": "15-character GSTIN (e.g., 27AAAAA0000A1Z)",
+  "panHint": "10-character PAN (e.g., AAAAA1234A)",
+  "creditLimitHint": "Maximum credit amount allowed",
+  "creditDaysHint": "Number of days for credit payment",
+  "creditOptional": "These fields are optional - leave blank if not applicable"
+}
 }

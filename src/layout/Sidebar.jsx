@@ -112,11 +112,12 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
   const mainMenu = [
     { path: "/dashboard", name: t('nav.dashboard'), icon: LayoutDashboard },
     { path: "/farmers", name: t('nav.farmers'), icon: Users },
+     { path: "/products", name: t('nav.products'), icon: Package },
     { path: "/purchases", name: t('nav.purchases'), icon: ShoppingCart },
     { path: "/payments", name: t('nav.payments'), icon: CreditCard },
     { path: "/inventory", name: t('nav.inventory'), icon: Package },
     { path: "/warehouses", name: t('nav.warehouses'), icon: Users },
-    //  { path: "/buyers", name: t('nav.buyers'), icon: ShoppingBag },
+     { path: "/buyers", name: t('nav.buyers'), icon: ShoppingBag },
     { path: "/sales", name: t('nav.sales'), icon: ShoppingBag },
     { path: "/expenses", name: t('nav.expenses'), icon: Wallet },
     { path: "/ledger", name: t('nav.ledger'), icon: Receipt },
