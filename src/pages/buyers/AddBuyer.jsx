@@ -75,13 +75,13 @@ const getBusinessTypes = (t) => [
   { value: 'society', label: t('buyers.businessTypes.society') }
 ];
 
-// Payment mode options with translations
+// Payment mode options with translations - Updated to match backend enums
 const getPaymentModes = (t) => [
   { value: 'cash', label: t('payments.modes.cash') },
-  { value: 'bank_transfer', label: t('payments.modes.bank') },
+  { value: 'upi', label: t('payments.modes.upi') },
+  { value: 'bank', label: t('payments.modes.bank') },
   { value: 'cheque', label: t('payments.modes.cheque') },
-  { value: 'credit', label: t('buyers.paymentModes.credit') },
-  { value: 'online', label: t('buyers.paymentModes.online') }
+  { value: 'credit', label: t('payments.modes.credit') }
 ];
 
 // Floating Error Alert Component
@@ -145,7 +145,7 @@ const AddBuyer = () => {
     businessType: 'individual',
     creditLimit: '',
     creditDays: '',
-    defaultPaymentMode: 'cash',
+    defaultPaymentMode: 'cash', // Changed from 'cash' to match backend enum
     notes: ''
   });
 
@@ -419,7 +419,7 @@ const AddBuyer = () => {
         businessType: formData.businessType,
         creditLimit: formData.creditLimit ? parseFloat(formData.creditLimit) : undefined,
         creditDays: formData.creditDays ? parseInt(formData.creditDays) : undefined,
-        defaultPaymentMode: formData.defaultPaymentMode,
+        defaultPaymentMode: formData.defaultPaymentMode, // Now uses correct enum values: cash, upi, bank, cheque, credit
         notes: formData.notes || undefined
       };
       

@@ -365,7 +365,7 @@ const AddProduct = () => {
             }
           }}
         >
-          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('products.saveProduct')}</>}
+          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('common.save')}</>}
         </Button>
       </Box>
     </Box>

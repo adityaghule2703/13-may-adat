@@ -1,6 +1,7 @@
 // src/pages/budgetalerts/EditBudget.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -53,8 +54,21 @@ const COLORS = {
   border: '#E3E8EF'
 };
 
+// Category options with translations
+const getCategoryOptions = (t) => [
+  { value: 'transport_logistics', label: t('budgetAlerts.categories.transport') },
+  { value: 'labour_wages', label: t('budgetAlerts.categories.labour') },
+  { value: 'market_fees', label: t('budgetAlerts.categories.marketFees') },
+  { value: 'storage_cold_chain', label: t('budgetAlerts.categories.storage') },
+  { value: 'shop_office', label: t('budgetAlerts.categories.shopOffice') },
+  { value: 'repairs_maintenance', label: t('budgetAlerts.categories.repairs') },
+  { value: 'banking_finance', label: t('budgetAlerts.categories.banking') },
+  { value: 'marketing_misc', label: t('budgetAlerts.categories.marketing') }
+];
+
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -91,6 +105,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const EditBudget = () => {
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -98,6 +113,7 @@ const EditBudget = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const [categoryOptions, setCategoryOptions] = useState([]);
   const [formData, setFormData] = useState({
     category: '',
     monthlyLimit: '',
@@ -107,16 +123,9 @@ const EditBudget = () => {
     notes: ''
   });
 
-  const categoryOptions = [
-    { value: 'transport_logistics', label: 'Transport & Logistics' },
-    { value: 'labour_wages', label: 'Labour & Wages' },
-    { value: 'market_fees', label: 'Market Fees' },
-    { value: 'storage_cold_chain', label: 'Storage & Cold Chain' },
-    { value: 'shop_office', label: 'Shop & Office' },
-    { value: 'repairs_maintenance', label: 'Repairs & Maintenance' },
-    { value: 'banking_finance', label: 'Banking & Finance' },
-    { value: 'marketing_misc', label: 'Marketing & Miscellaneous' }
-  ];
+  useEffect(() => {
+    setCategoryOptions(getCategoryOptions(t));
+  }, [t]);
 
   const getToken = () => localStorage.getItem('token');
 
@@ -145,12 +154,12 @@ const EditBudget = () => {
             notes: budget.notes || ''
           });
         } else {
-          setError('Budget not found');
+          setError(t('budgetAlerts.errors.notFound'));
         }
       }
     } catch (error) {
       console.error('Error fetching budget:', error);
-      setError(error.response?.data?.message || 'Failed to fetch budget details');
+      setError(error.response?.data?.message || t('budgetAlerts.errors.fetchFailed'));
     } finally {
       setFetching(false);
     }
@@ -181,29 +190,29 @@ const EditBudget = () => {
     let isValid = true;
 
     if (!formData.category) {
-      errors.category = 'Category is required';
+      errors.category = t('budgetAlerts.errors.categoryRequired');
       isValid = false;
     }
     if (!formData.monthlyLimit || parseFloat(formData.monthlyLimit) <= 0) {
-      errors.monthlyLimit = 'Please enter a valid budget amount';
+      errors.monthlyLimit = t('budgetAlerts.errors.validBudgetAmount');
       isValid = false;
     }
     if (!formData.month) {
-      errors.month = 'Month is required';
+      errors.month = t('budgetAlerts.errors.monthRequired');
       isValid = false;
     }
     if (!formData.year) {
-      errors.year = 'Year is required';
+      errors.year = t('budgetAlerts.errors.yearRequired');
       isValid = false;
     }
     if (!formData.alertThreshold || formData.alertThreshold < 0 || formData.alertThreshold > 100) {
-      errors.alertThreshold = 'Alert threshold must be between 0 and 100';
+      errors.alertThreshold = t('budgetAlerts.errors.invalidThreshold');
       isValid = false;
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields correctly');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -231,7 +240,7 @@ const EditBudget = () => {
         notes: formData.notes || undefined
       };
 
-      const response = await axios.post(`${BASE_URL}/budget-alerts`, payload, {
+      const response = await axios.put(`${BASE_URL}/budget-alerts/${id}`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -248,11 +257,11 @@ const EditBudget = () => {
         setSuccess(true);
         setTimeout(() => navigate('/budget-alerts'), 2000);
       } else {
-        showError(response.data.message || 'Failed to update budget');
+        showError(response.data.message || t('budgetAlerts.errors.updateFailed'));
       }
     } catch (error) {
       console.error('Error updating budget:', error);
-      showError(error.response?.data?.message || 'Network error. Please check your connection.');
+      showError(error.response?.data?.message || t('common.networkError'));
     } finally {
       setLoading(false);
     }
@@ -309,10 +318,25 @@ const EditBudget = () => {
   // Get selected category for Autocomplete (disabled)
   const selectedCategory = categoryOptions.find(opt => opt.value === formData.category) || null;
 
-  // Get months for dropdown
+  // Get months for dropdown based on current language
+  const getMonthLabels = () => {
+    const isMarathi = i18n.language === 'mr';
+    const marathiMonths = [
+      'जानेवारी', 'फेब्रुवारी', 'मार्च', 'एप्रिल', 'मे', 'जून',
+      'जुलै', 'ऑगस्ट', 'सप्टेंबर', 'ऑक्टोबर', 'नोव्हेंबर', 'डिसेंबर'
+    ];
+    const englishMonths = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    return isMarathi ? marathiMonths : englishMonths;
+  };
+
+  const monthLabels = getMonthLabels();
   const months = Array.from({ length: 12 }, (_, i) => ({
     value: i + 1,
-    label: new Date(2000, i, 1).toLocaleString('default', { month: 'long' })
+    label: monthLabels[i]
   }));
 
   // Get selected month
@@ -332,10 +356,13 @@ const EditBudget = () => {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '96vh' }}>
         <CircularProgress sx={{ color: '#2E7D32' }} />
-        <Typography sx={{ ml: 2, color: '#2E7D32' }}>Loading budget details...</Typography>
+        <Typography sx={{ ml: 2, color: '#2E7D32' }}>{t('common.loading')}</Typography>
       </Box>
     );
   }
+
+  // Get category label for subtitle
+  const categoryLabel = categoryOptions.find(c => c.value === formData.category)?.label || 'category';
 
   return (
     <Box sx={{ height: '100%', overflow: 'auto' }}>
@@ -353,10 +380,10 @@ const EditBudget = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Edit Budget
+            {t('budgetAlerts.editTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Update budget limit for {categoryOptions.find(c => c.value === formData.category)?.label || 'category'}
+            {t('budgetAlerts.editSubtitle', { category: categoryLabel })}
           </Typography>
         </Box>
         <Button
@@ -382,7 +409,7 @@ const EditBudget = () => {
             }
           }}
         >
-          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Update Budget</>}
+          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('budgetAlerts.updateBudget')}</>}
         </Button>
       </Box>
 
@@ -394,7 +421,7 @@ const EditBudget = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Budget updated successfully! Redirecting...
+          {t('budgetAlerts.messages.updateSuccess')}
         </Alert>
       )}
 
@@ -403,14 +430,14 @@ const EditBudget = () => {
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <MoneyIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Budget Information</Typography>
+            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('budgetAlerts.budgetInformation')}</Typography>
           </Stack>
         </Box>
         <Box sx={{ p: 2.5 }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
             {/* Category - Readonly Autocomplete */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label required>CATEGORY</Label>
+              <Label required>{t('budgetAlerts.category')}</Label>
               <Autocomplete
                 fullWidth
                 options={categoryOptions}
@@ -422,7 +449,7 @@ const EditBudget = () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Select expense category"
+                    placeholder={t('budgetAlerts.placeholders.selectCategory')}
                     sx={disabledAutocompleteSx}
                   />
                 )}
@@ -433,13 +460,13 @@ const EditBudget = () => {
                 )}
               />
               <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                <LockIcon sx={{ fontSize: '0.7rem', verticalAlign: 'middle', mr: 0.5 }} /> Category cannot be changed once set
+                <LockIcon sx={{ fontSize: '0.7rem', verticalAlign: 'middle', mr: 0.5 }} /> {t('budgetAlerts.categoryLockedNote')}
               </Typography>
             </Box>
 
             {/* Monthly Limit */}
             <Box>
-              <Label required>MONTHLY LIMIT</Label>
+              <Label required>{t('budgetAlerts.monthlyLimit')}</Label>
               <TextField
                 fullWidth
                 type="number"
@@ -447,7 +474,7 @@ const EditBudget = () => {
                 name="monthlyLimit"
                 value={formData.monthlyLimit}
                 onChange={handleChange}
-                placeholder="Enter budget amount"
+                placeholder={t('budgetAlerts.placeholders.budgetAmount')}
                 error={!!fieldErrors.monthlyLimit}
                 helperText={fieldErrors.monthlyLimit}
                 sx={inputSx}
@@ -462,7 +489,7 @@ const EditBudget = () => {
 
             {/* Month - Autocomplete */}
             <Box>
-              <Label required>MONTH</Label>
+              <Label required>{t('budgetAlerts.month')}</Label>
               <Autocomplete
                 fullWidth
                 options={months}
@@ -474,7 +501,7 @@ const EditBudget = () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Select month"
+                    placeholder={t('budgetAlerts.placeholders.selectMonth')}
                     error={!!fieldErrors.month}
                     helperText={fieldErrors.month}
                     sx={inputSx}
@@ -500,7 +527,7 @@ const EditBudget = () => {
 
             {/* Year - Autocomplete */}
             <Box>
-              <Label required>YEAR</Label>
+              <Label required>{t('budgetAlerts.year')}</Label>
               <Autocomplete
                 fullWidth
                 options={years}
@@ -512,7 +539,7 @@ const EditBudget = () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Select year"
+                    placeholder={t('budgetAlerts.placeholders.selectYear')}
                     error={!!fieldErrors.year}
                     helperText={fieldErrors.year}
                     sx={inputSx}
@@ -538,7 +565,7 @@ const EditBudget = () => {
 
             {/* Alert Threshold - spans both columns */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label>ALERT THRESHOLD (%)</Label>
+              <Label>{t('budgetAlerts.alertThreshold')}</Label>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Slider
                   value={formData.alertThreshold}
@@ -576,14 +603,14 @@ const EditBudget = () => {
                 />
               </Box>
               <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#8D6E63', fontSize: '0.65rem' }}>
-                You will be alerted when expenses reach this percentage of your budget
+                {t('budgetAlerts.thresholdHint')}
               </Typography>
               {fieldErrors.alertThreshold && <Typography variant="caption" sx={{ color: '#EF4444', fontSize: '0.65rem' }}>{fieldErrors.alertThreshold}</Typography>}
             </Box>
 
             {/* Notes - spans both columns */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label>NOTES (Optional)</Label>
+              <Label>{t('common.notes')}</Label>
               <TextField
                 fullWidth
                 multiline
@@ -592,7 +619,7 @@ const EditBudget = () => {
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                placeholder="Additional notes about this budget..."
+                placeholder={t('budgetAlerts.placeholders.notes')}
                 sx={inputSx}
               />
             </Box>

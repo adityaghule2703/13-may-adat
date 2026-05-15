@@ -97,8 +97,18 @@ const ViewBudget = () => {
     };
   };
 
-  const getMonthName = (month) => {
-    return new Date(2000, month - 1, 1).toLocaleString('default', { month: 'long' });
+  // Fixed: Format month from "YYYY-MM" to readable format
+  const formatMonth = (monthString) => {
+    if (!monthString) return '';
+    
+    // Parse month string in format "YYYY-MM"
+    const [year, month] = monthString.split('-');
+    
+    // Create date to get month name
+    const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+    const monthName = date.toLocaleString('default', { month: 'long' });
+    
+    return `${monthName} ${year}`;
   };
 
   const getCategoryIcon = (category) => {
@@ -131,7 +141,7 @@ const ViewBudget = () => {
     );
   }
 
-  const percentage = budget.percentageUsed || 0;
+  const percentage = parseFloat(budget.percentageUsed) || 0;
   const alertInfo = getAlertLevel(budget.alertLevel, percentage);
   const AlertIcon = alertInfo.icon;
   const CategoryIcon = getCategoryIcon(budget.category);
@@ -193,6 +203,7 @@ const ViewBudget = () => {
             </div>
           </div>
 
+
           {/* Budget Overview Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-gray-50 rounded-lg p-4 text-center">
@@ -209,20 +220,6 @@ const ViewBudget = () => {
             </div>
           </div>
 
-          {/* Progress Bar */}
-          <div>
-            <div className="flex justify-between text-sm mb-1">
-              <span style={{ color: '#5D4037' }}>{t('budgetAlerts.budgetUsage')}</span>
-              <span style={{ color: '#5D4037' }}>{percentage}% {t('budgetAlerts.used')}</span>
-            </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-              <div 
-                className={`h-full rounded-full transition-all duration-500 ${barColor}`}
-                style={{ width: `${Math.min(percentage, 100)}%` }}
-              ></div>
-            </div>
-          </div>
-
           {/* Details Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4 border-t" style={{ borderColor: '#E8F5E9' }}>
             <div>
@@ -231,7 +228,7 @@ const ViewBudget = () => {
             </div>
             <div>
               <p className="text-xs mb-1" style={{ color: '#8D6E63' }}>{t('budgetAlerts.month')}</p>
-              <p className="text-base" style={{ color: '#5D4037' }}>{getMonthName(budget.month)} {budget.year}</p>
+              <p className="text-base" style={{ color: '#5D4037' }}>{formatMonth(budget.month)}</p>
             </div>
             <div>
               <p className="text-xs mb-1" style={{ color: '#8D6E63' }}>{t('budgetAlerts.alertThreshold')}</p>

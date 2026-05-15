@@ -230,8 +230,30 @@ const Sales = () => {
     return convert(num);
   };
 
-  const handlePrintInvoice = (sale) => {
+const handlePrintInvoice = (saleId) => {
+  const token = getToken();
+  
+  fetch(`${BASE_URL}/sales/${saleId}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (!data.success) {
+      alert(t('sales.errors.invoiceFetchFailed'));
+      return;
+    }
+    
+    const sale = data.data;
     const isMarathi = i18n.language === 'mr';
+    
+    // Get business details from API response (root level, not inside data)
+    const businessDetails = data.businessDetails || {};
+    const businessName = businessDetails.name ||"N/A";
+    const businessAddress = businessDetails.address || "N/A";
+    const businessPhone = businessDetails.phone || "N/A";
+    const businessEmail = businessDetails.email || '';
+    const businessGst = businessDetails.gstNumber || '';
+    const businessPan = businessDetails.panNumber || '';
     
     // Format date
     const saleDate = sale.saleDate ? new Date(sale.saleDate) : new Date();
@@ -245,9 +267,11 @@ const Sales = () => {
     const formattedTotalDeductions = formatNumber(sale.totalDeductions || 0);
     const formattedFinalReceivable = formatNumber(sale.finalReceivable || sale.grandTotal || 0);
     
-    // Get buyer name and mobile
-    const buyerName = getBuyerDisplayName(sale);
-    const buyerMobile = getBuyerMobile(sale);
+    // Get buyer details
+    const buyerName = sale.buyer?.displayName || sale.buyer?.name || sale.buyerName || 'N/A';
+    const buyerMobile = sale.buyer?.mobile || sale.buyerMobile || 'N/A';
+    const buyerAddress = sale.buyer?.fullAddress || (sale.buyer?.address ? `${sale.buyer.address}, ${sale.buyer.city || ''}`.replace(/, ,/g, ',').replace(/,$/, '') : 'N/A');
+    const buyerGst = sale.buyer?.gstNumber || '';
     
     // Build items table rows
     const itemsRows = sale.lines?.map((line, idx) => {
@@ -291,6 +315,9 @@ const Sales = () => {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
           }
           body {
             background: #e5e5e5;
@@ -301,7 +328,7 @@ const Sales = () => {
             font-family: 'Arial', 'Noto Sans', 'Segoe UI', sans-serif;
           }
           .receipt {
-            width: 780px;
+            width: 800px;
             max-width: 100%;
             background: #fff;
             border: 2px solid #b3153f;
@@ -332,15 +359,17 @@ const Sales = () => {
             padding: 0 10px;
           }
           .center-title h1 {
-            font-size: 38px;
+            font-size: 32px;
             font-weight: 700;
             line-height: 1.2;
             margin-bottom: 6px;
             letter-spacing: 1px;
+            word-break: break-word;
           }
           .sub {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
+            word-break: break-word;
           }
           .receipt-badge {
             display: inline-block;
@@ -358,10 +387,20 @@ const Sales = () => {
             padding-top: 8px;
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            align-items: center;
+            font-size: 11px;
             font-weight: bold;
             flex-wrap: wrap;
             gap: 5px;
+          }
+          .contact-phone {
+            flex: 1;
+            text-align: left;
+          }
+          .contact-email {
+            flex: 1;
+            text-align: right;
+            word-break: break-all;
           }
           .details {
             width: 100%;
@@ -371,8 +410,9 @@ const Sales = () => {
           .details td {
             border-bottom: 2px solid #b3153f;
             padding: 10px 12px;
-            height: 50px;
-            font-size: 16px;
+            height: auto;
+            font-size: 14px;
+            position: relative;
           }
           .label {
             font-weight: bold;
@@ -382,9 +422,10 @@ const Sales = () => {
           }
           .value {
             color: #000;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 500;
             padding-left: 15px;
+            word-break: break-word;
           }
           .main-table {
             width: 100%;
@@ -395,18 +436,18 @@ const Sales = () => {
           .main-table th,
           .main-table td {
             border: 2px solid #b3153f;
-            padding: 10px 8px;
+            padding: 8px 6px;
             vertical-align: middle;
           }
           .main-table th {
             text-align: center;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 13px;
             background: #fff5f5;
           }
           .main-table td {
             color: #000;
-            font-size: 14px;
+            font-size: 12px;
           }
           .col1 { width: 6%; text-align: center; }
           .col2 { width: 40%; }
@@ -433,7 +474,7 @@ const Sales = () => {
           .footer-left {
             flex: 1;
             padding: 12px 15px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             color: #b3153f;
             min-width: 200px;
@@ -442,7 +483,7 @@ const Sales = () => {
             width: 280px;
             border-left: 2px solid #b3153f;
             padding: 12px 15px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -452,7 +493,7 @@ const Sales = () => {
           }
           .footer-right span {
             color: #000;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
             display: inline-block;
             margin-left: 5px;
@@ -462,10 +503,11 @@ const Sales = () => {
             justify-content: space-between;
             align-items: flex-end;
             padding: 25px 15px 15px;
-            min-height: 130px;
+            min-height: 120px;
+            flex-wrap: wrap;
           }
           .buyer-sign {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             border-top: 1px dashed #b3153f;
             padding-top: 15px;
@@ -474,28 +516,32 @@ const Sales = () => {
           }
           .shop-sign {
             text-align: center;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             position: relative;
             padding-top: 15px;
             border-top: 1px dashed #b3153f;
             min-width: 200px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
           }
           .sign-mark {
-            font-size: 50px;
+            font-size: 45px;
             font-family: cursive;
             position: absolute;
-            top: -40px;
+            top: -35px;
             right: 20px;
             color: #000;
             transform: rotate(-10deg);
           }
           .amount-in-words {
             padding: 8px 15px;
-            font-size: 14px;
+            font-size: 12px;
             background: #fff8f0;
             border-top: 1px solid #b3153f;
             color: #555;
+            word-break: break-word;
           }
           .refinwords {
             padding: 8px 15px;
@@ -512,6 +558,11 @@ const Sales = () => {
               width: 100%;
             }
           }
+          @media (max-width: 768px) {
+            .center-title h1 { font-size: 24px; }
+            .sub { font-size: 11px; }
+            .main-table th, .main-table td { font-size: 10px; padding: 6px 4px; }
+          }
         </style>
       </head>
       <body>
@@ -522,14 +573,15 @@ const Sales = () => {
             </div>
             <div class="title-section">
               <div class="center-title">
-                <h1>${isMarathi ? 'जय शिवराय व्हेजिटेबल' : 'Jai Shivrai Vegetable Co.'}</h1>
-                <div class="sub">${isMarathi ? 'वेसराणे, ता. कळवण जि. नाशिक' : 'Vesarane, Tal. Kalwan, Dist. Nashik'}</div>
+                <h1>${businessName}</h1>
+                <div class="sub">${businessAddress}</div>
+                ${(businessGst || businessPan) ? `<div style="font-size: 11px; margin-top: 4px;">${businessGst ? `${isMarathi ? 'जीएसटी' : 'GST'}: ${businessGst}` : ''}${businessGst && businessPan ? ' | ' : ''}${businessPan ? `${isMarathi ? 'पॅन' : 'PAN'}: ${businessPan}` : ''}</div>` : ''}
                 <div class="receipt-badge">${isMarathi ? 'विक्री पावती' : 'TAX INVOICE'}</div>
               </div>
             </div>
             <div class="contact-row">
-              <div>${isMarathi ? 'प्रो. रोकेश हिरे मो. ९०२१६९९९९१ / ९६२३९५६३९६' : 'Prop. Rakesh Hire M: 9021699991 / 9623956396'}</div>
-              <div>${isMarathi ? 'प्रो. स्वजित हिरे मो. ९५६५४५९९९१ / ९९१९९९९९९९' : 'Prop. Swajit Hire M: 9565459991 / 9919999999'}</div>
+              <div class="contact-phone">📞 ${businessPhone}</div>
+              ${businessEmail ? `<div class="contact-email">✉️ ${businessEmail}</div>` : ''}
             </div>
           </div>
           
@@ -554,6 +606,22 @@ const Sales = () => {
                 <span class="value">${buyerMobile}</span>
               </td>
             </tr>
+            ${buyerAddress !== 'N/A' ? `
+            <tr>
+              <td colspan="2">
+                <span class="label">${isMarathi ? 'पत्ता' : 'Address'}:</span>
+                <span class="value">${buyerAddress}</span>
+              </td>
+            </tr>
+            ` : ''}
+            ${buyerGst ? `
+            <tr>
+              <td colspan="2">
+                <span class="label">${isMarathi ? 'जीएसटी क्र.' : 'GST No.'}:</span>
+                <span class="value">${buyerGst}</span>
+              </td>
+            </tr>
+            ` : ''}
           </table>
           
           <table class="main-table">
@@ -587,7 +655,7 @@ const Sales = () => {
               ` : ''}
               <tr class="total-row">
                 <td colspan="4" style="text-align: right; font-weight: bold; color: #b3153f;">${isMarathi ? 'अंतिम देय रक्कम' : 'Final Receivable'}:</td>
-                <td style="text-align: right; font-weight: bold; color: #b3153f; font-size: 18px;">₹ ${formattedFinalReceivable}</td>
+                <td style="text-align: right; font-weight: bold; color: #b3153f; font-size: 16px;">₹ ${formattedFinalReceivable}</td>
               </tr>
             </tbody>
           </table>
@@ -620,7 +688,7 @@ const Sales = () => {
               </div>
               <div class="shop-sign" oncontextmenu="return false;">
                 <div class="sign-mark">✓</div>
-                ${isMarathi ? 'जय शिवराय व्हेजिटेबल कळवण' : 'Jai Shivrai Vegetable Co., Kalwan'}
+                ${businessName}
               </div>
             </div>
           </div>
@@ -630,7 +698,12 @@ const Sales = () => {
     `);
     printWindow.document.close();
     printWindow.print();
-  };
+  })
+  .catch(error => {
+    console.error('Error fetching sale invoice:', error);
+    alert(t('common.networkError'));
+  });
+};
 
   const handleViewDetails = (saleId) => {
     navigate(`/sales/view/${saleId}`);
@@ -918,17 +991,18 @@ const Sales = () => {
                                 left: anchorRect.left - 80
                               }}
                             >
-                              <button 
-                                onClick={() => {
-                                  handlePrintInvoice(sale);
-                                  handleActionMenuClose();
-                                }}
-                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-green-50 flex items-center gap-2 transition-colors"
-                                style={{ color: '#1565C0' }}
-                              >
-                                <Printer className="w-4 h-4" />
-                                {t('sales.buttons.printInvoice')}
-                              </button>
+                           
+<button 
+  onClick={() => {
+    handlePrintInvoice(sale._id);
+    handleActionMenuClose();
+  }}
+  className="w-full px-4 py-2.5 text-left text-sm hover:bg-green-50 flex items-center gap-2 transition-colors"
+  style={{ color: '#1565C0' }}
+>
+  <Printer className="w-4 h-4" />
+  {t('sales.buttons.printInvoice')}
+</button>
                               <button 
                                 onClick={() => {
                                   handleViewDetails(sale._id);

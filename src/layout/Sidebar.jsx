@@ -32,6 +32,35 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [summaryError, setSummaryError] = useState(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+
+  // Fetch user role from API
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      try {
+        const response = await fetch(`${BASE_URL}/auth/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.user) {
+            setUserRole(data.user.role);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
+
+    fetchUserRole();
+  }, []);
 
   const getTodayDate = () => {
     const today = new Date();
@@ -141,23 +170,30 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
     boxShadow: '0 0 20px rgba(46, 125, 50, 0.3)'
   };
 
-  const mainMenu = [
-    { path: "/dashboard",    name: t('nav.dashboard'),    icon: LayoutDashboard },
-    { path: "/farmers",      name: t('nav.farmers'),      icon: Users },
-    { path: "/products",     name: t('nav.products'),     icon: Package },
-    { path: "/purchases",    name: t('nav.purchases'),    icon: ShoppingCart },
-    { path: "/payments",     name: t('nav.payments'),     icon: CreditCard },
-    { path: "/inventory",    name: t('nav.inventory'),    icon: Package },
-    { path: "/warehouses",   name: t('nav.warehouses'),   icon: Users },
-    { path: "/buyers",       name: t('nav.buyers'),       icon: ShoppingBag },
-    { path: "/sales",        name: t('nav.sales'),        icon: ShoppingBag },
-    { path: "/sale-payments",name: t('nav.salepayments'), icon: ShoppingBag },
-    { path: "/expenses",     name: t('nav.expenses'),     icon: Wallet },
-    { path: "/ledger",       name: t('nav.ledger'),       icon: Receipt },
-    { path: "/budget-alerts",name: t('nav.budgetAlerts'), icon: Bell },
-    { path: "/audit-logs",   name: t('nav.auditLogs'),    icon: History },
-    { path: "/users",        name: t('nav.usersRoles'),   icon: UserCog },
+  // Define menu items based on user role
+  const getAllMenuItems = () => [
+    { path: "/dashboard",    name: t('nav.dashboard'),    icon: LayoutDashboard, requiredRole: ['superadmin', 'admin'] },
+    { path: "/farmers",      name: t('nav.farmers'),      icon: Users, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/products",     name: t('nav.products'),     icon: Package, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/purchases",    name: t('nav.purchases'),    icon: ShoppingCart, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/payments",     name: t('nav.payments'),     icon: CreditCard, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/inventory",    name: t('nav.inventory'),    icon: Package, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/warehouses",   name: t('nav.warehouses'),   icon: Users, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/buyers",       name: t('nav.buyers'),       icon: ShoppingBag, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/sales",        name: t('nav.sales'),        icon: ShoppingBag, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/sale-payments",name: t('nav.salepayments'), icon: ShoppingBag, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/expenses",     name: t('nav.expenses'),     icon: Wallet, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/ledger",       name: t('nav.ledger'),       icon: Receipt, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/budget-alerts",name: t('nav.budgetAlerts'), icon: Bell, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/audit-logs",   name: t('nav.auditLogs'),    icon: History, requiredRole: ['superadmin', 'admin'] },
+    { path: "/users",        name: t('nav.usersRoles'),   icon: UserCog, requiredRole: ['superadmin', 'admin'] },
   ];
+
+  // Filter menu items based on user role
+  const mainMenu = getAllMenuItems().filter(item => {
+    if (!userRole) return true; // Show all while loading
+    return item.requiredRole.includes(userRole);
+  });
 
   const sidebarContent = (
     <aside className="h-full flex flex-col overflow-y-auto scrollbar-hide" style={{ background: '#1B3A1F' }}>
@@ -180,7 +216,7 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
       {/* Gradient Border Top - Desktop only */}
       <div className="hidden lg:block h-1 w-full" style={{ background: 'linear-gradient(90deg, #FF6F00, #FF8F00, #FF6F00)' }}></div>
 
-      {/* Today's Summary Card */}
+      {/* Today's Summary Card - Shows for ALL roles */}
       <div className="mx-3 sm:mx-5 mt-4 mb-6 p-3 rounded-xl" style={{ background: 'rgba(255, 111, 0, 0.15)', border: '1px solid rgba(255, 111, 0, 0.3)' }}>
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="w-4 h-4" style={{ color: '#FF8F00' }} />

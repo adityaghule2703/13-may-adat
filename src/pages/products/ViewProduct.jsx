@@ -38,10 +38,10 @@ const ViewProduct = () => {
       if (data.success) {
         setProduct(data.data);
       } else {
-        setError(data.message || 'Failed to fetch product details');
+        setError(data.message || t('products.errors.fetchFailed'));
       }
     } catch (error) {
-      setError('Network error. Please check your connection.');
+      setError(t('common.networkError'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -78,7 +78,7 @@ const ViewProduct = () => {
         icon: CheckCircle, 
         color: '#2E7D32', 
         bg: '#E8F5E9', 
-        label: 'Active',
+        label: t('products.status.active'),
         border: '#C8E6C9'
       };
     } else {
@@ -86,7 +86,7 @@ const ViewProduct = () => {
         icon: XCircle, 
         color: '#D32F2F', 
         bg: '#FFEBEE', 
-        label: 'Inactive',
+        label: t('products.status.inactive'),
         border: '#FFCDD2'
       };
     }
@@ -96,7 +96,7 @@ const ViewProduct = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <Loader className="w-8 h-8 animate-spin" style={{ color: '#2E7D32' }} />
-        <span className="ml-2" style={{ color: '#2E7D32' }}>Loading product details...</span>
+        <span className="ml-2" style={{ color: '#2E7D32' }}>{t('products.loading')}</span>
       </div>
     );
   }
@@ -106,12 +106,12 @@ const ViewProduct = () => {
       <div className="max-w-5xl mx-auto">
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
-          <p className="text-red-600">{error || 'Product not found'}</p>
+          <p className="text-red-600">{error || t('products.errors.notFound')}</p>
           <button 
             onClick={() => navigate('/products')} 
             className="mt-4 px-4 py-2 rounded-lg bg-green-700 text-white hover:bg-green-800 transition-colors"
           >
-            Back to Products
+            {t('products.backToProducts')}
           </button>
         </div>
       </div>
@@ -122,7 +122,7 @@ const ViewProduct = () => {
   const StatusIcon = statusDetails.icon;
 
   return (
-    <div className=" mx-auto space-y-6">
+    <div className="mx-auto space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center flex-wrap gap-4">
         <div className="flex items-center gap-3">
@@ -135,12 +135,23 @@ const ViewProduct = () => {
           </button>
           <div>
             <h1 className="text-2xl font-bold" style={{ color: '#1B5E20' }}>
-              Product Details
+              {t('products.viewTitle')}
             </h1>
-          
+            <p className="text-sm mt-0.5" style={{ color: '#8D6E63' }}>
+              {t('products.viewSubtitle')}
+            </p>
           </div>
         </div>
-       
+        <div className="flex gap-2">
+          {/* <button
+            onClick={() => navigate(`/products/edit/${product._id}`)}
+            className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all hover:scale-105"
+            style={{ background: 'linear-gradient(135deg, #2E7D32, #43A047)' }}
+          >
+            <Edit2 className="w-4 h-4" />
+            {t('common.edit')}
+          </button> */}
+        </div>
       </div>
 
       {/* Product Status Banner */}
@@ -157,7 +168,7 @@ const ViewProduct = () => {
               <Package className="w-6 h-6" style={{ color: '#2E7D32' }} />
             </div>
             <div>
-              <p className="text-sm font-medium" style={{ color: '#2E7D32' }}>Product Status</p>
+              <p className="text-sm font-medium" style={{ color: '#2E7D32' }}>{t('products.productStatus')}</p>
               <p className="text-xl font-bold" style={{ color: '#1B5E20' }}>{product.productName}</p>
             </div>
           </div>
@@ -178,22 +189,22 @@ const ViewProduct = () => {
         <div className="p-5 border-b" style={{ borderColor: '#E8F5E9' }}>
           <div className="flex items-center gap-2">
             <Tag className="w-5 h-5" style={{ color: '#2E7D32' }} />
-            <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Product Information</h3>
+            <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>{t('products.productInformation')}</h3>
           </div>
         </div>
         <div className="p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Product Name</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('products.productName')}</p>
               <p className="text-base font-semibold mt-1" style={{ color: '#1B5E20' }}>
                 <Package className="w-3.5 h-3.5 inline mr-1" style={{ color: '#A5D6A7' }} />
                 {product.productName}
               </p>
             </div>
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Description</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('products.description')}</p>
               <p className="text-base mt-1" style={{ color: '#5D4037' }}>
-                {product.description || 'No description provided'}
+                {product.description || t('products.noDescription')}
               </p>
             </div>
           </div>
@@ -205,27 +216,27 @@ const ViewProduct = () => {
         <div className="p-5 border-b" style={{ borderColor: '#E8F5E9' }}>
           <div className="flex items-center gap-2">
             <User className="w-5 h-5" style={{ color: '#2E7D32' }} />
-            <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Created By Information</h3>
+            <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>{t('products.createdByInfo')}</h3>
           </div>
         </div>
         <div className="p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Created By</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('products.createdBy')}</p>
               <p className="text-base font-semibold mt-1" style={{ color: '#1B5E20' }}>
                 <UserCheck className="w-3.5 h-3.5 inline mr-1" style={{ color: '#A5D6A7' }} />
                 {product.createdBy?.name || 'N/A'}
               </p>
             </div>
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Email</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('common.email')}</p>
               <p className="text-base mt-1" style={{ color: '#1B5E20' }}>
                 <Mail className="w-3.5 h-3.5 inline mr-1" style={{ color: '#A5D6A7' }} />
                 {product.createdBy?.email || 'N/A'}
               </p>
             </div>
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Created Date</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('products.createdDate')}</p>
               <p className="text-base mt-1" style={{ color: '#1B5E20' }}>
                 <Calendar className="w-3.5 h-3.5 inline mr-1" style={{ color: '#A5D6A7' }} />
                 {formatDate(product.createdAt)}
@@ -238,12 +249,10 @@ const ViewProduct = () => {
         </div>
       </div>
 
-     
-
       {/* Update Information */}
       {product.updatedAt && product.updatedAt !== product.createdAt && (
         <div className="text-center text-xs" style={{ color: '#A5D6A7' }}>
-          Last updated: {formatDateTime(product.updatedAt)}
+          {t('products.lastUpdated')}: {formatDateTime(product.updatedAt)}
         </div>
       )}
     </div>

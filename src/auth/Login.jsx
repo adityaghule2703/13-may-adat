@@ -1,15 +1,17 @@
 // src/auth/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   LogIn, Eye, EyeOff, AlertCircle, TrendingUp, 
   ArrowRight, CheckCircle, Shield, Leaf, 
   Users, DollarSign, Package, Truck, Zap,
-  Award, Star, Mail, Phone, Calendar
+  Award, Star, Mail, Phone, Calendar, Languages
 } from 'lucide-react';
 import BASE_URL from '../config/Config';
 
 const Login = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -18,6 +20,11 @@ const Login = () => {
     password: ''
   });
   const [error, setError] = useState('');
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('i18nextLng', lng);
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -31,7 +38,7 @@ const Login = () => {
     e.preventDefault();
     
     if (!formData.email || !formData.password) {
-      setError('Please enter both email and password');
+      setError(t('login.errors.credentialsRequired'));
       return;
     }
 
@@ -57,7 +64,6 @@ const Login = () => {
       console.log('Login response:', data);
 
       if (response.ok && data.success) {
-        // Store tokens and user data
         if (data.accessToken) {
           localStorage.setItem('token', data.accessToken);
           console.log('Token saved:', data.accessToken.substring(0, 50) + '...');
@@ -72,18 +78,17 @@ const Login = () => {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // Verify token was saved
         const savedToken = localStorage.getItem('token');
         console.log('Token verification - saved successfully:', !!savedToken);
         console.log('Redirecting to dashboard...');
         
         navigate('/dashboard');
       } else {
-        setError(data.message || 'Login failed. Please try again.');
+        setError(data.message || t('login.errors.loginFailed'));
       }
     } catch (error) {
       console.error('Login error details:', error);
-      setError('Network error. Please check your connection and try again.');
+      setError(t('login.errors.networkError'));
     } finally {
       setLoading(false);
     }
@@ -132,7 +137,7 @@ const Login = () => {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-white">AgriBroker</h1>
-                  <p className="text-xs text-white/70">Finance & Trading System</p>
+                  <p className="text-xs text-white/70">{t('login.brandSubtitle')}</p>
                 </div>
               </div>
 
@@ -140,54 +145,55 @@ const Login = () => {
               <div className="mb-8">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur mb-4">
                   <Award className="w-3 h-3 text-[#FF8F00]" />
-                  <span className="text-xs text-white">Trusted Platform</span>
+                  <span className="text-xs text-white">{t('login.trustedPlatform')}</span>
                 </div>
                 <h2 className="text-4xl font-bold text-white mb-4 leading-tight">
-                  Smart Trading,<br />
-                  <span className="text-[#FF8F00]">Better Growth</span>
+                  {t('login.welcomeTitleLine1')}<br />
+                  <span className="text-[#FF8F00]">{t('login.welcomeTitleLine2')}</span>
                 </h2>
                 <p className="text-base leading-relaxed text-white/80">
-                  Streamline your agricultural business with our comprehensive 
-                  trading and financial management platform.
+                  {t('login.welcomeDescription')}
                 </p>
               </div>
-
-              {/* Stats Grid */}
-              {/* <div className="grid grid-cols-2 gap-4 mb-8">
-                <div className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
-                  <div className="flex items-center gap-2 mb-2">
-                    <DollarSign className="w-4 h-4 text-[#FF8F00]" />
-                    <span className="text-xs text-white/70">Total Volume</span>
-                  </div>
-                  <p className="text-2xl font-bold text-white">₹50L+</p>
-                  <p className="text-xs text-green-300 mt-1">↑ 32% this month</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users className="w-4 h-4 text-[#FF8F00]" />
-                    <span className="text-xs text-white/70">Active Farmers</span>
-                  </div>
-                  <p className="text-2xl font-bold text-white">500+</p>
-                  <p className="text-xs text-green-300 mt-1">↑ 18% new</p>
-                </div>
-              </div> */}
-
-             
             </div>
           </div>
 
           {/* Right Side - Login Form */}
           <div className="p-8 lg:p-12 bg-white">
             <div className="max-w-md mx-auto">
-             
+              {/* Language Toggle Button */}
+              <div className="flex justify-end mb-4">
+                <div className="flex bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => changeLanguage('en')}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1 ${
+                      i18n.language === 'en' 
+                        ? 'bg-white text-[#2E7D32] shadow-sm' 
+                        : 'text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <Languages className="w-3.5 h-3.5" />
+                    English
+                  </button>
+                  <button
+                    onClick={() => changeLanguage('mr')}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1 ${
+                      i18n.language === 'mr' 
+                        ? 'bg-white text-[#2E7D32] shadow-sm' 
+                        : 'text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <Languages className="w-3.5 h-3.5" />
+                    मराठी
+                  </button>
+                </div>
+              </div>
 
               {/* Header */}
               <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold mb-2" style={{ color: '#1B5E20' }}>Welcome Back</h3>
-                <p className="text-sm" style={{ color: '#8D6E63' }}>Enter your credentials to continue</p>
+                <h3 className="text-2xl font-bold mb-2" style={{ color: '#1B5E20' }}>{t('login.welcomeBack')}</h3>
+                <p className="text-sm" style={{ color: '#8D6E63' }}>{t('login.enterCredentials')}</p>
               </div>
-
-             
 
               {/* Divider */}
               <div className="relative my-6">
@@ -195,7 +201,7 @@ const Login = () => {
                   <div className="w-full border-t border-[#E8F5E9]"></div>
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-2 bg-white" style={{ color: '#8D6E63' }}>Secure Login</span>
+                  <span className="px-2 bg-white" style={{ color: '#8D6E63' }}>{t('login.secureLogin')}</span>
                 </div>
               </div>
 
@@ -212,7 +218,7 @@ const Login = () => {
                 {/* Email Field */}
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: '#2E7D32' }}>
-                    Email Address
+                    {t('login.emailAddress')}
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#C8E6C9]" />
@@ -221,7 +227,7 @@ const Login = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="superadmin@farmerp.com"
+                      placeholder={t('login.emailPlaceholder')}
                       className="w-full pl-10 pr-4 py-3 border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32] transition-all bg-white"
                       style={{ color: '#1B5E20' }}
                       autoComplete="email"
@@ -232,7 +238,7 @@ const Login = () => {
                 {/* Password Field */}
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: '#2E7D32' }}>
-                    Password
+                    {t('login.password')}
                   </label>
                   <div className="relative">
                     <input
@@ -240,7 +246,7 @@ const Login = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      placeholder="••••••••"
+                      placeholder={t('login.passwordPlaceholder')}
                       className="w-full px-4 py-3 border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32] transition-all bg-white pr-12"
                       style={{ color: '#1B5E20' }}
                       autoComplete="current-password"
@@ -259,8 +265,6 @@ const Login = () => {
                   </div>
                 </div>
 
-               
-
                 {/* Login Button */}
                 <button
                   type="submit"
@@ -273,22 +277,20 @@ const Login = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Signing in...
+                      {t('login.signingIn')}
                     </>
                   ) : (
                     <>
                       <LogIn className="w-5 h-5" />
-                      Sign In
+                      {t('login.signIn')}
                     </>
                   )}
                 </button>
               </form>
 
-             
-
               {/* Footer */}
               <div className="text-center mt-6 pt-4 border-t border-[#E8F5E9]">
-                <p className="text-xs" style={{ color: '#8D6E63' }}>© 2026 AgriBroker. All rights reserved.</p>
+                <p className="text-xs" style={{ color: '#8D6E63' }}>© 2026 AgriBroker. {t('login.allRightsReserved')}</p>
               </div>
             </div>
           </div>

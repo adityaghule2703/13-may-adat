@@ -5,6 +5,8 @@
         "search": "Search farmers, buyers, transactions...",
         "searchPlaceholder": "Search transactions...",
         "logout": "Logout",
+        "english": "English",
+    "marathi": "Marathi",
         "save": "Save",
         "cancel": "Cancel",
         "edit": "Edit",
@@ -78,108 +80,133 @@
         "locale": "en"
     },
 
-    "nav": {
-        "dashboard": "Dashboard",
-        "account": "Account",
-        "receipts": "Receipts",
-        "farmers": "Farmers",
-        "buyers": "Buyers",
-        "transactions": "Transactions",
-        "stock": "Inventory",
-        "orders": "Orders",
-        "deliveries": "Deliveries",
-        "payments": "Payments",
-        "reports": "Reports",
-        "financeTrading": "Finance & Trading",
-        "purchases": "Purchases",
-        "sales": "Sales",
-        "expenses": "Expenses",
-        "inventory": "Inventory",
-        "warehouses": "Warehouses",
-        "ledger": "Ledger",
-        "expenseLedger": "Expense Ledger",
-        "combinedLedger": "Combined Ledger",
-        "budgetAlerts": "Budget Alerts",
-        "auditLogs": "Audit Logs",
-        "usersRoles": "Users & Roles",
-        "settings": "Settings",
-        "mainNav": "Navigation"
-    },
+   
+  "nav": {
+    "dashboard": "Dashboard",
+    "account": "Account",
+    "receipts": "Receipts",
+    "farmers": "Farmers",
+    "products": "Products",
+    "buyers": "Buyers",
+    "transactions": "Transactions",
+    "stock": "Inventory",
+    "orders": "Orders",
+    "deliveries": "Deliveries",
+    "payments": "Payments",
+    "reports": "Reports",
+    "financeTrading": "Finance & Trading",
+    "purchases": "Purchases",
+    "sales": "Sales",
+    "expenses": "Expenses",
+    "inventory": "Inventory",
+    "warehouses": "Warehouses",
+    "ledger": "Ledger",
+    "expenseLedger": "Expense Ledger",
+    "combinedLedger": "Combined Ledger",
+    "budgetAlerts": "Budget Alerts",
+    "auditLogs": "Audit Logs",
+    "usersRoles": "Users & Roles",
+    "settings": "Settings",
+    "salepayments": "Sale Payments",
+    "mainNav": "Navigation"
+  },
 
-    "dashboard": {
-        "title": "Dashboard",
-        "subtitle": "Real-time trading insights and analytics",
-        "loading": "Loading dashboard data...",
-        "totalFarmers": "Total Farmers",
-        "totalPayments": "Total Payments",
-        "totalWarehouses": "Total Warehouses",
-        "totalRevenue": "Total Revenue",
-        "fromYesterday": "from yesterday",
-        "fromLastMonth": "from last month",
-        "revenueOverview": "Revenue Overview",
-        "chartSubtitle": "Purchase vs Sale trend analysis",
-        "weekly": "Weekly",
-        "monthly": "Monthly",
-        "purchaseAmount": "Purchase",
-        "saleAmount": "Sale",
-        "todaysPerformance": "Today's Performance",
-        "purchaseTarget": "Purchase Target",
-        "saleTarget": "Sale Target",
-        "topProducts": "Top Products",
-        "recentPayments": "Recent Payments",
-        "recentPaymentsSubtitle": "Latest 5 payment transactions",
-        "noPaymentsFound": "No payments found",
-        "topBuyerOfMonth": "Top Buyer of the Month",
-        "individualBuyer": "Individual Buyer",
-        "noBuyersYet": "No buyers yet",
-        "totalPurchases": "Total Purchases",
-        "purchaseValue": "Purchase Value",
-        "totalBuyers": "Total Buyers",
-        "activeBuyers": "Active Buyers",
-        "totalPurchaseValue": "Total Purchase Value",
-        "viewAllBuyers": "View All Buyers",
-        "weekDays": {
-            "mon": "Mon",
-            "tue": "Tue",
-            "wed": "Wed",
-            "thu": "Thu",
-            "fri": "Fri",
-            "sat": "Sat",
-            "sun": "Sun",
-            "week1": "Week 1",
-            "week2": "Week 2",
-            "week3": "Week 3",
-            "week4": "Week 4"
-        },
-        "timeAgo": {
-            "justNow": "Just now",
-            "minutesAgo": "{{count}} min ago",
-            "hoursAgo": "{{count}} hour{{count > 1 ? 's' : ''}} ago",
-            "daysAgo": "{{count}} day{{count > 1 ? 's' : ''}} ago"
-        },
-        "alerts": {
-            "lowStockTitle": "Low Stock Alert",
-            "lowStockMessage": "Wheat stock is below 500kg",
-            "paymentReceivedTitle": "Payment Received",
-            "paymentReceivedMessage": "₹25,000 received from Suresh Patel",
-            "newOrderTitle": "New Order",
-            "newOrderMessage": "New order placed by AgriCorp Ltd",
-            "priceAlertTitle": "Price Alert",
-            "priceAlertMessage": "Rice prices increased by 5%",
-            "fiveMinAgo": "5 min ago",
-            "fifteenMinAgo": "15 min ago",
-            "oneHourAgo": "1 hour ago",
-            "twoHoursAgo": "2 hours ago"
-        },
-        "products": {
-            "wheat": "Wheat",
-            "rice": "Rice",
-            "corn": "Corn"
-        },
-        "errors": {
-            "fetchFailed": "Failed to load dashboard data"
-        }
+    
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Real-time trading insights and analytics",
+    "loading": "Loading dashboard data...",
+    "fromYesterday": "from yesterday",
+    "fromLastMonth": "+32% from last month",
+    "ref": "Ref",
+    "completed": "COMPLETED",
+    "unknownFarmer": "Unknown Farmer",
+    "noPaymentsFound": "No payments found",
+    "noBuyersYet": "No buyers yet",
+    "individualBuyer": "Individual Buyer",
+    "stats": {
+      "totalFarmers": "Total Farmers",
+      "totalPayments": "Total Payments",
+      "totalWarehouses": "Total Warehouses",
+      "totalRevenue": "Total Revenue"
     },
+    "revenueOverview": "Revenue Overview",
+    "revenueSubtitle": "Purchase vs Sale trend analysis",
+    "todaysPerformance": "Today's Performance",
+    "purchaseTarget": "Purchase Target",
+    "saleTarget": "Sale Target",
+    "topProducts": "Top Products",
+    "recentPayments": "Recent Payments",
+    "recentPaymentsSubtitle": "Latest 5 payment transactions",
+    "topBuyerOfMonth": "Top Buyer of the Month",
+    "totalPurchases": "Total Purchases",
+    "purchaseValue": "Purchase Value",
+    "totalBuyers": "Total Buyers",
+    "activeBuyers": "Active Buyers",
+    "totalPurchaseValue": "Total Purchase Value",
+    "viewAllBuyers": "View All Buyers",
+    "periods": {
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "weeks": {
+      "week1": "Week 1",
+      "week2": "Week 2",
+      "week3": "Week 3",
+      "week4": "Week 4"
+    },
+    "chart": {
+      "purchase": "Purchase",
+      "sale": "Sale"
+    },
+    "products": {
+      "wheat": "Wheat",
+      "rice": "Rice",
+      "corn": "Corn"
+    },
+    "alerts": {
+      "lowStock": {
+        "title": "Low Stock Alert",
+        "message": "Wheat stock is below 500kg",
+        "time": "5 min ago"
+      },
+      "paymentReceived": {
+        "title": "Payment Received",
+        "message": "₹25,000 received from Suresh Patel",
+        "time": "15 min ago"
+      },
+      "newOrder": {
+        "title": "New Order",
+        "message": "New order placed by AgriCorp Ltd",
+        "time": "1 hour ago"
+      },
+      "priceAlert": {
+        "title": "Price Alert",
+        "message": "Rice prices increased by 5%",
+        "time": "2 hours ago"
+      }
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} min ago",
+      "hoursAgo": "{{count}} hour ago",
+      "hoursAgo_plural": "{{count}} hours ago",
+      "daysAgo": "{{count}} day ago",
+      "daysAgo_plural": "{{count}} days ago"
+    },
+    "errors": {
+      "loadFailed": "Failed to load dashboard data"
+    }
+  },
 
     "account": {
         "title": "Account Settings",
@@ -452,6 +479,8 @@
         "loading": "Loading purchases...",
         "searchPlaceholder": "Search purchases...",
         "noPurchasesFound": "No purchases found",
+        "createPurchase": "Create Purchase",
+        "updatePurchase": "Update Purchase",
         "items": "item(s)",
         "stats": {
             "totalPurchases": "Total Purchases",
@@ -459,14 +488,15 @@
             "totalDeductions": "Total Deductions",
             "finalPayable": "Final Payable"
         },
-        "status": {
-            "draft": "Draft",
-            "saved": "Saved",
-            "partial": "Partial",
-            "paid": "Paid",
-            "completed": "Completed",
-            "cancelled": "Cancelled"
-        },
+       "status": {
+  "draft": "Draft",
+  "saved": "Saved",
+  "partial": "Partial",
+  "pending": "Pending",
+  "paid": "Paid",
+  "completed": "Completed",
+  "cancelled": "Cancelled"
+},
         "filters": {
             "startDate": "Start Date",
             "endDate": "End Date",
@@ -968,294 +998,508 @@
         }
     },
 
-    "expenses": {
-        "title": "Expenses",
-        "subtitle": "Track and manage all business expenses",
-        "loading": "Loading expenses...",
-        "searchPlaceholder": "Search by description, paid to, or reference...",
-        "noExpensesFound": "No expenses found",
-        "to": "To",
-        "ref": "Ref",
-        "addTitle": "Add Expense",
-        "addSubtitle": "Record a new business expense",
-        "expenseDetails": "Expense Details",
-        "paymentInformation": "Payment Information",
-        "category": "CATEGORY",
-        "description": "DESCRIPTION",
-        "expenseDate": "EXPENSE DATE",
-        "paidBy": "PAID BY",
-        "paidTo": "PAID TO (Vendor/Person)",
-        "referenceNumber": "REFERENCE NUMBER",
-        "step1": "Expense Details",
-        "step2": "Payment Information",
-        "autoApprovalNote": "Expenses under ₹1,000 will be auto-approved. Higher amounts require manager approval.",
-        "stats": {
-            "totalExpenses": "Total Expenses",
-            "totalAmount": "Total Amount",
-            "created": "Created",
-            "cancelled": "Cancelled"
-        },
-        "status": {
-            "created": "Created",
-            "cancelled": "Cancelled",
-            "unknown": "Unknown",
-            "approved": "Approved",
-            "autoApproved": "Auto Approved",
-            "pending": "Pending",
-            "rejected": "Rejected"
-        },
-        "categories": {
-            "transport": "Transport & Logistics",
-            "labour": "Labour & Wages",
-            "marketFees": "Market Fees",
-            "storage": "Storage & Cold Chain",
-            "shopOffice": "Shop & Office",
-            "repairs": "Repairs & Maintenance",
-            "banking": "Banking & Finance",
-            "marketing": "Marketing & Miscellaneous"
-        },
-        "filters": {
-            "startDate": "Start Date",
-            "endDate": "End Date",
-            "category": "Category",
-            "status": "Status"
-        },
-        "table": {
-            "date": "Date",
-            "category": "Category",
-            "description": "Description",
-            "amount": "Amount",
-            "paidBy": "Paid By",
-            "status": "Status",
-            "actions": "Actions"
-        },
-        "buttons": {
-            "addExpense": "Add Expense",
-            "cancelExpense": "Cancel Expense",
-            "confirmCancellation": "Confirm Cancellation"
-        },
-        "modals": {
-            "cancel": {
-                "title": "Cancel Expense",
-                "subtitle": "Confirm cancellation",
-                "confirmMessage": "Are you sure you want to cancel expense of {{amount}} for '{{description}}'?",
-                "reasonLabel": "Reason for cancellation",
-                "reasonPlaceholder": "Enter reason for cancelling this expense..."
-            }
-        },
-        "pagination": {
-            "showing": "Showing {{start}} to {{end}} of {{total}} expenses"
-        },
-        "errors": {
-            "fetchFailed": "Failed to fetch expenses",
-            "reasonRequired": "Please provide a reason for cancellation",
-            "cancelFailed": "Failed to cancel expense",
-            "approveFailed": "Failed to approve expense",
-            "rejectFailed": "Failed to reject expense",
-            "notFound": "Expense not found",
-            "categoryRequired": "Please select a category",
-            "validAmountRequired": "Please enter a valid amount",
-            "descriptionRequired": "Description is required",
-            "dateRequired": "Expense date is required",
-            "paymentMethodRequired": "Payment method is required",
-            "createFailed": "Failed to create expense"
-        },
-        "messages": {
-            "createSuccess": "Expense created successfully! Redirecting..."
-        },
-        "detailsTitle": "Expense Details",
-        "id": "ID",
-        "approvedBy": "Approved by",
-        "amount": "Amount",
-        "approve": "Approve",
-        "reject": "Reject",
-        "expenseInformation": "Expense Information",
-        "category": "Category",
-        "description": "Description",
-        "expenseDate": "Expense Date",
-        "paidTo": "Paid To",
-        "paymentDetails": "Payment Details",
-        "paymentMethod": "Payment Method",
-        "referenceNumber": "Reference Number",
-        "createdBy": "Created By",
-        "createdAt": "Created At",
-        "approvedAt": "Approved At",
-        "remarks": "Remarks",
-        "rejectExpense": "Reject Expense",
-        "cancelExpense": "Cancel Expense",
-        "rejectionReasonPlaceholder": "Reason for rejection...",
-        "cancellationReasonPlaceholder": "Reason for cancellation...",
-        "confirmReject": "Confirm Reject",
-        "confirmCancel": "Confirm Cancel",
-        "placeholders": {
-            "selectCategory": "Select expense category",
-            "description": "Describe the expense",
-            "paidTo": "Vendor or person name",
-            "referenceNumber": "Bill/Invoice/Transaction No.",
-            "notes": "Additional notes..."
-        }
+   
+ 
+  "expenses": {
+    "title": "Expenses",
+    "subtitle": "Track and manage all business expenses",
+    "loading": "Loading expenses...",
+    "searchPlaceholder": "Search by description, paid to, or reference...",
+    "noExpensesFound": "No expenses found",
+    "to": "To",
+    "ref": "Ref",
+    "addTitle": "Add Expense",
+    "addSubtitle": "Record a new business expense",
+    "editTitle": "Edit Expense",
+    "editSubtitle": "Update expense details",
+    "update": "Update Expense",
+    "expenseDetails": "Expense Details",
+    "paymentInformation": "Payment Information",
+    "category": "CATEGORY",
+    "description": "DESCRIPTION",
+    "expenseDate": "EXPENSE DATE",
+    "paidBy": "PAID BY",
+    "paidTo": "PAID TO (Vendor/Person)",
+    "referenceNumber": "REFERENCE NUMBER",
+    "step1": "Expense Details",
+    "step2": "Payment Information",
+    "autoApprovalNote": "Expenses under ₹1,000 will be auto-approved. Higher amounts require manager approval.",
+    "stats": {
+      "totalExpenses": "Total Expenses",
+      "totalAmount": "Total Amount",
+      "created": "Created",
+      "cancelled": "Cancelled"
     },
+    "status": {
+      "created": "Created",
+      "cancelled": "Cancelled",
+      "unknown": "Unknown",
+      "approved": "Approved",
+      "autoApproved": "Auto Approved",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    },
+    "categories": {
+      "transport": "Transport & Logistics",
+      "labour": "Labour & Wages",
+      "marketFees": "Market Fees",
+      "storage": "Storage & Cold Chain",
+      "shopOffice": "Shop & Office",
+      "repairs": "Repairs & Maintenance",
+      "banking": "Banking & Finance",
+      "marketing": "Marketing & Miscellaneous"
+    },
+    "modes": {
+      "cash": "Cash",
+      "upi": "UPI",
+      "bank": "Bank Transfer",
+      "cheque": "Cheque"
+    },
+    "filters": {
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "category": "Category",
+      "status": "Status"
+    },
+    "table": {
+      "date": "Date",
+      "category": "Category",
+      "description": "Description",
+      "amount": "Amount",
+      "paidBy": "Paid By",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "addExpense": "Add Expense",
+      "cancelExpense": "Cancel Expense",
+      "confirmCancellation": "Confirm Cancellation"
+    },
+    "modals": {
+      "cancel": {
+        "title": "Cancel Expense",
+        "subtitle": "Confirm cancellation",
+        "confirmMessage": "Are you sure you want to cancel expense of {{amount}} for '{{description}}'?",
+        "reasonLabel": "Reason for cancellation",
+        "reasonPlaceholder": "Enter reason for cancelling this expense..."
+      }
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} expenses"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch expenses",
+      "reasonRequired": "Please provide a reason for cancellation",
+      "cancelFailed": "Failed to cancel expense",
+      "approveFailed": "Failed to approve expense",
+      "rejectFailed": "Failed to reject expense",
+      "notFound": "Expense not found",
+      "categoryRequired": "Please select a category",
+      "validAmountRequired": "Please enter a valid amount",
+      "descriptionRequired": "Description is required",
+      "dateRequired": "Expense date is required",
+      "paymentMethodRequired": "Payment method is required",
+      "createFailed": "Failed to create expense",
+      "updateFailed": "Failed to update expense"
+    },
+    "messages": {
+      "createSuccess": "Expense created successfully! Redirecting...",
+      "updateSuccess": "Expense updated successfully! Redirecting..."
+    },
+    "detailsTitle": "Expense Details",
+    "id": "ID",
+    "approvedBy": "Approved by",
+    "amount": "Amount",
+    "approve": "Approve",
+    "reject": "Reject",
+    "expenseInformation": "Expense Information",
+    "paymentDetails": "Payment Details",
+    "paymentMethod": "Payment Method",
+    "createdBy": "Created By",
+    "createdAt": "Created At",
+    "approvedAt": "Approved At",
+    "remarks": "Remarks",
+    "rejectExpense": "Reject Expense",
+    "cancelExpense": "Cancel Expense",
+    "rejectionReasonPlaceholder": "Reason for rejection...",
+    "cancellationReasonPlaceholder": "Reason for cancellation...",
+    "confirmReject": "Confirm Reject",
+    "confirmCancel": "Confirm Cancel",
+    "placeholders": {
+      "selectCategory": "Select expense category",
+      "description": "Describe the expense",
+      "paidTo": "Vendor or person name",
+      "referenceNumber": "Bill/Invoice/Transaction No.",
+      "notes": "Additional notes..."
+    }
+  },
 
 
 
-    "budgetAlerts": {
-        "title": "Budget Alerts",
-        "subtitle": "Set monthly budget limits and track expenses",
-        "loading": "Loading budget alerts...",
-        "searchPlaceholder": "Search category...",
-        "noBudgetsFound": "No budget set for this month. Click \"Set Budget\" to create one.",
-        "setBudget": "Set Budget",
-        "setBudgetSubtitle": "Set monthly budget limit for a category",
-        "budgetInformation": "Budget Information",
-        "category": "CATEGORY",
-        "monthlyLimit": "MONTHLY LIMIT",
-        "month": "MONTH",
-        "year": "YEAR",
-        "alertThreshold": "ALERT THRESHOLD (%)",
-        "thresholdHint": "You will be alerted when expenses reach this percentage of your budget",
-        "infoNote": "Budget alerts help you track your expenses. When you reach your alert threshold, you will receive a warning. Exceeding 90% will trigger a critical alert.",
-        "stats": {
-            "totalBudget": "Total Budget",
-            "totalSpend": "Total Spend",
-            "remainingBudget": "Remaining Budget",
-            "utilization": "Utilization"
-        },
-        "alertLevels": {
-            "critical": "Critical",
-            "warning": "Warning",
-            "normal": "Normal"
-        },
-        "table": {
-            "category": "Category",
-            "monthlyLimit": "Monthly Limit",
-            "currentSpend": "Current Spend",
-            "remaining": "Remaining",
-            "usage": "Usage",
-            "status": "Status",
-            "alertThreshold": "Alert Threshold",
-            "actions": "Actions"
-        },
-        "buttons": {
-            "setBudget": "Set Budget",
-            "editBudget": "Edit Budget"
-        },
-        "pagination": {
-            "showing": "Showing {{start}} to {{end}} of {{total}} budgets"
-        },
-        "errors": {
-            "statusLoadFailed": "Failed to load budget status",
-            "categoryRequired": "Category is required",
-            "validAmountRequired": "Please enter a valid budget amount",
-            "monthRequired": "Month is required",
-            "yearRequired": "Year is required",
-            "thresholdInvalid": "Alert threshold must be between 0 and 100",
-            "createFailed": "Failed to set budget"
-        },
-        "messages": {
-            "createSuccess": "Budget set successfully! Redirecting..."
-        },
-        "detailsTitle": "Budget Details",
-        "detailsSubtitle": "View complete budget information",
-        "currentSpend": "Current Spend",
-        "remainingBudget": "Remaining Budget",
-        "utilization": "Utilization",
-        "budgetUsage": "Budget Usage",
-        "used": "used",
-        "createdOn": "Created On",
-        "lastUpdated": "Last Updated",
-        "createdBy": "Created By",
-        "tipMessage": "Budget alerts are triggered when expenses reach your alert threshold ({{threshold}}%). You'll receive notifications when approaching or exceeding your budget limits.",
-        "messages": {
-            "limitExceeded": "Budget limit exceeded!",
-            "approachingLimit": "Approaching budget limit!",
-            "withinLimits": "Within budget limits"
-        },
-        "placeholders": {
-            "selectCategory": "Select expense category",
-            "monthlyLimit": "Enter budget amount",
-            "selectMonth": "Select month",
-            "selectYear": "Select year",
-            "notes": "Additional notes about this budget..."
-        }
+  
+  "budgetAlerts": {
+    "title": "Budget Alerts",
+    "subtitle": "Set monthly budget limits and track expenses",
+    "loading": "Loading budget alerts...",
+    "searchPlaceholder": "Search category...",
+    "noBudgetsFound": "No budget set for this month. Click \"Set Budget\" to create one.",
+    "setBudget": "Set Budget",
+    "setBudgetSubtitle": "Set monthly budget limit for a category",
+    "budgetInformation": "Budget Information",
+    "category": "CATEGORY",
+    "monthlyLimit": "MONTHLY LIMIT",
+    "month": "MONTH",
+    "year": "YEAR",
+    "alertThreshold": "ALERT THRESHOLD (%)",
+    "thresholdHint": "You will be alerted when expenses reach this percentage of your budget",
+    "infoNote": "Budget alerts help you track your expenses. When you reach your alert threshold, you will receive a warning. Exceeding 90% will trigger a critical alert.",
+    "stats": {
+      "totalBudget": "Total Budget",
+      "totalSpend": "Total Spend",
+      "remainingBudget": "Remaining Budget",
+      "utilization": "Utilization"
     },
-    "ledger": {
-        "title": "Ledger",
-        "subtitle": "Track all financial transactions",
-        "loading": "Loading ledger...",
-        "tabs": {
-            "farmersLedger": "Farmers Ledger",
-            "operatorsLedger": "Operators Ledger"
-        },
-        "stats": {
-            "totalFarmers": "Total Farmers",
-            "totalTransactions": "Total Transactions",
-            "totalPayments": "Total Payments",
-            "totalPurchases": "Total Purchases",
-            "totalOperators": "Total Operators",
-            "totalSales": "Total Sales",
-            "totalPurchasesOperator": "Total Purchases",
-            "netProfit": "Net Profit"
-        },
-        "search": {
-            "farmersPlaceholder": "Search by farmer name or mobile...",
-            "operatorsPlaceholder": "Search by operator name, email or phone..."
-        },
-        "filters": {
-            "startDate": "Start Date",
-            "endDate": "End Date"
-        },
-        "table": {
-            "farmer": "Farmer",
-            "operator": "Operator",
-            "contact": "Contact",
-            "totalPaid": "Total Paid",
-            "totalPurchased": "Total Purchased",
-            "totalPurchasedOperator": "Total Purchases",
-            "balance": "Balance",
-            "totalSales": "Total Sales",
-            "netProfit": "Net Profit",
-            "actions": "Actions"
-        },
-        "buttons": {
-            "printSummary": "Print Summary"
-        },
-        "pagination": {
-            "showingFarmers": "Showing {{start}} to {{end}} of {{total}} farmers",
-            "showingOperators": "Showing {{start}} to {{end}} of {{total}} operators"
-        },
-        "noFarmersFound": "No farmers found",
-        "noOperatorsFound": "No operators found",
-        "print": {
-            "farmerTitle": "Farmer Ledger",
-            "farmerStatement": "Farmer Ledger Statement",
-            "operatorTitle": "Operator Ledger",
-            "operatorStatement": "Operator Ledger Statement",
-            "farmerDetails": "Farmer Details",
-            "operatorDetails": "Operator Details",
-            "name": "Name",
-            "mobile": "Mobile",
-            "email": "Email",
-            "phone": "Phone",
-            "role": "Role",
-            "totalReceived": "Total Received",
-            "totalPurchased": "Total Purchased",
-            "currentBalance": "Current Balance",
-            "totalSales": "Total Sales",
-            "totalExpenses": "Total Expenses",
-            "netProfit": "Net Profit",
-            "recentTransactions": "Recent Transactions",
-            "date": "Date",
-            "description": "Description",
-            "debit": "Debit",
-            "credit": "Credit",
-            "balance": "Balance",
-            "farmer": "Farmer"
-        },
-        "errors": {
-            "fetchFarmersFailed": "Failed to fetch farmers ledger",
-            "fetchOperatorsFailed": "Failed to fetch operators ledger"
-        }
+    "alertLevels": {
+      "critical": "Critical",
+      "warning": "Warning",
+      "normal": "Normal"
     },
+    "table": {
+      "category": "Category",
+      "monthlyLimit": "Monthly Limit",
+      "currentSpend": "Current Spend",
+      "remaining": "Remaining",
+      "usage": "Usage",
+      "status": "Status",
+      "alertThreshold": "Alert Threshold",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "setBudget": "Set Budget",
+      "editBudget": "Edit Budget"
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} budgets"
+    },
+    "errors": {
+      "statusLoadFailed": "Failed to load budget status",
+      "categoryRequired": "Category is required",
+      "validAmountRequired": "Please enter a valid budget amount",
+      "monthRequired": "Month is required",
+      "yearRequired": "Year is required",
+      "thresholdInvalid": "Alert threshold must be between 0 and 100",
+      "createFailed": "Failed to set budget",
+      "fetchFailed": "Failed to fetch budget details",
+      "updateFailed": "Failed to update budget",
+      "notFound": "Budget not found",
+      "validBudgetAmount": "Please enter a valid budget amount",
+      "invalidThreshold": "Alert threshold must be between 0 and 100"
+    },
+    "messages": {
+      "createSuccess": "Budget set successfully! Redirecting...",
+      "updateSuccess": "Budget updated successfully! Redirecting...",
+      "limitExceeded": "Budget limit exceeded!",
+      "approachingLimit": "Approaching budget limit!",
+      "withinLimits": "Within budget limits"
+    },
+    "detailsTitle": "Budget Details",
+    "detailsSubtitle": "View complete budget information",
+    "currentSpend": "Current Spend",
+    "remainingBudget": "Remaining Budget",
+    "utilization": "Utilization",
+    "budgetUsage": "Budget Usage",
+    "used": "used",
+    "createdOn": "Created On",
+    "lastUpdated": "Last Updated",
+    "createdBy": "Created By",
+    "tipMessage": "Budget alerts are triggered when expenses reach your alert threshold ({{threshold}}%). You'll receive notifications when approaching or exceeding your budget limits.",
+    "categories": {
+      "transport": "Transport & Logistics",
+      "labour": "Labour & Wages",
+      "marketFees": "Market Fees",
+      "storage": "Storage & Cold Chain",
+      "shopOffice": "Shop & Office",
+      "repairs": "Repairs & Maintenance",
+      "banking": "Banking & Finance",
+      "marketing": "Marketing & Miscellaneous"
+    },
+    "editTitle": "Edit Budget",
+    "editSubtitle": "Update budget limit for {{category}}",
+    "updateBudget": "Update Budget",
+    "categoryLockedNote": "Category cannot be changed once set",
+    "placeholders": {
+      "selectCategory": "Select expense category",
+      "budgetAmount": "Enter budget amount",
+      "selectMonth": "Select month",
+      "selectYear": "Select year",
+      "notes": "Additional notes about this budget..."
+    }
+  },
+    
+  "ledger": {
+    "title": "Ledger",
+    "subtitle": "Track all financial transactions",
+    "tabs": {
+      "farmersLedger": "Farmers Ledger",
+      "operatorsLedger": "Operators Ledger",
+      "buyersLedger": "Buyers Ledger"
+    },
+    "stats": {
+      "totalFarmers": "Total Farmers",
+      "totalTransactions": "Total Transactions",
+      "totalPayments": "Total Payments",
+      "totalPurchases": "Total Purchases",
+      "totalOperators": "Total Operators",
+      "totalSales": "Total Sales",
+      "totalPurchasesOperator": "Total Purchases",
+      "netProfit": "Net Profit",
+      "totalReceived": "Total Received",
+      "currentBalance": "Current Balance"
+    },
+    "search": {
+      "farmersPlaceholder": "Search by farmer name or mobile...",
+      "operatorsPlaceholder": "Search by operator name, email or phone...",
+      "buyersPlaceholder": "Search by buyer name, email or mobile..."
+    },
+    "filters": {
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    },
+    "table": {
+      "farmer": "Farmer",
+      "operator": "Operator",
+      "buyer": "Buyer",
+      "contact": "Contact",
+      "totalPaid": "Total Paid",
+      "totalPurchased": "Total Purchased",
+      "totalPurchasedOperator": "Total Purchases",
+      "balance": "Balance",
+      "totalSales": "Total Sales",
+      "netProfit": "Net Profit",
+      "actions": "Actions",
+      "totalPayments": "Total Payments"
+    },
+    "buttons": {
+      "printSummary": "Print Summary"
+    },
+    "pagination": {
+      "showingFarmers": "Showing {{start}} to {{end}} of {{total}} farmers",
+      "showingOperators": "Showing {{start}} to {{end}} of {{total}} operators",
+      "showingBuyers": "Showing {{start}} to {{end}} of {{total}} buyers"
+    },
+    "noFarmersFound": "No farmers found",
+    "noOperatorsFound": "No operators found",
+    "noBuyersFound": "No buyers found",
+    "print": {
+      "farmerTitle": "Farmer Ledger",
+      "farmerStatement": "Farmer Ledger Statement",
+      "operatorTitle": "Operator Ledger",
+      "operatorStatement": "Operator Ledger Statement",
+      "buyerTitle": "Buyer Ledger",
+      "buyerStatement": "Buyer Ledger Statement",
+      "farmerDetails": "Farmer Details",
+      "operatorDetails": "Operator Details",
+      "buyerDetails": "Buyer Details",
+      "name": "Name",
+      "mobile": "Mobile",
+      "email": "Email",
+      "phone": "Phone",
+      "role": "Role",
+      "totalReceived": "Total Received",
+      "totalPurchased": "Total Purchased",
+      "currentBalance": "Current Balance",
+      "totalSales": "Total Sales",
+      "totalExpenses": "Total Expenses",
+      "netProfit": "Net Profit",
+      "recentTransactions": "Recent Transactions",
+      "date": "Date",
+      "description": "Description",
+      "debit": "Debit",
+      "credit": "Credit",
+      "balance": "Balance",
+      "farmer": "Farmer",
+      "buyer": "Buyer"
+    },
+    "errors": {
+      "fetchFarmersFailed": "Failed to fetch farmers ledger",
+      "fetchOperatorsFailed": "Failed to fetch operators ledger",
+      "fetchBuyersFailed": "Failed to fetch buyers ledger"
+    }
+  },
+
+  
+  "buyers": {
+    "title": "Buyers",
+    "subtitle": "Manage and track all your buyers",
+    "loading": "Loading buyers...",
+    "searchPlaceholder": "Search buyers by name, email, mobile, or business...",
+    "noBuyersFound": "No buyers found",
+    "addTitle": "Add New Buyer",
+    "addSubtitle": "Enter buyer details to add them to your network",
+    "editTitle": "Edit Buyer",
+    "editSubtitle": "Modify buyer details",
+    "viewTitle": "Buyer Details",
+    "viewSubtitle": "View buyer information and purchase history",
+    "personalInfo": "Personal Information",
+    "businessDetails": "Business Details",
+    "creditTerms": "Credit Terms & Additional Info",
+    "steps": {
+      "personalInfo": "Personal Info",
+      "businessDetails": "Business Details",
+      "creditTerms": "Credit Terms"
+    },
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "mobileNumber": "Mobile Number",
+    "alternateMobile": "Alternate Mobile",
+    "address": "Address",
+    "city": "City",
+    "state": "State",
+    "pincode": "Pincode",
+    "businessName": "Business Name",
+    "businessType": "Business Type",
+    "gstNumber": "GST Number",
+    "panNumber": "PAN Number",
+    "creditLimit": "Credit Limit",
+    "creditDays": "Credit Days",
+    "defaultPaymentMode": "Default Payment Mode",
+    "notes": "Notes",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "businessTypes": {
+      "individual": "Individual",
+      "company": "Company",
+      "partnership": "Partnership",
+      "proprietorship": "Proprietorship",
+      "privateLimited": "Private Limited",
+      "publicLimited": "Public Limited",
+      "llp": "LLP",
+      "trust": "Trust",
+      "society": "Society"
+    },
+    "paymentModes": {
+      "credit": "Credit",
+      "online": "Online"
+    },
+    "stats": {
+      "totalBuyers": "Total Buyers",
+      "totalPurchaseValue": "Total Purchase Value",
+      "totalCreditLimit": "Total Credit Limit",
+      "activeBuyers": "Active Buyers"
+    },
+    "filters": {
+      "status": "Status",
+      "businessType": "Business Type",
+      "city": "City",
+      "state": "State",
+      "cityPlaceholder": "Filter by city",
+      "statePlaceholder": "Filter by state"
+    },
+    "table": {
+      "buyerInfo": "Buyer Info",
+      "contact": "Contact",
+      "location": "Location",
+      "business": "Business",
+      "creditLimit": "Credit Limit",
+      "purchaseValue": "Purchase Value",
+      "status": "Status",
+      "daysCredit": "days credit",
+      "purchases": "purchases",
+      "lastPurchase": "Last"
+    },
+    "buttons": {
+      "addNew": "Add New Buyer",
+      "editBuyer": "Edit Buyer",
+      "deleteBuyer": "Delete Buyer",
+      "viewDetails": "View Details",
+      "updateStatus": "Update Status"
+    },
+    "actions": {
+      "viewPurchases": "View Purchases"
+    },
+    "modals": {
+      "deactivate": {
+        "title": "Deactivate Buyer",
+        "subtitle": "Confirm deactivation",
+        "confirmMessage": "Are you sure you want to deactivate {{name}}?",
+        "warningMessage": "This action will deactivate the buyer account. They will not be able to make purchases until reactivated."
+      },
+      "activate": {
+        "title": "Activate Buyer",
+        "subtitle": "Confirm activation",
+        "confirmMessage": "Are you sure you want to activate {{name}}?",
+        "warningMessage": "This action will activate the buyer account. They will be able to make purchases again."
+      },
+      "delete": {
+        "title": "Delete Buyer",
+        "subtitle": "Confirm deletion",
+        "confirmMessage": "Are you sure you want to delete {{name}}?",
+        "warningMessage": "This action cannot be undone. All data associated with this buyer will be permanently removed."
+      }
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} buyers"
+    },
+    "messages": {
+      "deactivateSuccess": "{{name}} has been deactivated successfully",
+      "activateSuccess": "{{name}} has been activated successfully",
+      "deleteSuccess": "{{name}} has been deleted successfully",
+      "addSuccess": "Buyer added successfully! Redirecting...",
+      "updateSuccess": "Buyer updated successfully! Redirecting...",
+      "fetchSuccess": "Buyer details loaded successfully"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch buyers",
+      "fetchDetailFailed": "Failed to fetch buyer details",
+      "deactivateFailed": "Failed to deactivate buyer",
+      "activateFailed": "Failed to activate buyer",
+      "deleteFailed": "Failed to delete buyer",
+      "updateFailed": "Failed to update buyer",
+      "addFailed": "Failed to add buyer. Please try again.",
+      "nameRequired": "Name is required",
+      "nameInvalid": "Name should only contain letters, spaces, dots and hyphens",
+      "emailInvalid": "Please enter a valid email address",
+      "mobileInvalid": "Please enter a valid 10-digit mobile number starting with 6-9",
+      "alternateMobileInvalid": "Please enter a valid 10-digit mobile number",
+      "cityRequired": "City is required",
+      "stateRequired": "State is required",
+      "pincodeInvalid": "Please enter a valid 6-digit pincode",
+      "businessNameRequired": "Business name is required",
+      "businessNameInvalid": "Business name contains invalid characters",
+      "gstInvalid": "Please enter a valid GST number (e.g., 27AAAAA0000A1Z)",
+      "panInvalid": "Please enter a valid PAN number (e.g., AAAAA1234A)",
+      "creditLimitInvalid": "Please enter a valid credit limit amount",
+      "creditDaysInvalid": "Please enter valid credit days (0-365)",
+      "notFound": "Buyer not found"
+    },
+    "placeholders": {
+      "name": "Enter full name",
+      "email": "Enter email address",
+      "mobile": "Enter 10-digit mobile number",
+      "alternateMobile": "Enter alternate mobile number",
+      "address": "Enter complete address",
+      "city": "Enter city name",
+      "state": "Enter state name",
+      "pincode": "Enter 6-digit pincode",
+      "businessName": "Enter business/company name",
+      "gst": "Enter 15-digit GST number",
+      "pan": "Enter 10-digit PAN number",
+      "creditLimit": "Enter credit limit amount",
+      "creditDays": "Enter number of credit days (1-365)",
+      "notes": "Add any additional notes..."
+    },
+    "hints": {
+      "mobile": "Enter 10-digit mobile number (starts with 6,7,8,9)",
+      "pincode": "Enter 6-digit pincode",
+      "gst": "15-character GSTIN (e.g., 27AAAAA0000A1Z)",
+      "pan": "10-character PAN (e.g., AAAAA1234A)",
+      "creditLimit": "Maximum credit amount allowed",
+      "creditDays": "Number of days for credit payment",
+      "creditOptional": "These fields are optional - leave blank if not applicable"
+    }
+  },
 
     "payments": {
         "title": "Payments",
@@ -1423,6 +1667,128 @@
             "chequeNumber": "Cheque number"
         }
     },
+
+
+    
+  
+  "salePayments": {
+    "title": "Sale Payments",
+    "subtitle": "Manage and track all sale payments",
+    "loading": "Loading payments...",
+    "searchPlaceholder": "Search by invoice number, buyer name, or mobile...",
+    "noPaymentsFound": "No payments found",
+    "addTitle": "Add Sale Payment",
+    "addSubtitle": "Record a payment received from a buyer",
+    "viewTitle": "Sale Payment Details",
+    "paymentInformation": "Payment Information",
+    "selectSale": "Select Sale",
+    "selectedSale": "Selected Sale Details",
+    "saleInformation": "Sale Information",
+    "paymentDate": "Payment Date",
+    "paymentMode": "Payment Mode",
+    "amount": "Amount",
+    "referenceNumber": "Reference Number",
+    "bankName": "Bank Name",
+    "chequeNumber": "Cheque Number",
+    "chequeDate": "Cheque Date",
+    "upiReference": "UPI Transaction ID / Reference Number",
+    "notes": "Notes",
+    "selectedBuyer": "Selected Buyer",
+    "selectedSaleInfo": "Selected Sale",
+    "dueAmount": "Due Amount",
+    "pendingAmount": "Pending Amount",
+    "maximumPayable": "Maximum payable",
+    "buyerInformation": "Buyer Information",
+    "transactionDetails": "Transaction Details",
+    "chequeDetails": "Cheque Details",
+    "recordInformation": "Record Information",
+    "paymentReceipt": "Payment Receipt",
+    "receiptNumber": "Receipt No",
+    "todayPayment": "Today's Payment",
+    "remainingAmount": "Remaining Amount",
+    "totalBillAmount": "Total Bill Amount",
+    "totalPaid": "Total Paid",
+    "paymentSummary": "Payment Summary",
+    "amountDue": "Amount Due",
+    "status": {
+      "fullyPaid": "Fully Paid",
+      "partiallyPaid": "Partially Paid",
+      "pending": "Pending",
+      "cleared": "Cleared",
+      "bounced": "Bounced",
+      "pendingClearance": "Pending Clearance"
+    },
+    "stats": {
+      "totalPayments": "Total Payments",
+      "totalAmount": "Total Amount",
+      "avgAmount": "Average Amount"
+    },
+    "filters": {
+      "paymentMode": "Payment Mode",
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    },
+    "table": {
+      "invoiceNo": "Invoice No",
+      "buyer": "Buyer",
+      "paymentDate": "Payment Date",
+      "amount": "Amount",
+      "paymentMode": "Payment Mode",
+      "reference": "Reference",
+      "createdBy": "Created By",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "addPayment": "Add Payment",
+      "printReceipt": "Print Receipt",
+      "viewDetails": "View Details",
+      "refresh": "Refresh",
+      "export": "Export",
+      "clearAll": "Clear All",
+      "applyFilters": "Apply Filters",
+      "addFirstPayment": "Add First Payment",
+      "recordPayment": "Record Payment"
+    },
+    "modes": {
+      "all": "All",
+      "cash": "Cash",
+      "upi": "UPI",
+      "bank": "Bank Transfer",
+      "cheque": "Cheque",
+      "other": "Other"
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} payments"
+    },
+    "messages": {
+      "createSuccess": "Payment added successfully! Redirecting..."
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch payments",
+      "createFailed": "Failed to record payment",
+      "notFound": "Payment not found",
+      "saleRequired": "Please select a sale",
+      "amountRequired": "Valid payment amount is required",
+      "amountInvalid": "Please enter a valid amount",
+      "amountExceedsDue": "Payment amount cannot exceed amount due ({{amount}})",
+      "dateRequired": "Payment date is required",
+      "paymentModeRequired": "Payment mode is required",
+      "referenceRequired": "Reference number is required",
+      "bankNameRequired": "Bank name is required",
+      "chequeNumberRequired": "Cheque number is required",
+      "chequeDateRequired": "Cheque date is required"
+    },
+    "placeholders": {
+      "selectSale": "Search by invoice number or buyer name...",
+      "amount": "Enter payment amount",
+      "upiReference": "e.g., 1234567890@ybl or UPI123456789",
+      "bankReference": "Bank transaction reference number",
+      "bankName": "Enter bank name (e.g., State Bank of India)",
+      "chequeNumber": "Enter cheque number",
+      "notes": "Additional notes about this payment...",
+      "selectPaymentMode": "Select payment mode"
+    }
+  },
 
     "sales": {
         "title": "Sales",
@@ -1595,6 +1961,136 @@
         }
     },
 
+  "products": {
+  "title": "Products",
+  "subtitle": "Manage and track all your products",
+  "loading": "Loading products...",
+  "searchPlaceholder": "Search products by name...",
+  "noProductsFound": "No products found",
+  
+  "stats": {
+    "totalProducts": "Total Products",
+    "activeProducts": "Active Products",
+    "inactiveProducts": "Inactive Products"
+  },
+  
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "label": "Status",
+    "activeHint": "Product is currently active and available for selection",
+    "inactiveHint": "Product is currently inactive and will not appear in selections"
+  },
+  
+  "filters": {
+    "status": "Status"
+  },
+  
+  "table": {
+    "productInfo": "Product Info",
+    "description": "Description",
+    "createdBy": "Created By",
+    "createdDate": "Created Date",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  
+  "buttons": {
+    "addNew": "Add New Product",
+    "clearFilters": "Clear filters"
+  },
+  
+  "actions": {
+    "viewDetails": "View Details",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  
+  "modals": {
+    "delete": {
+      "title": "Delete Product",
+      "subtitle": "Confirm deletion",
+      "confirmMessage": "Are you sure you want to delete {{name}}?",
+      "warningMessage": "This action cannot be undone. The product will be permanently removed from the system.",
+      "deleteButton": "Delete Product"
+    }
+  },
+  
+  "pagination": {
+    "showing": "Showing {{start}} to {{end}} of {{total}} products"
+  },
+  
+  "messages": {
+    "deleteSuccess": "{{name}} has been deleted successfully",
+    "addSuccess": "Product created successfully! Redirecting...",
+    "updateSuccess": "Product updated successfully! Redirecting..."
+  },
+  
+  "errors": {
+    "fetchFailed": "Failed to fetch products",
+    "networkError": "Network error. Please check your connection.",
+    "deleteFailed": "Failed to delete product",
+    "nameRequired": "Product name is required",
+    "nameInvalid": "Product name should contain only letters, numbers, spaces, dots, and hyphens",
+    "addFailed": "Failed to add product. Please try again.",
+    "updateFailed": "Failed to update product. Please try again.",
+    "notFound": "Product not found"
+  },
+  
+  "addTitle": "Add New Product",
+  "addSubtitle": "Register a new product in the system",
+  "editTitle": "Edit Product",
+  "editSubtitle": "Update product information",
+  "viewTitle": "Product Details",
+  "viewSubtitle": "View complete product information",
+  
+  "productInformation": "Product Information",
+  "productName": "Product Name",
+  "description": "Description",
+  "descriptionPlaceholder": "Enter product description...",
+  "productStatus": "Product Status",
+  "noDescription": "No description provided",
+  "productNameHint": "Product name must contain only letters, numbers, spaces, dots, and hyphens",
+  "descriptionHint": "Optional - Add a detailed description of the product",
+  "saveProduct": "Save Product",
+  
+  "createdByInfo": "Created By Information",
+  "createdDetails": "Created Details",
+  "createdOn": "Created On",
+  "lastUpdated": "Last updated",
+  "createdBy": "Created By",
+  "createdDate": "Created Date",
+  "backToProducts": "Back to Products",
+  
+  "placeholders": {
+    "productName": "Enter product name",
+    "description": "Enter product description"
+  }
+},
+
+"login": {
+    "brandSubtitle": "Finance & Trading System",
+    "trustedPlatform": "Trusted Platform",
+    "welcomeTitleLine1": "Smart Trading,",
+    "welcomeTitleLine2": "Better Growth",
+    "welcomeDescription": "Streamline your agricultural business with our comprehensive trading and financial management platform.",
+    "welcomeBack": "Welcome Back",
+    "enterCredentials": "Enter your credentials to continue",
+    "secureLogin": "Secure Login",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "emailPlaceholder": "superadmin@farmerp.com",
+    "passwordPlaceholder": "••••••••",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "allRightsReserved": "All rights reserved.",
+    "errors": {
+      "credentialsRequired": "Please enter both email and password",
+      "loginFailed": "Login failed. Please try again.",
+      "networkError": "Network error. Please check your connection and try again."
+    }
+  },
+
     "audit": {
         "title": "Audit Logs",
         "subtitle": "Track all system activities and user actions",
@@ -1693,145 +2189,157 @@
         }
     },
 
-    "buyers": {
-        "title": "Buyers",
-        "subtitle": "Manage and track all your buyers",
-        "loading": "Loading buyers...",
-        "searchPlaceholder": "Search buyers by name, email, mobile, or business...",
-        "noBuyersFound": "No buyers found",
-        "addTitle": "Add New Buyer",
-        "addSubtitle": "Enter buyer details to add them to your network",
-        "personalInfo": "Personal Information",
-        "businessDetails": "Business Details",
-        "creditTerms": "Credit Terms & Additional Info",
-        "steps": {
-            "personalInfo": "Personal Info",
-            "businessDetails": "Business Details",
-            "creditTerms": "Credit Terms"
-        },
-        "fullName": "Full Name",
-        "email": "Email Address",
-        "mobileNumber": "Mobile Number",
-        "alternateMobile": "Alternate Mobile",
-        "address": "Address",
-        "city": "City",
-        "state": "State",
-        "pincode": "Pincode",
-        "businessName": "Business Name",
-        "businessType": "Business Type",
-        "gstNumber": "GST Number",
-        "panNumber": "PAN Number",
-        "creditLimit": "Credit Limit (₹)",
-        "creditDays": "Credit Days",
-        "defaultPaymentMode": "Default Payment Mode",
-        "notes": "Notes",
-        "businessTypes": {
-            "individual": "Individual",
-            "company": "Company",
-            "partnership": "Partnership",
-            "proprietorship": "Proprietorship",
-            "privateLimited": "Private Limited",
-            "publicLimited": "Public Limited",
-            "llp": "LLP",
-            "trust": "Trust",
-            "society": "Society"
-        },
-        "paymentModes": {
-            "credit": "Credit",
-            "online": "Online"
-        },
-        "stats": {
-            "totalBuyers": "Total Buyers",
-            "totalPurchaseValue": "Total Purchase Value",
-            "totalCreditLimit": "Total Credit Limit",
-            "activeBuyers": "Active Buyers"
-        },
-        "status": {
-            "active": "Active",
-            "inactive": "Inactive"
-        },
-        "filters": {
-            "status": "Status",
-            "businessType": "Business Type",
-            "city": "City",
-            "state": "State",
-            "cityPlaceholder": "Filter by city",
-            "statePlaceholder": "Filter by state"
-        },
-        "table": {
-            "buyerInfo": "Buyer Info",
-            "contact": "Contact",
-            "location": "Location",
-            "business": "Business",
-            "creditLimit": "Credit Limit",
-            "purchaseValue": "Purchase Value",
-            "status": "Status",
-            "daysCredit": "days credit",
-            "purchases": "purchases",
-            "lastPurchase": "Last"
-        },
-        "buttons": {
-            "addNew": "Add New Buyer"
-        },
-        "actions": {
-            "viewPurchases": "View Purchases"
-        },
-        "modals": {
-            "deactivate": {
-                "title": "Deactivate Buyer",
-                "subtitle": "Confirm deactivation",
-                "confirmMessage": "Are you sure you want to deactivate {{name}}?",
-                "warningMessage": "This action will deactivate the buyer account. They will not be able to make purchases until reactivated."
-            }
-        },
-        "pagination": {
-            "showing": "Showing {{start}} to {{end}} of {{total}} buyers"
-        },
-        "messages": {
-            "deactivateSuccess": "{{name}} has been deactivated successfully",
-            "addSuccess": "Buyer added successfully! Redirecting..."
-        },
-        "errors": {
-            "fetchFailed": "Failed to fetch buyers",
-            "deactivateFailed": "Failed to deactivate buyer",
-            "nameRequired": "Name is required",
-            "nameInvalid": "Name should only contain letters, spaces, dots and hyphens",
-            "emailInvalid": "Please enter a valid email address",
-            "mobileInvalid": "Please enter a valid 10-digit mobile number starting with 6-9",
-            "alternateMobileInvalid": "Please enter a valid 10-digit mobile number",
-            "cityRequired": "City is required",
-            "stateRequired": "State is required",
-            "pincodeInvalid": "Please enter a valid 6-digit pincode",
-            "businessNameRequired": "Business name is required",
-            "businessNameInvalid": "Business name contains invalid characters",
-            "gstInvalid": "Please enter a valid GST number (e.g., 27AAAAA0000A1Z)",
-            "panInvalid": "Please enter a valid PAN number (e.g., AAAAA1234A)",
-            "creditLimitInvalid": "Please enter a valid credit limit amount",
-            "creditDaysInvalid": "Please enter valid credit days (0-365)",
-            "addFailed": "Failed to add buyer. Please try again."
-        },
-        "placeholders": {
-            "name": "Enter full name",
-            "email": "Enter email address",
-            "mobile": "Enter 10-digit mobile number",
-            "alternateMobile": "Enter alternate mobile number",
-            "address": "Enter complete address",
-            "city": "Enter city name",
-            "state": "Enter state name",
-            "pincode": "Enter 6-digit pincode",
-            "businessName": "Enter business/company name",
-            "gst": "Enter 15-digit GST number",
-            "pan": "Enter 10-digit PAN number",
-            "creditLimit": "Enter credit limit amount",
-            "creditDays": "Enter number of credit days (1-365)",
-            "notes": "Add any additional notes..."
-        },
-        "mobileHint": "Enter 10-digit mobile number (starts with 6,7,8,9)",
-        "pincodeHint": "Enter 6-digit pincode",
-        "gstHint": "15-character GSTIN (e.g., 27AAAAA0000A1Z)",
-        "panHint": "10-character PAN (e.g., AAAAA1234A)",
-        "creditLimitHint": "Maximum credit amount allowed",
-        "creditDaysHint": "Number of days for credit payment",
-        "creditOptional": "These fields are optional - leave blank if not applicable"
+   
+  
+ 
+ 
+  "sales": {
+    "title": "Sales",
+    "subtitle": "Manage all sales invoices",
+    "loading": "Loading sales...",
+    "searchPlaceholder": "Search by invoice number, buyer name, or mobile...",
+    "noSalesFound": "No sales found",
+    "items": "items",
+    "stats": {
+      "totalSales": "Total Sales",
+      "totalRevenue": "Total Revenue",
+      "itemsSold": "Items Sold"
+    },
+    "filters": {
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    },
+    "table": {
+      "invoiceNo": "Invoice No",
+      "date": "Date",
+      "buyer": "Buyer",
+      "items": "Items",
+      "subtotal": "Subtotal",
+      "gst": "GST",
+      "grandTotal": "Grand Total",
+      "actions": "Actions",
+      "grossTotal": "Gross Total",
+      "deductions": "Deductions",
+      "finalReceivable": "Final Receivable",
+      "status": "Status",
+      "product": "Product",
+      "quantity": "Quantity",
+      "rate": "Rate",
+      "total": "Total"
+    },
+    "buttons": {
+      "newSale": "New Sale",
+      "printInvoice": "Print Invoice"
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} sales"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch sales",
+      "notFound": "Sale not found",
+      "buyerRequired": "Please select a buyer",
+      "dateRequired": "Sale date is required",
+      "productRequired": "Please select a product",
+      "rateRequired": "Valid rate required",
+      "qtyRequired": "Valid quantity required",
+      "completeLines": "Please complete all product lines",
+      "createFailed": "Failed to create sale"
+    },
+    "addTitle": "New Sale",
+    "addSubtitle": "Create a new sale invoice",
+    "viewTitle": "Sale Details",
+    "createSale": "Create Sale",
+    "saleInformation": "Sale Information",
+    "saleStatus": "Sale Status",
+    "selectBuyer": "Select Buyer",
+    "saleDate": "Sale Date",
+    "selectedBuyer": "Selected Buyer",
+    "locationNotSpecified": "Location not specified",
+    "buyerInformation": "Buyer Information",
+    "buyerName": "Buyer Name",
+    "mobileNumber": "Mobile Number",
+    "address": "Address",
+    "gstNumber": "GST Number",
+    "paymentStatus": "Payment Status",
+    "productsSold": "Products Sold",
+    "quantityDetails": "Quantity Details",
+    "qualityDeduction": "Quality deduction",
+    "productLine": "Product Line",
+    "productName": "Product Name",
+    "pricingType": "Pricing Type",
+    "rate": "Rate",
+    "quantity": "Quantity",
+    "lineNotes": "Line Notes",
+    "lineTotal": "Line Total",
+    "numberOfBags": "Number of Bags",
+    "weightPerBag": "Weight Per Bag (kg)",
+    "autoCalculated": "Auto-calculated",
+    "bags": "bags",
+    "unit": "unit",
+    "units": "units",
+    "transportCharges": "Transport Charges",
+    "labourCharges": "Labour Charges",
+    "commission": "Commission",
+    "storageCharges": "Storage Charges",
+    "advanceAdjusted": "Advance Adjusted",
+    "otherCharges": "Other Charges",
+    "returnDeduction": "Return Deduction",
+    "deductionsCharges": "Deductions & Charges",
+    "saleSummary": "Sale Summary",
+    "financialSummary": "Financial Summary",
+    "grossTotal": "Gross Total",
+    "totalDeductions": "Total Deductions",
+    "netAmount": "Net Amount",
+    "finalReceivable": "Final Receivable",
+    "amountReceived": "Amount Received",
+    "amountDue": "Amount Due",
+    "productsSummary": "Products Summary",
+    "addAnotherProduct": "Add Another Product",
+    "recordInformation": "Record Information",
+    "steps": {
+      "buyerInfo": "Buyer Information",
+      "productLines": "Product Lines",
+      "deductions": "Deductions & Summary"
+    },
+    "pricingTypes": {
+      "kg": "Per KG",
+      "quintal": "Per Quintal",
+      "ton": "Per Ton",
+      "bag": "Per Bag"
+    },
+    "commissionTypes": {
+      "fixed": "Fixed Amount",
+      "percent": "Percentage"
+    },
+    "status": {
+      "completed": "Completed",
+      "partial": "Partial Payment",
+      "pending": "Pending",
+      "unknown": "Unknown"
+    },
+    "placeholders": {
+      "selectBuyer": "Search buyer by name or mobile...",
+      "selectProduct": "Search or select product...",
+      "selectPricingType": "Select pricing type",
+      "rate": "Enter rate",
+      "quantity": "Enter quantity",
+      "qualityDeduction": "Quality deduction",
+      "lineNotes": "Notes for this product line",
+      "numberOfBags": "Number of bags",
+      "weightPerBag": "Weight per bag",
+      "transportCharges": "Transport charges",
+      "labourCharges": "Labour charges",
+      "commissionAmount": "Commission amount",
+      "commissionPercent": "Commission percentage",
+      "commissionType": "Commission type",
+      "storageCharges": "Storage charges",
+      "advanceAdjusted": "Advance amount to adjust",
+      "notes": "Additional notes about this sale..."
+    },
+    "messages": {
+      "createSuccess": "Sale created successfully! Redirecting..."
     }
+  }
+
+
 }

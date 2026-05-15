@@ -204,7 +204,7 @@ const FarmerDues = () => {
             </p>
           </div>
         </div>
-        <button
+        {/* <button
           onClick={handleRefresh}
           disabled={refreshing}
           className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all hover:scale-105 border"
@@ -212,7 +212,7 @@ const FarmerDues = () => {
         >
           <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
           {t('common.refresh')}
-        </button>
+        </button> */}
       </div>
 
       {/* Error Message */}

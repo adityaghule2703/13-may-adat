@@ -1,6 +1,7 @@
 // src/pages/expenses/EditExpense.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextField,
@@ -67,8 +68,29 @@ const COLORS = {
   border: '#E3E8EF'
 };
 
+// Category options with icons - using translations
+const getCategoryOptions = (t) => [
+  { value: 'transport_logistics', label: t('expenses.categories.transport'), icon: <TruckIcon sx={{ fontSize: '1rem' }} /> },
+  { value: 'labour_wages', label: t('expenses.categories.labour'), icon: <BriefcaseIcon sx={{ fontSize: '1rem' }} /> },
+  { value: 'market_fees', label: t('expenses.categories.marketFees'), icon: <LandmarkIcon sx={{ fontSize: '1rem' }} /> },
+  { value: 'storage_cold_chain', label: t('expenses.categories.storage'), icon: <WarehouseIcon sx={{ fontSize: '1rem' }} /> },
+  { value: 'shop_office', label: t('expenses.categories.shopOffice'), icon: <BuildingIcon sx={{ fontSize: '1rem' }} /> },
+  { value: 'repairs_maintenance', label: t('expenses.categories.repairs'), icon: <WrenchIcon sx={{ fontSize: '1rem' }} /> },
+  { value: 'banking_finance', label: t('expenses.categories.banking'), icon: <BanknoteIcon sx={{ fontSize: '1rem' }} /> },
+  { value: 'marketing_misc', label: t('expenses.categories.marketing'), icon: <MegaphoneIcon sx={{ fontSize: '1rem' }} /> }
+];
+
+// Payment options with translations
+const getPaymentOptions = (t) => [
+  { value: 'cash', label: t('expenses.modes.cash') },
+  { value: 'upi', label: t('expenses.modes.upi') },
+  { value: 'bank', label: t('expenses.modes.bank') },
+  { value: 'cheque', label: t('expenses.modes.cheque') }
+];
+
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -105,6 +127,7 @@ const FloatingErrorAlert = ({ error, onClose }) => {
 };
 
 const EditExpense = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
@@ -113,6 +136,9 @@ const EditExpense = () => {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [fetchError, setFetchError] = useState('');
+  
+  const categoryOptions = getCategoryOptions(t);
+  const paymentOptions = getPaymentOptions(t);
   
   const [formData, setFormData] = useState({
     category: 'transport_logistics',
@@ -124,26 +150,6 @@ const EditExpense = () => {
     referenceNumber: '',
     notes: ''
   });
-
-  // Category options with icons
-  const categoryOptions = [
-    { value: 'transport_logistics', label: 'Transport & Logistics', icon: <TruckIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'labour_wages', label: 'Labour & Wages', icon: <BriefcaseIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'market_fees', label: 'Market Fees', icon: <LandmarkIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'storage_cold_chain', label: 'Storage & Cold Chain', icon: <WarehouseIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'shop_office', label: 'Shop & Office', icon: <BuildingIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'repairs_maintenance', label: 'Repairs & Maintenance', icon: <WrenchIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'banking_finance', label: 'Banking & Finance', icon: <BanknoteIcon sx={{ fontSize: '1rem' }} /> },
-    { value: 'marketing_misc', label: 'Marketing & Miscellaneous', icon: <MegaphoneIcon sx={{ fontSize: '1rem' }} /> }
-  ];
-
-  // Payment options
-  const paymentOptions = [
-    { value: 'cash', label: 'Cash' },
-    { value: 'upi', label: 'UPI' },
-    { value: 'bank', label: 'Bank Transfer' },
-    { value: 'cheque', label: 'Cheque' }
-  ];
 
   const getToken = () => localStorage.getItem('token');
 
@@ -175,18 +181,18 @@ const EditExpense = () => {
             notes: expense.notes || ''
           });
         } else {
-          setFetchError(response.data.message || 'Failed to fetch expense details');
+          setFetchError(response.data.message || t('expenses.errors.fetchFailed'));
         }
       } catch (error) {
         console.error('Error fetching expense:', error);
-        setFetchError(error.response?.data?.message || 'Network error. Please check your connection.');
+        setFetchError(error.response?.data?.message || t('common.networkError'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchExpense();
-  }, [id, navigate]);
+  }, [id, navigate, t]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -204,29 +210,29 @@ const EditExpense = () => {
     let isValid = true;
 
     if (!formData.category) {
-      errors.category = 'Please select a category';
+      errors.category = t('expenses.errors.categoryRequired');
       isValid = false;
     }
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
-      errors.amount = 'Please enter a valid amount';
+      errors.amount = t('expenses.errors.validAmountRequired');
       isValid = false;
     }
     if (!formData.description) {
-      errors.description = 'Description is required';
+      errors.description = t('expenses.errors.descriptionRequired');
       isValid = false;
     }
     if (!formData.expenseDate) {
-      errors.expenseDate = 'Expense date is required';
+      errors.expenseDate = t('expenses.errors.dateRequired');
       isValid = false;
     }
     if (!formData.paidBy) {
-      errors.paidBy = 'Payment method is required';
+      errors.paidBy = t('expenses.errors.paymentMethodRequired');
       isValid = false;
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -273,11 +279,11 @@ const EditExpense = () => {
         setSuccess(true);
         setTimeout(() => navigate('/expenses'), 2000);
       } else {
-        showError(response.data.message || 'Failed to update expense');
+        showError(response.data.message || t('expenses.errors.updateFailed'));
       }
     } catch (error) {
       console.error('Error updating expense:', error);
-      showError(error.response?.data?.message || 'Network error. Please check your connection.');
+      showError(error.response?.data?.message || t('common.networkError'));
     } finally {
       setSaving(false);
     }
@@ -353,7 +359,7 @@ const EditExpense = () => {
           onClick={() => navigate('/expenses')}
           sx={{ mt: 2 }}
         >
-          Back to Expenses
+          {t('common.backToList')}
         </Button>
       </Box>
     );
@@ -375,10 +381,10 @@ const EditExpense = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Edit Expense
+            {t('expenses.editTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Update expense details
+            {t('expenses.editSubtitle')}
           </Typography>
         </Box>
         <Box sx={{ ml: 'auto' }}>
@@ -404,7 +410,7 @@ const EditExpense = () => {
               }
             }}
           >
-            {saving ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Update Expense</>}
+         {saving ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('expenses.update')}</>}
           </Button>
         </Box>
       </Box>
@@ -417,7 +423,7 @@ const EditExpense = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Expense updated successfully! Redirecting...
+          {t('expenses.messages.updateSuccess')}
         </Alert>
       )}
 
@@ -426,14 +432,14 @@ const EditExpense = () => {
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <EditIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Expense Details</Typography>
+            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('expenses.expenseDetails')}</Typography>
           </Stack>
         </Box>
         <Box sx={{ p: 2.5 }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            {/* Category - Using Autocomplete like farmer dropdown */}
+            {/* Category - Using Autocomplete */}
             <Box>
-              <Label required>CATEGORY</Label>
+              <Label required>{t('expenses.category')}</Label>
               <Autocomplete
                 fullWidth
                 options={categoryOptions}
@@ -445,7 +451,7 @@ const EditExpense = () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Select expense category"
+                    placeholder={t('expenses.placeholders.selectCategory')}
                     error={!!fieldErrors.category}
                     helperText={fieldErrors.category}
                     sx={inputSx}
@@ -474,7 +480,7 @@ const EditExpense = () => {
 
             {/* Amount */}
             <Box>
-              <Label required>AMOUNT</Label>
+              <Label required>{t('expenses.amount')}</Label>
               <TextField
                 fullWidth
                 type="number"
@@ -482,7 +488,7 @@ const EditExpense = () => {
                 name="amount"
                 value={formData.amount}
                 onChange={handleChange}
-                placeholder="Enter amount"
+                placeholder={t('common.enterAmount')}
                 error={!!fieldErrors.amount}
                 helperText={fieldErrors.amount}
                 sx={inputSx}
@@ -494,7 +500,7 @@ const EditExpense = () => {
 
             {/* Description - spans both columns */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label required>DESCRIPTION</Label>
+              <Label required>{t('expenses.description')}</Label>
               <TextField
                 fullWidth
                 multiline
@@ -503,7 +509,7 @@ const EditExpense = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Describe the expense"
+                placeholder={t('expenses.placeholders.description')}
                 error={!!fieldErrors.description}
                 helperText={fieldErrors.description}
                 sx={inputSx}
@@ -512,7 +518,7 @@ const EditExpense = () => {
 
             {/* Expense Date */}
             <Box>
-              <Label required>EXPENSE DATE</Label>
+              <Label required>{t('expenses.expenseDate')}</Label>
               <TextField
                 fullWidth
                 type="date"
@@ -534,14 +540,14 @@ const EditExpense = () => {
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <PaymentIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Payment Information</Typography>
+            <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('expenses.paymentInformation')}</Typography>
           </Stack>
         </Box>
         <Box sx={{ p: 2.5 }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
             {/* Paid By */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label required>PAID BY</Label>
+              <Label required>{t('expenses.paidBy')}</Label>
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1.5, mb: 2 }}>
                 {paymentOptions.map(option => (
                   <Button
@@ -571,14 +577,14 @@ const EditExpense = () => {
 
             {/* Paid To */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label>PAID TO (Vendor/Person)</Label>
+              <Label>{t('expenses.paidTo')}</Label>
               <TextField
                 fullWidth
                 size="small"
                 name="paidTo"
                 value={formData.paidTo}
                 onChange={handleChange}
-                placeholder="Vendor or person name"
+                placeholder={t('expenses.placeholders.paidTo')}
                 sx={inputSx}
                 InputProps={{
                   startAdornment: <PersonIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -589,14 +595,14 @@ const EditExpense = () => {
             {/* Reference Number - Only show when payment method is NOT cash */}
             {formData.paidBy !== 'cash' && (
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label>REFERENCE NUMBER</Label>
+                <Label>{t('expenses.referenceNumber')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="referenceNumber"
                   value={formData.referenceNumber}
                   onChange={handleChange}
-                  placeholder="Bill/Invoice/Transaction No."
+                  placeholder={t('expenses.placeholders.referenceNumber')}
                   sx={inputSx}
                   InputProps={{
                     startAdornment: <ReceiptIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary, mr: 0.5 }} />
@@ -607,7 +613,7 @@ const EditExpense = () => {
 
             {/* Notes */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label>NOTES (Optional)</Label>
+              <Label>{t('common.notes')}</Label>
               <TextField
                 fullWidth
                 multiline
@@ -616,7 +622,7 @@ const EditExpense = () => {
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                placeholder="Additional notes..."
+                placeholder={t('expenses.placeholders.notes')}
                 sx={inputSx}
               />
             </Box>
@@ -627,7 +633,7 @@ const EditExpense = () => {
       {/* Info Note */}
       <Paper sx={{ p: 2.5, bgcolor: '#E3F2FD', borderRadius: 2.5, border: '1px solid #BBDEFB', mt: 2.5 }}>
         <Typography variant="caption" sx={{ color: '#1565C0', fontSize: '0.7rem' }}>
-          <strong>Note:</strong> Expenses under ₹1,000 will be auto-approved. Higher amounts require manager approval.
+          <strong>{t('common.note')}:</strong> {t('expenses.autoApprovalNote')}
         </Typography>
       </Paper>
 
@@ -650,7 +656,7 @@ const EditExpense = () => {
             }
           }}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={handleSubmit}
@@ -674,7 +680,7 @@ const EditExpense = () => {
             }
           }}
         >
-          {saving ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Update Expense</>}
+        {saving ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('expenses.update')}</>}
         </Button>
       </Box>
     </Box>

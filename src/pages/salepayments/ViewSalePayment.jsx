@@ -39,10 +39,10 @@ const ViewSalePayment = () => {
       if (data.success) {
         setPayment(data.data);
       } else {
-        setError(data.message || 'Failed to fetch payment details');
+        setError(data.message || t('salePayments.errors.fetchFailed'));
       }
     } catch (error) {
-      setError('Network error. Please check your connection.');
+      setError(t('common.networkError'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -84,37 +84,37 @@ const ViewSalePayment = () => {
 
   const getPaymentModeDetails = (mode) => {
     const modes = {
-      cash: { icon: Wallet, color: '#2E7D32', bg: '#E8F5E9', label: 'Cash', border: '#C8E6C9' },
-      upi: { icon: TrendingUp, color: '#1976D2', bg: '#E3F2FD', label: 'UPI', border: '#BBDEFB' },
-      bank: { icon: Building, color: '#F57C00', bg: '#FFF3E0', label: 'Bank Transfer', border: '#FFE0B2' },
-      cheque: { icon: CreditCard, color: '#7B1FA2', bg: '#F3E5F5', label: 'Cheque', border: '#E1BEE7' }
+      cash: { icon: Wallet, color: '#2E7D32', bg: '#E8F5E9', label: t('salePayments.modes.cash'), border: '#C8E6C9' },
+      upi: { icon: TrendingUp, color: '#1976D2', bg: '#E3F2FD', label: t('salePayments.modes.upi'), border: '#BBDEFB' },
+      bank: { icon: Building, color: '#F57C00', bg: '#FFF3E0', label: t('salePayments.modes.bank'), border: '#FFE0B2' },
+      cheque: { icon: CreditCard, color: '#7B1FA2', bg: '#F3E5F5', label: t('salePayments.modes.cheque'), border: '#E1BEE7' }
     };
-    return modes[mode?.toLowerCase()] || { icon: Banknote, color: '#8D6E63', bg: '#FAFAFA', label: mode || 'Other', border: '#EEEEEE' };
+    return modes[mode?.toLowerCase()] || { icon: Banknote, color: '#8D6E63', bg: '#FAFAFA', label: mode || t('salePayments.modes.other'), border: '#EEEEEE' };
   };
 
   const getChequeStatusDetails = (status) => {
     switch(status) {
-      case 'cleared': return { icon: CheckCircle, color: '#2E7D32', bg: '#E8F5E9', label: 'Cleared' };
-      case 'bounced': return { icon: XCircle, color: '#D32F2F', bg: '#FFEBEE', label: 'Bounced' };
-      default: return { icon: Clock, color: '#FF6F00', bg: '#FFF3E0', label: 'Pending' };
+      case 'cleared': return { icon: CheckCircle, color: '#2E7D32', bg: '#E8F5E9', label: t('salePayments.status.cleared') };
+      case 'bounced': return { icon: XCircle, color: '#D32F2F', bg: '#FFEBEE', label: t('salePayments.status.bounced') };
+      default: return { icon: Clock, color: '#FF6F00', bg: '#FFF3E0', label: t('salePayments.status.pendingClearance') };
     }
   };
 
   const getSaleStatusBadge = (summary) => {
     if (!summary) return null;
     if (summary.status === 'completed' || summary.amountDue === 0) {
-      return { icon: CheckCircle, color: '#2E7D32', bg: '#E8F5E9', label: 'Fully Paid' };
+      return { icon: CheckCircle, color: '#2E7D32', bg: '#E8F5E9', label: t('salePayments.status.fullyPaid') };
     } else if (summary.amountDue > 0 && summary.amountReceived > 0) {
-      return { icon: AlertCircle, color: '#E65100', bg: '#FFF3E0', label: 'Partial Payment' };
+      return { icon: AlertCircle, color: '#E65100', bg: '#FFF3E0', label: t('salePayments.status.partiallyPaid') };
     }
-    return { icon: Clock, color: '#1565C0', bg: '#E3F2FD', label: 'Pending' };
+    return { icon: Clock, color: '#1565C0', bg: '#E3F2FD', label: t('salePayments.status.pending') };
   };
 
   if (loading && !payment) {
     return (
       <div className="flex items-center justify-center h-96">
         <Loader className="w-8 h-8 animate-spin" style={{ color: '#2E7D32' }} />
-        <span className="ml-2" style={{ color: '#2E7D32' }}>Loading payment details...</span>
+        <span className="ml-2" style={{ color: '#2E7D32' }}>{t('common.loading')}</span>
       </div>
     );
   }
@@ -124,12 +124,12 @@ const ViewSalePayment = () => {
       <div className="max-w-5xl mx-auto">
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
-          <p className="text-red-600">{error || 'Payment not found'}</p>
+          <p className="text-red-600">{error || t('salePayments.errors.notFound')}</p>
           <button 
             onClick={() => navigate('/sale-payments')} 
             className="mt-4 px-4 py-2 rounded-lg bg-green-700 text-white hover:bg-green-800 transition-colors"
           >
-            Back to Payments
+            {t('common.backToList')}
           </button>
         </div>
       </div>
@@ -144,7 +144,7 @@ const ViewSalePayment = () => {
   const SaleStatusIcon = saleStatus?.icon;
 
   return (
-    <div className=" mx-auto space-y-6">
+    <div className="mx-auto space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center flex-wrap gap-4">
         <div className="flex items-center gap-3">
@@ -157,12 +157,18 @@ const ViewSalePayment = () => {
           </button>
           <div>
             <h1 className="text-2xl font-bold" style={{ color: '#1B5E20' }}>
-              Sale Payment Details
+              {t('salePayments.viewTitle')}
             </h1>
-            
           </div>
         </div>
-       
+        <button
+          onClick={() => window.print()}
+          className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all hover:scale-105"
+          style={{ background: 'linear-gradient(135deg, #2E7D32, #43A047)', color: 'white' }}
+        >
+          <Printer className="w-4 h-4" />
+          {t('salePayments.buttons.printReceipt')}
+        </button>
       </div>
 
       {/* Payment Status Banner */}
@@ -179,12 +185,12 @@ const ViewSalePayment = () => {
               <ModeIcon className="w-6 h-6" style={{ color: modeDetails.color }} />
             </div>
             <div>
-              <p className="text-sm font-medium" style={{ color: modeDetails.color }}>Payment Mode</p>
+              <p className="text-sm font-medium" style={{ color: modeDetails.color }}>{t('salePayments.paymentMode')}</p>
               <p className="text-xl font-bold" style={{ color: '#1B5E20' }}>{modeDetails.label}</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-sm" style={{ color: '#8D6E63' }}>Payment Amount</p>
+            <p className="text-sm" style={{ color: '#8D6E63' }}>{t('salePayments.amount')}</p>
             <p className="text-3xl font-bold" style={{ color: '#2E7D32' }}>
               {formatCurrency(payment.amount)}
             </p>
@@ -197,32 +203,32 @@ const ViewSalePayment = () => {
         <div className="p-5 border-b" style={{ borderColor: '#E8F5E9' }}>
           <div className="flex items-center gap-2">
             <Receipt className="w-5 h-5" style={{ color: '#2E7D32' }} />
-            <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Sale Information</h3>
+            <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>{t('salePayments.saleInformation')}</h3>
           </div>
         </div>
         <div className="p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Invoice Number</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('salePayments.table.invoiceNo')}</p>
               <p className="text-base font-semibold mt-1" style={{ color: '#2E7D32' }}>
                 {payment.sale?.invoiceNumber || payment.saleSummary?.invoiceNumber || 'N/A'}
               </p>
             </div>
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Sale Date</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('sales.saleDate')}</p>
               <p className="text-base mt-1" style={{ color: '#1B5E20' }}>
                 <Calendar className="w-3.5 h-3.5 inline mr-1" style={{ color: '#A5D6A7' }} />
                 {formatDate(payment.sale?.saleDate)}
               </p>
             </div>
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Final Receivable</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('sales.finalReceivable')}</p>
               <p className="text-base font-semibold mt-1" style={{ color: '#FF6F00' }}>
                 {formatCurrency(payment.sale?.finalReceivable || payment.saleSummary?.finalReceivable || 0)}
               </p>
             </div>
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Sale Status</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('common.status')}</p>
               <div className="mt-1">
                 {saleStatus && (
                   <span
@@ -245,7 +251,7 @@ const ViewSalePayment = () => {
           <div className="p-5 border-b" style={{ borderColor: '#E8F5E9' }}>
             <div className="flex items-center gap-2">
               <User className="w-5 h-5" style={{ color: '#2E7D32' }} />
-              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Buyer Information</h3>
+              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>{t('salePayments.buyerInformation')}</h3>
             </div>
           </div>
           <div className="p-5">
@@ -292,20 +298,20 @@ const ViewSalePayment = () => {
         <div className="p-5 border-b" style={{ borderColor: '#E8F5E9' }}>
           <div className="flex items-center gap-2">
             <CreditCard className="w-5 h-5" style={{ color: '#2E7D32' }} />
-            <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Payment Information</h3>
+            <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>{t('salePayments.paymentInformation')}</h3>
           </div>
         </div>
         <div className="p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Payment Date</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('salePayments.paymentDate')}</p>
               <p className="text-base font-semibold mt-1" style={{ color: '#1B5E20' }}>
                 <Calendar className="w-3.5 h-3.5 inline mr-1" style={{ color: '#A5D6A7' }} />
                 {formatDate(payment.paymentDate)}
               </p>
             </div>
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Payment Mode</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('salePayments.paymentMode')}</p>
               <div className="mt-1">
                 <span
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border"
@@ -317,7 +323,7 @@ const ViewSalePayment = () => {
               </div>
             </div>
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Created By</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('common.createdBy')}</p>
               <p className="text-sm font-medium mt-1" style={{ color: '#1B5E20' }}>
                 <UserCheck className="w-3.5 h-3.5 inline mr-1" style={{ color: '#8D6E63' }} />
                 {payment.createdBy?.name || 'N/A'}
@@ -336,20 +342,20 @@ const ViewSalePayment = () => {
           <div className="p-5 border-b" style={{ borderColor: '#E8F5E9' }}>
             <div className="flex items-center gap-2">
               <Hash className="w-5 h-5" style={{ color: '#2E7D32' }} />
-              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Transaction Details</h3>
+              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>{t('salePayments.transactionDetails')}</h3>
             </div>
           </div>
           <div className="p-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <p className="text-xs" style={{ color: '#8D6E63' }}>Reference Number</p>
+                <p className="text-xs" style={{ color: '#8D6E63' }}>{t('salePayments.referenceNumber')}</p>
                 <p className="text-sm font-mono mt-1 break-all" style={{ color: '#5D4037' }}>
                   {payment.referenceNumber}
                 </p>
               </div>
               {payment.bankName && (
                 <div>
-                  <p className="text-xs" style={{ color: '#8D6E63' }}>Bank Name</p>
+                  <p className="text-xs" style={{ color: '#8D6E63' }}>{t('salePayments.bankName')}</p>
                   <p className="text-base mt-1" style={{ color: '#1B5E20' }}>
                     <Landmark className="w-3.5 h-3.5 inline mr-1" style={{ color: '#A5D6A7' }} />
                     {payment.bankName}
@@ -366,32 +372,32 @@ const ViewSalePayment = () => {
           <div className="p-5 border-b" style={{ borderColor: '#E8F5E9' }}>
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5" style={{ color: '#2E7D32' }} />
-              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Cheque Details</h3>
+              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>{t('salePayments.chequeDetails')}</h3>
             </div>
           </div>
           <div className="p-5">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
-                <p className="text-xs" style={{ color: '#8D6E63' }}>Cheque Number</p>
+                <p className="text-xs" style={{ color: '#8D6E63' }}>{t('salePayments.chequeNumber')}</p>
                 <p className="text-base font-mono font-semibold mt-1" style={{ color: '#1B5E20' }}>
                   {payment.chequeNumber || 'N/A'}
                 </p>
               </div>
               <div>
-                <p className="text-xs" style={{ color: '#8D6E63' }}>Cheque Date</p>
+                <p className="text-xs" style={{ color: '#8D6E63' }}>{t('salePayments.chequeDate')}</p>
                 <p className="text-base mt-1" style={{ color: '#1B5E20' }}>
                   {formatDate(payment.chequeDate)}
                 </p>
               </div>
               <div>
-                <p className="text-xs" style={{ color: '#8D6E63' }}>Bank Name</p>
+                <p className="text-xs" style={{ color: '#8D6E63' }}>{t('salePayments.bankName')}</p>
                 <p className="text-base mt-1" style={{ color: '#1B5E20' }}>
                   <Landmark className="w-3.5 h-3.5 inline mr-1" style={{ color: '#A5D6A7' }} />
                   {payment.bankName || 'N/A'}
                 </p>
               </div>
               <div>
-                <p className="text-xs" style={{ color: '#8D6E63' }}>Cheque Status</p>
+                <p className="text-xs" style={{ color: '#8D6E63' }}>{t('common.status')}</p>
                 <div className="mt-1">
                   {chequeDetails && (
                     <span
@@ -415,26 +421,26 @@ const ViewSalePayment = () => {
           <div className="p-5 border-b" style={{ borderColor: '#E8F5E9' }}>
             <div className="flex items-center gap-2">
               <IndianRupee className="w-5 h-5" style={{ color: '#2E7D32' }} />
-              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Payment Summary</h3>
+              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>{t('salePayments.paymentSummary')}</h3>
             </div>
           </div>
           <div className="p-5">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="text-center p-3 rounded-lg" style={{ background: '#E8F5E9' }}>
-                <p className="text-xs" style={{ color: '#1B5E20' }}>Final Receivable</p>
+                <p className="text-xs" style={{ color: '#1B5E20' }}>{t('sales.finalReceivable')}</p>
                 <p className="text-lg font-bold" style={{ color: '#2E7D32' }}>
                   {formatCurrency(payment.saleSummary.finalReceivable)}
                 </p>
               </div>
               <div className="text-center p-3 rounded-lg" style={{ background: '#E3F2FD' }}>
-                <p className="text-xs" style={{ color: '#1565C0' }}>Amount Received</p>
+                <p className="text-xs" style={{ color: '#1565C0' }}>{t('salePayments.totalPaid')}</p>
                 <p className="text-lg font-bold" style={{ color: '#1565C0' }}>
                   {formatCurrency(payment.saleSummary.amountReceived)}
                 </p>
               </div>
               <div className="text-center p-3 rounded-lg" style={{ background: payment.saleSummary.amountDue > 0 ? '#FFF3E0' : '#E8F5E9' }}>
                 <p className="text-xs" style={{ color: payment.saleSummary.amountDue > 0 ? '#E65100' : '#2E7D32' }}>
-                  Amount Due
+                  {t('salePayments.amountDue')}
                 </p>
                 <p className="text-lg font-bold" style={{ color: payment.saleSummary.amountDue > 0 ? '#E65100' : '#2E7D32' }}>
                   {formatCurrency(payment.saleSummary.amountDue)}
@@ -451,7 +457,7 @@ const ViewSalePayment = () => {
           <div className="p-5 border-b" style={{ borderColor: '#E8F5E9' }}>
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5" style={{ color: '#2E7D32' }} />
-              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>Additional Notes</h3>
+              <h3 className="font-semibold text-lg" style={{ color: '#1B5E20' }}>{t('common.notes')}</h3>
             </div>
           </div>
           <div className="p-5">
@@ -463,7 +469,7 @@ const ViewSalePayment = () => {
       {/* Update Information */}
       {payment.updatedAt && payment.updatedAt !== payment.createdAt && (
         <div className="text-center text-xs" style={{ color: '#A5D6A7' }}>
-          Last updated: {formatDateTime(payment.updatedAt)}
+          {t('common.lastUpdated')}: {formatDateTime(payment.updatedAt)}
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 // src/pages/products/Products.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   Package, Search, Filter, Eye, Edit2, 
   Download, UserPlus, CheckCircle, XCircle, 
@@ -11,6 +12,7 @@ import {
 import BASE_URL from '../../config/Config';
 
 const Products = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -95,7 +97,6 @@ const Products = () => {
         setProducts(data.data);
         setPagination(data.pagination);
         
-        // Calculate stats from fetched data
         const activeProducts = data.data.filter(p => p.isActive).length;
         const inactiveProducts = data.data.filter(p => !p.isActive).length;
         
@@ -105,15 +106,15 @@ const Products = () => {
           inactiveProducts
         });
       } else {
-        setError(data.message || 'Failed to fetch products');
+        setError(data.message || t('products.errors.fetchFailed'));
       }
     } catch (error) {
       console.error('Error fetching products:', error);
-      setError('Network error. Please check your connection.');
+      setError(t('common.networkError'));
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, debouncedSearchTerm, filters.status, navigate]);
+  }, [pagination.page, pagination.limit, debouncedSearchTerm, filters.status, navigate, t]);
 
   const handleDeleteProduct = async (product) => {
     setDeleting(true);
@@ -139,14 +140,14 @@ const Products = () => {
         setShowDeleteModal(false);
         setSelectedProduct(null);
         fetchProducts();
-        alert(`${product.productName} has been deleted successfully`);
+        alert(t('products.messages.deleteSuccess', { name: product.productName }));
       } else {
-        setError(data.message || 'Failed to delete product');
+        setError(data.message || t('products.errors.deleteFailed'));
         setShowDeleteModal(false);
       }
     } catch (error) {
       console.error('Error deleting product:', error);
-      setError('Network error. Please try again.');
+      setError(t('common.networkError'));
     } finally {
       setDeleting(false);
       setActionMenuAnchor(null);
@@ -190,8 +191,8 @@ const Products = () => {
 
   const getStatusColor = (isActive) =>
     isActive
-      ? { bg: '#E8F5E9', text: '#2E7D32', label: 'Active' }
-      : { bg: '#FFEBEE', text: '#D32F2F', label: 'Inactive' };
+      ? { bg: '#E8F5E9', text: '#2E7D32', label: t('products.status.active') }
+      : { bg: '#FFEBEE', text: '#D32F2F', label: t('products.status.inactive') };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -212,7 +213,7 @@ const Products = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <Loader className="w-8 h-8 animate-spin" style={{ color: '#2E7D32' }} />
-        <span className="ml-2" style={{ color: '#2E7D32' }}>Loading products...</span>
+        <span className="ml-2" style={{ color: '#2E7D32' }}>{t('products.loading')}</span>
       </div>
     );
   }
@@ -222,8 +223,8 @@ const Products = () => {
       {/* Page Header */}
       <div className="flex justify-between items-center flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: '#1B5E20' }}>Products</h1>
-          <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>Manage and track all your products</p>
+          <h1 className="text-2xl font-bold" style={{ color: '#1B5E20' }}>{t('products.title')}</h1>
+          <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>{t('products.subtitle')}</p>
         </div>
       </div>
 
@@ -232,7 +233,7 @@ const Products = () => {
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Total Products</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('products.stats.totalProducts')}</p>
               <p className="text-2xl font-bold mt-1" style={{ color: '#2E7D32' }}>{stats.totalProducts}</p>
             </div>
             <Package className="w-8 h-8" style={{ color: '#43A047' }} />
@@ -241,7 +242,7 @@ const Products = () => {
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Active Products</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('products.stats.activeProducts')}</p>
               <p className="text-2xl font-bold mt-1" style={{ color: '#2E7D32' }}>{stats.activeProducts}</p>
             </div>
             <CheckCircle className="w-8 h-8" style={{ color: '#2E7D32' }} />
@@ -250,7 +251,7 @@ const Products = () => {
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Inactive Products</p>
+              <p className="text-xs" style={{ color: '#8D6E63' }}>{t('products.stats.inactiveProducts')}</p>
               <p className="text-2xl font-bold mt-1" style={{ color: '#FF6F00' }}>{stats.inactiveProducts}</p>
             </div>
             <XCircle className="w-8 h-8" style={{ color: '#FF6F00' }} />
@@ -263,7 +264,7 @@ const Products = () => {
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-red-500" />
           <span className="text-sm text-red-600">{error}</span>
-          <button onClick={fetchProducts} className="ml-auto text-sm text-red-600 hover:underline">Retry</button>
+          <button onClick={fetchProducts} className="ml-auto text-sm text-red-600 hover:underline">{t('common.retry')}</button>
         </div>
       )}
 
@@ -276,7 +277,7 @@ const Products = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#8D6E63' }} />
               <input
                 type="text"
-                placeholder="Search products by name..."
+                placeholder={t('products.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#2E7D32]"
@@ -297,23 +298,23 @@ const Products = () => {
               style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}
             >
               <Filter className="w-4 h-4" />
-              Filters
+              {t('common.filter')}
               {(filters.status !== 'all') && (
                 <span className="w-2 h-2 rounded-full bg-[#FF6F00]"></span>
               )}
             </button>
             
-            <button className="px-4 py-2 border rounded-lg flex items-center gap-2 hover:bg-gray-50 transition-all" style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}>
+            {/* <button className="px-4 py-2 border rounded-lg flex items-center gap-2 hover:bg-gray-50 transition-all" style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}>
               <Download className="w-4 h-4" />
-              Export
-            </button>
+              {t('common.export')}
+            </button> */}
             <button
               onClick={() => navigate('/products/add')}
               className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all hover:scale-105"
               style={{ background: 'linear-gradient(135deg, #2E7D32, #43A047)' }}
             >
               <UserPlus className="w-4 h-4" />
-              Add New Product
+              {t('products.buttons.addNew')}
             </button>
           </div>
         </div>
@@ -322,33 +323,40 @@ const Products = () => {
           <div className="mt-4 p-4 border rounded-lg" style={{ borderColor: '#E8F5E9', background: '#FAFAFA' }}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>Status</label>
+                <label className="block text-xs font-medium mb-1" style={{ color: '#2E7D32' }}>{t('products.filters.status')}</label>
                 <select
                   value={filters.status}
                   onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                   className="w-full px-3 py-2 border rounded-lg text-sm"
                   style={{ borderColor: '#C8E6C9' }}
                 >
-                  <option value="all">All</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="all">{t('common.all')}</option>
+                  <option value="active">{t('products.status.active')}</option>
+                  <option value="inactive">{t('products.status.inactive')}</option>
                 </select>
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <button
+                onClick={clearFilters}
+                className="px-3 py-1 border rounded-lg text-sm"
+                style={{ borderColor: '#C8E6C9', color: '#8D6E63' }}
+              >
+                {t('common.clearAll')}
+              </button>
+              <button
                 onClick={() => setShowFilters(false)}
                 className="px-3 py-1 border rounded-lg text-sm"
                 style={{ borderColor: '#C8E6C9', color: '#8D6E63' }}
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={applyFilters}
                 className="px-3 py-1 rounded-lg text-white text-sm"
                 style={{ background: '#2E7D32' }}
               >
-                Apply Filters
+                {t('common.apply')}
               </button>
             </div>
           </div>
@@ -360,15 +368,15 @@ const Products = () => {
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader className="w-6 h-6 animate-spin" style={{ color: '#2E7D32' }} />
-            <span className="ml-2 text-sm" style={{ color: '#2E7D32' }}>Loading...</span>
+            <span className="ml-2 text-sm" style={{ color: '#2E7D32' }}>{t('common.loading')}</span>
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
             <Package className="w-12 h-12 mx-auto mb-3" style={{ color: '#C8E6C9' }} />
-            <p className="text-sm" style={{ color: '#8D6E63' }}>No products found</p>
+            <p className="text-sm" style={{ color: '#8D6E63' }}>{t('products.noProductsFound')}</p>
             {(searchTerm || filters.status !== 'all') && (
               <button onClick={clearFilters} className="mt-2 text-sm text-[#2E7D32] hover:underline">
-                Clear filters
+                {t('common.clearFilters')}
               </button>
             )}
           </div>
@@ -378,12 +386,12 @@ const Products = () => {
               <table className="w-full">
                 <thead>
                   <tr style={{ background: '#1B3A1F', borderBottom: '1px solid #2E5A32' }}>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Product Info</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Description</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Created By</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Created Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Status</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('products.table.productInfo')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('products.table.description')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('products.table.createdBy')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('products.table.createdDate')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('products.table.status')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('products.table.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -448,7 +456,7 @@ const Products = () => {
                             style={{ color: '#2E7D32' }}
                           >
                             <MoreVertical className="w-4 h-4" />
-                            <span className="text-xs font-medium">Actions</span>
+                            <span className="text-xs font-medium">{t('common.actions')}</span>
                           </button>
 
                           {/* Dropdown - Only View, Edit, Delete */}
@@ -474,7 +482,7 @@ const Products = () => {
                                 style={{ color: '#2E7D32' }}
                               >
                                 <Eye className="w-4 h-4" />
-                                View Details
+                                {t('products.actions.viewDetails')}
                               </button>
 
                               <button
@@ -486,7 +494,7 @@ const Products = () => {
                                 style={{ color: '#FF6F00' }}
                               >
                                 <Edit2 className="w-4 h-4" />
-                                Edit
+                                {t('products.actions.edit')}
                               </button>
 
                               <button
@@ -495,7 +503,7 @@ const Products = () => {
                                 style={{ color: '#D32F2F', borderColor: '#E8F5E9' }}
                               >
                                 <Trash2 className="w-4 h-4" />
-                                Delete
+                                {t('products.actions.delete')}
                               </button>
                             </div>
                           )}
@@ -511,8 +519,11 @@ const Products = () => {
             {pagination.pages > 1 && (
               <div className="px-6 py-4 border-t flex justify-between items-center flex-wrap gap-4" style={{ borderColor: '#E8F5E9' }}>
                 <div className="text-xs" style={{ color: '#8D6E63' }}>
-                  Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                  {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} products
+                  {t('products.pagination.showing', {
+                    start: (pagination.page - 1) * pagination.limit + 1,
+                    end: Math.min(pagination.page * pagination.limit, pagination.total),
+                    total: pagination.total
+                  })}
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -521,7 +532,7 @@ const Products = () => {
                     className="px-3 py-1 rounded border text-sm disabled:opacity-50 hover:bg-gray-50 transition-all"
                     style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}
                   >
-                    Previous
+                    {t('common.previous')}
                   </button>
                   <div className="flex gap-1">
                     {[...Array(Math.min(pagination.pages, 5))].map((_, i) => {
@@ -552,7 +563,7 @@ const Products = () => {
                     className="px-3 py-1 rounded border text-sm disabled:opacity-50 hover:bg-gray-50 transition-all"
                     style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}
                   >
-                    Next
+                    {t('common.next')}
                   </button>
                 </div>
               </div>
@@ -585,8 +596,8 @@ const Products = () => {
             <div className="relative bg-white rounded-xl shadow-xl w-full" style={{ maxWidth: '400px' }}>
               <div className="flex justify-between items-center p-6 border-b" style={{ borderColor: '#E8F5E9' }}>
                 <div>
-                  <h3 className="text-lg font-semibold" style={{ color: '#D32F2F' }}>Delete Product</h3>
-                  <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>Confirm deletion</p>
+                  <h3 className="text-lg font-semibold" style={{ color: '#D32F2F' }}>{t('products.modals.delete.title')}</h3>
+                  <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>{t('products.modals.delete.subtitle')}</p>
                 </div>
                 <button
                   onClick={() => { setShowDeleteModal(false); setSelectedProduct(null); }}
@@ -602,10 +613,10 @@ const Products = () => {
                   </div>
                 </div>
                 <p className="text-center text-sm mb-2" style={{ color: '#5D4037' }}>
-                  Are you sure you want to delete <strong>{selectedProduct.productName}</strong>?
+                  {t('products.modals.delete.confirmMessage', { name: selectedProduct.productName })}
                 </p>
                 <p className="text-center text-xs" style={{ color: '#8D6E63' }}>
-                  This action cannot be undone. The product will be permanently removed from the system.
+                  {t('products.modals.delete.warningMessage')}
                 </p>
               </div>
               <div className="flex justify-end gap-3 p-6 border-t" style={{ borderColor: '#E8F5E9' }}>
@@ -614,7 +625,7 @@ const Products = () => {
                   className="px-4 py-2 rounded-lg border text-sm font-medium transition-all hover:bg-gray-50"
                   style={{ borderColor: '#C8E6C9', color: '#8D6E63' }}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={() => handleDeleteProduct(selectedProduct)}
@@ -622,9 +633,9 @@ const Products = () => {
                   className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all hover:scale-105 bg-red-600"
                 >
                   {deleting ? (
-                    <><Loader className="w-4 h-4 animate-spin" /> Deleting...</>
+                    <><Loader className="w-4 h-4 animate-spin" /> {t('common.deleting')}</>
                   ) : (
-                    <><Trash2 className="w-4 h-4" /> Delete Product</>
+                    <><Trash2 className="w-4 h-4" /> {t('products.modals.delete.deleteButton')}</>
                   )}
                 </button>
               </div>

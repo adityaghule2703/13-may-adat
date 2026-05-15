@@ -614,7 +614,7 @@ const BudgetAlerts = () => {
                     <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.monthlyLimit')}</th>
                     {/* <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.currentSpend')}</th> */}
                     <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.remaining')}</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.usage')}</th>
+                   
                     <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.status')}</th>
                     <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.alertThreshold')}</th>
                     <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('budgetAlerts.table.actions')}</th>
@@ -646,14 +646,7 @@ const BudgetAlerts = () => {
                         <td className="px-6 py-4 text-right text-sm" style={{ color: '#5D4037' }}>
                           {formatCurrency(budget.remainingBudget || 0)}
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <div className={`h-full ${barColor} rounded-full`} style={{ width: `${Math.min(percentage, 100)}%` }}></div>
-                            </div>
-                            <span className="text-xs w-12" style={{ color: '#8D6E63' }}>{percentage}%</span>
-                          </div>
-                        </td>
+                       
                         <td className="px-6 py-4 text-center">
                           <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs" style={{ background: alertLevel.bg, color: alertLevel.text }}>
                             <AlertIcon className="w-3 h-3" />

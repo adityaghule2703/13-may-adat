@@ -75,15 +75,15 @@ const ViewBuyer = () => {
           pages: Math.ceil((data.data.purchaseHistory || []).length / prev.limit)
         }));
       } else {
-        setError(data.message || 'Failed to fetch buyer details');
+        setError(data.message || t('buyers.errors.fetchFailed'));
       }
     } catch (err) {
       console.error('Error fetching buyer:', err);
-      setError('Network error. Please check your connection.');
+      setError(t('common.networkError'));
     } finally {
       setLoading(false);
     }
-  }, [id, navigate]);
+  }, [id, navigate, t]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -124,30 +124,31 @@ const ViewBuyer = () => {
 
   const getBusinessTypeLabel = (type) => {
     const types = {
-      individual: 'Individual',
-      proprietorship: 'Proprietorship',
-      partnership: 'Partnership',
-      private_limited: 'Private Limited',
-      public_limited: 'Public Limited',
-      llp: 'LLP',
-      trust: 'Trust',
-      society: 'Society'
+      individual: t('buyers.businessTypes.individual'),
+      company: t('buyers.businessTypes.company'),
+      proprietorship: t('buyers.businessTypes.proprietorship'),
+      partnership: t('buyers.businessTypes.partnership'),
+      private_limited: t('buyers.businessTypes.privateLimited'),
+      public_limited: t('buyers.businessTypes.publicLimited'),
+      llp: t('buyers.businessTypes.llp'),
+      trust: t('buyers.businessTypes.trust'),
+      society: t('buyers.businessTypes.society')
     };
     return types[type] || type || 'N/A';
   };
 
   const getStatusColor = (isActive) =>
     isActive
-      ? { bg: '#E8F5E9', text: '#2E7D32', label: 'Active' }
-      : { bg: '#FFEBEE', text: '#D32F2F', label: 'Inactive' };
+      ? { bg: '#E8F5E9', text: '#2E7D32', label: t('buyers.status.active') }
+      : { bg: '#FFEBEE', text: '#D32F2F', label: t('buyers.status.inactive') };
 
   const getPaymentModeLabel = (mode) => {
     const modes = {
-      cash: 'Cash',
-      bank_transfer: 'Bank Transfer',
-      cheque: 'Cheque',
-      credit: 'Credit',
-      online: 'Online'
+      cash: t('payments.modes.cash'),
+      bank_transfer: t('payments.modes.bank'),
+      cheque: t('payments.modes.cheque'),
+      credit: t('buyers.paymentModes.credit'),
+      online: t('buyers.paymentModes.online')
     };
     return modes[mode] || mode || 'N/A';
   };
@@ -155,11 +156,11 @@ const ViewBuyer = () => {
   const getPurchaseStatusConfig = (status) => {
     switch (status) {
       case 'completed':
-        return { bg: '#E8F5E9', text: '#2E7D32', label: 'Completed', icon: CheckCircle };
+        return { bg: '#E8F5E9', text: '#2E7D32', label: t('purchases.status.completed'), icon: CheckCircle };
       case 'partial':
-        return { bg: '#FFF3E0', text: '#E65100', label: 'Partial', icon: Clock };
+        return { bg: '#FFF3E0', text: '#E65100', label: t('purchases.status.partialPayment'), icon: Clock };
       case 'pending':
-        return { bg: '#FFF8E1', text: '#F57C00', label: 'Pending', icon: AlertCircle };
+        return { bg: '#FFF8E1', text: '#F57C00', label: t('purchases.status.pending'), icon: AlertCircle };
       default:
         return { bg: '#F3F4F6', text: '#6B7280', label: status || 'N/A', icon: FileText };
     }
@@ -180,7 +181,7 @@ const ViewBuyer = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <Loader className="w-8 h-8 animate-spin" style={{ color: '#2E7D32' }} />
-        <span className="ml-2" style={{ color: '#2E7D32' }}>Loading buyer details...</span>
+        <span className="ml-2" style={{ color: '#2E7D32' }}>{t('common.loading')}</span>
       </div>
     );
   }
@@ -197,14 +198,14 @@ const ViewBuyer = () => {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: '#1B5E20' }}>Buyer Details</h1>
+            <h1 className="text-2xl font-bold" style={{ color: '#1B5E20' }}>{t('buyers.title')}</h1>
           </div>
         </div>
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-red-500" />
-          <span className="text-sm text-red-600">{error || 'Buyer not found'}</span>
+          <span className="text-sm text-red-600">{error || t('buyers.errors.fetchFailed')}</span>
           <button onClick={fetchBuyerDetails} className="ml-auto text-sm text-red-600 hover:underline">
-            Retry
+            {t('common.retry')}
           </button>
         </div>
       </div>
@@ -230,7 +231,7 @@ const ViewBuyer = () => {
               {buyer.displayName || buyer.name}
             </h1>
             <p className="text-sm mt-0.5" style={{ color: '#8D6E63' }}>
-              Buyer Details & Purchase History
+              {t('buyers.subtitle')}
             </p>
           </div>
         </div>
@@ -242,7 +243,7 @@ const ViewBuyer = () => {
             style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            {t('common.refresh')}
           </button>
           <button
             onClick={() => navigate(`/buyers/edit/${buyer._id}`)}
@@ -250,7 +251,7 @@ const ViewBuyer = () => {
             style={{ background: 'linear-gradient(135deg, #2E7D32, #43A047)', color: 'white' }}
           >
             <Edit className="w-4 h-4" />
-            Edit Buyer
+            {t('common.edit')}
           </button>
         </div>
       </div>
@@ -262,41 +263,46 @@ const ViewBuyer = () => {
           <div className="px-6 py-4 border-b" style={{ borderColor: '#E8F5E9', background: '#FAFAFA' }}>
             <div className="flex items-center gap-2">
               <User className="w-5 h-5" style={{ color: '#2E7D32' }} />
-              <h3 className="font-semibold" style={{ color: '#1B5E20' }}>Personal Information</h3>
+              <h3 className="font-semibold" style={{ color: '#1B5E20' }}>{t('buyers.personalInfo')}</h3>
             </div>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>Full Name</p>
+                  <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>{t('buyers.fullName')}</p>
                   <p className="text-sm" style={{ color: '#2E7D32' }}>{buyer.name}</p>
                 </div>
                 <div>
                   <p className="text-xs font-medium mb-1 flex items-center gap-1" style={{ color: '#8D6E63' }}>
-                    <Mail className="w-3 h-3" /> Email
+                    <Mail className="w-3 h-3" /> {t('buyers.email')}
                   </p>
                   <p className="text-sm" style={{ color: '#2E7D32' }}>{buyer.email || '—'}</p>
                 </div>
                 <div>
                   <p className="text-xs font-medium mb-1 flex items-center gap-1" style={{ color: '#8D6E63' }}>
-                    <Phone className="w-3 h-3" /> Mobile Number
+                    <Phone className="w-3 h-3" /> {t('buyers.mobileNumber')}
                   </p>
                   <p className="text-sm" style={{ color: '#2E7D32' }}>{buyer.mobile || '—'}</p>
                   {buyer.alternateMobile && (
-                    <p className="text-xs mt-1" style={{ color: '#8D6E63' }}>Alt: {buyer.alternateMobile}</p>
+                    <p className="text-xs mt-1" style={{ color: '#8D6E63' }}>{t('buyers.alternateMobile')}: {buyer.alternateMobile}</p>
                   )}
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
                   <p className="text-xs font-medium mb-1 flex items-center gap-1" style={{ color: '#8D6E63' }}>
-                    <MapPin className="w-3 h-3" /> Address
+                    <MapPin className="w-3 h-3" /> {t('buyers.address')}
                   </p>
-                  <p className="text-sm" style={{ color: '#2E7D32' }}>{buyer.fullAddress || '—'}</p>
+                  <p className="text-sm" style={{ color: '#2E7D32' }}>{buyer.fullAddress || buyer.address || '—'}</p>
+                  {(buyer.city || buyer.state || buyer.pincode) && (
+                    <p className="text-xs mt-1" style={{ color: '#8D6E63' }}>
+                      {buyer.city && `${buyer.city}`}{buyer.city && buyer.state && ', '}{buyer.state && `${buyer.state}`}{buyer.pincode && ` - ${buyer.pincode}`}
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>Status</p>
+                  <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>{t('common.status')}</p>
                   <span
                     className="text-xs px-2 py-1 rounded-full inline-flex items-center gap-1"
                     style={{ background: statusColors.bg, color: statusColors.text }}
@@ -305,12 +311,7 @@ const ViewBuyer = () => {
                     {statusColors.label}
                   </span>
                 </div>
-                <div>
-                  <p className="text-xs font-medium mb-1 flex items-center gap-1" style={{ color: '#8D6E63' }}>
-                    <Calendar className="w-3 h-3" /> Registered On
-                  </p>
-                  <p className="text-sm" style={{ color: '#2E7D32' }}>{formatDate(buyer.createdAt)}</p>
-                </div>
+                
               </div>
             </div>
           </div>
@@ -323,20 +324,20 @@ const ViewBuyer = () => {
             <div className="px-6 py-4 border-b" style={{ borderColor: '#E8F5E9', background: '#FAFAFA' }}>
               <div className="flex items-center gap-2">
                 <Building2 className="w-5 h-5" style={{ color: '#2E7D32' }} />
-                <h3 className="font-semibold" style={{ color: '#1B5E20' }}>Business Details</h3>
+                <h3 className="font-semibold" style={{ color: '#1B5E20' }}>{t('buyers.businessDetails')}</h3>
               </div>
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>Business Name</p>
+                <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>{t('buyers.businessName')}</p>
                 <p className="text-sm font-semibold" style={{ color: '#2E7D32' }}>{buyer.businessName || '—'}</p>
               </div>
               <div>
-                <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>Business Type</p>
+                <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>{t('buyers.businessType')}</p>
                 <p className="text-sm" style={{ color: '#2E7D32' }}>{getBusinessTypeLabel(buyer.businessType)}</p>
               </div>
               <div>
-                <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>GST / PAN</p>
+                <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>{t('buyers.gstNumber')} / {t('buyers.panNumber')}</p>
                 <p className="text-sm" style={{ color: '#2E7D32' }}>
                   {buyer.gstNumber ? `GST: ${buyer.gstNumber}` : 'GST: —'}
                   {buyer.panNumber && <span className="block text-xs mt-1">PAN: {buyer.panNumber}</span>}
@@ -350,28 +351,28 @@ const ViewBuyer = () => {
             <div className="px-6 py-4 border-b" style={{ borderColor: '#E8F5E9', background: '#FAFAFA' }}>
               <div className="flex items-center gap-2">
                 <Wallet className="w-5 h-5" style={{ color: '#2E7D32' }} />
-                <h3 className="font-semibold" style={{ color: '#1B5E20' }}>Financial Summary</h3>
+                <h3 className="font-semibold" style={{ color: '#1B5E20' }}>{t('buyers.creditTerms')}</h3>
               </div>
             </div>
             <div className="p-6 space-y-4">
               <div className="flex justify-between items-center pb-2 border-b" style={{ borderColor: '#E8F5E9' }}>
-                <span className="text-xs" style={{ color: '#8D6E63' }}>Total Purchases</span>
+                <span className="text-xs" style={{ color: '#8D6E63' }}>{t('buyers.table.purchases')}</span>
                 <span className="text-sm font-bold" style={{ color: '#2E7D32' }}>{buyer.totalPurchases || 0}</span>
               </div>
               <div className="flex justify-between items-center pb-2 border-b" style={{ borderColor: '#E8F5E9' }}>
-                <span className="text-xs" style={{ color: '#8D6E63' }}>Total Purchase Value</span>
+                <span className="text-xs" style={{ color: '#8D6E63' }}>{t('buyers.table.purchaseValue')}</span>
                 <span className="text-sm font-bold" style={{ color: '#FF6F00' }}>{formatCurrency(buyer.totalPurchaseValue)}</span>
               </div>
               <div className="flex justify-between items-center pb-2 border-b" style={{ borderColor: '#E8F5E9' }}>
-                <span className="text-xs" style={{ color: '#8D6E63' }}>Credit Limit</span>
+                <span className="text-xs" style={{ color: '#8D6E63' }}>{t('buyers.creditLimit')}</span>
                 <span className="text-sm font-bold" style={{ color: '#2E7D32' }}>{formatCurrency(buyer.creditLimit)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-xs" style={{ color: '#8D6E63' }}>Credit Days</span>
-                <span className="text-sm font-bold" style={{ color: '#2E7D32' }}>{buyer.creditDays} days</span>
+                <span className="text-xs" style={{ color: '#8D6E63' }}>{t('buyers.creditDays')}</span>
+                <span className="text-sm font-bold" style={{ color: '#2E7D32' }}>{buyer.creditDays} {t('buyers.table.daysCredit')}</span>
               </div>
               <div className="flex justify-between items-center pt-2 mt-2 border-t" style={{ borderColor: '#E8F5E9' }}>
-                <span className="text-xs" style={{ color: '#8D6E63' }}>Default Payment Mode</span>
+                <span className="text-xs" style={{ color: '#8D6E63' }}>{t('buyers.defaultPaymentMode')}</span>
                 <span className="text-sm font-semibold" style={{ color: '#2E7D32' }}>{getPaymentModeLabel(buyer.defaultPaymentMode)}</span>
               </div>
             </div>
@@ -384,9 +385,9 @@ const ViewBuyer = () => {
         <div className="px-6 py-4 border-b flex items-center justify-between flex-wrap gap-4" style={{ borderColor: '#E8F5E9', background: '#FAFAFA' }}>
           <div className="flex items-center gap-2">
             <Receipt className="w-5 h-5" style={{ color: '#2E7D32' }} />
-            <h3 className="font-semibold" style={{ color: '#1B5E20' }}>Purchase History</h3>
+            <h3 className="font-semibold" style={{ color: '#1B5E20' }}>{t('purchases.title')}</h3>
             <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: '#E8F5E9', color: '#2E7D32' }}>
-              {purchaseHistory.length} {purchaseHistory.length === 1 ? 'Purchase' : 'Purchases'}
+              {purchaseHistory.length} {purchaseHistory.length === 1 ? t('purchases.title') : t('purchases.title')}
             </span>
           </div>
         </div>
@@ -394,7 +395,7 @@ const ViewBuyer = () => {
         {purchaseHistory.length === 0 ? (
           <div className="text-center py-12">
             <Package className="w-12 h-12 mx-auto mb-3" style={{ color: '#C8E6C9' }} />
-            <p className="text-sm" style={{ color: '#8D6E63' }}>No purchase history found</p>
+            <p className="text-sm" style={{ color: '#8D6E63' }}>{t('purchases.noPurchasesFound')}</p>
           </div>
         ) : (
           <>
@@ -402,15 +403,15 @@ const ViewBuyer = () => {
               <table className="w-full">
                 <thead>
                   <tr style={{ background: '#1B3A1F' }}>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Invoice #</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Products</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Gross Total</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Deductions</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Final Amount</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Amount Due</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Status</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.table.receiptNo')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.purchaseDate')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.table.product')}</th>
+                    <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.grossTotal')}</th>
+                    <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.totalDeductions')}</th>
+                    <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.finalPayable')}</th>
+                    <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.amountDue')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('common.status')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('common.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -426,49 +427,49 @@ const ViewBuyer = () => {
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm font-medium" style={{ color: '#2E7D32' }}>
-                            {purchase.invoiceNumber}
+                            {purchase.invoiceNumber || purchase.receiptNumber}
                           </span>
-                         </td>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" style={{ color: '#A5D6A7' }} />
-                            <span className="text-sm" style={{ color: '#5D4037' }}>{formatDate(purchase.saleDate)}</span>
+                            <span className="text-sm" style={{ color: '#5D4037' }}>{formatDate(purchase.saleDate || purchase.purchaseDate)}</span>
                           </div>
-                         </td>
+                        </td>
                         <td className="px-6 py-4">
                           <div className="space-y-1">
                             {purchase.lines?.slice(0, 2).map((line, idx) => (
                               <p key={idx} className="text-xs" style={{ color: '#5D4037' }}>
-                                {line.productName} - {line.bags} bags ({line.actualQty} {line.unit})
+                                {line.productName} - {line.bags || line.actualQty} {line.unit || (line.pricingType === 'kg' ? 'kg' : line.pricingType)}
                               </p>
                             ))}
                             {purchase.lines?.length > 2 && (
                               <p className="text-xs" style={{ color: '#8D6E63' }}>
-                                +{purchase.lines.length - 2} more items
+                                +{purchase.lines.length - 2} {t('common.moreItems')}
                               </p>
                             )}
                           </div>
-                         </td>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <span className="text-sm" style={{ color: '#2E7D32' }}>
                             {formatCurrency(purchase.grossTotal)}
                           </span>
-                         </td>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <span className="text-sm" style={{ color: '#D32F2F' }}>
                             {formatCurrency(purchase.totalDeductions)}
                           </span>
-                         </td>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <span className="text-sm font-semibold" style={{ color: '#FF6F00' }}>
-                            {formatCurrency(purchase.finalReceivable)}
+                            {formatCurrency(purchase.finalReceivable || purchase.finalPayable)}
                           </span>
-                         </td>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <span className="text-sm font-semibold" style={{ color: purchase.amountDue > 0 ? '#D32F2F' : '#2E7D32' }}>
                             {formatCurrency(purchase.amountDue)}
                           </span>
-                         </td>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-center">
                           <span
                             className="text-xs px-2 py-1 rounded-full inline-flex items-center gap-1"
@@ -477,29 +478,33 @@ const ViewBuyer = () => {
                             <StatusIcon className="w-3 h-3" />
                             {statusConfig.label}
                           </span>
-                         </td>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-center">
                           <button
                             onClick={() => navigate(`/purchases/view/${purchase._id}`)}
                             className="p-1.5 rounded-lg hover:bg-gray-100 transition-all"
                             style={{ color: '#2E7D32' }}
+                            title={t('common.view')}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
-                         </td>
-                       </tr>
+                        </td>
+                      </tr>
                     );
                   })}
                 </tbody>
-               </table>
+              </table>
             </div>
 
             {/* Pagination */}
             {pagination.pages > 1 && (
               <div className="px-6 py-4 border-t flex justify-between items-center flex-wrap gap-4" style={{ borderColor: '#E8F5E9' }}>
                 <div className="text-xs" style={{ color: '#8D6E63' }}>
-                  Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                  {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} purchases
+                  {t('purchases.pagination.showing', {
+                    start: (pagination.page - 1) * pagination.limit + 1,
+                    end: Math.min(pagination.page * pagination.limit, pagination.total),
+                    total: pagination.total
+                  })}
                 </div>
                 <div className="flex gap-2 items-center">
                   <button
@@ -534,7 +539,7 @@ const ViewBuyer = () => {
           <div className="px-6 py-4 border-b" style={{ borderColor: '#E8F5E9', background: '#FAFAFA' }}>
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5" style={{ color: '#2E7D32' }} />
-              <h3 className="font-semibold" style={{ color: '#1B5E20' }}>Additional Notes</h3>
+              <h3 className="font-semibold" style={{ color: '#1B5E20' }}>{t('buyers.notes')}</h3>
             </div>
           </div>
           <div className="p-6">
@@ -543,28 +548,7 @@ const ViewBuyer = () => {
         </div>
       )}
 
-      {/* Meta Information */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b" style={{ borderColor: '#E8F5E9', background: '#FAFAFA' }}>
-          <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5" style={{ color: '#2E7D32' }} />
-            <h3 className="font-semibold" style={{ color: '#1B5E20' }}>Record Information</h3>
-          </div>
-        </div>
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>Created By</p>
-              <p className="text-sm" style={{ color: '#2E7D32' }}>{buyer.createdBy?.name || '—'}</p>
-              <p className="text-xs mt-1" style={{ color: '#8D6E63' }}>{formatDateTime(buyer.createdAt)}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium mb-1" style={{ color: '#8D6E63' }}>Last Updated</p>
-              <p className="text-sm" style={{ color: '#2E7D32' }}>{formatDateTime(buyer.updatedAt)}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 };

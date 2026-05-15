@@ -61,22 +61,23 @@ const COLORS = {
   border: '#E3E8EF'
 };
 
-// Pricing types
-const pricingTypeOptions = [
-  { value: 'kg', label: 'Per KG' },
-  { value: 'quintal', label: 'Per Quintal' },
-  { value: 'ton', label: 'Per Ton' },
-  { value: 'bag', label: 'Per Bag' }
+// Pricing types with translations
+const getPricingTypeOptions = (t) => [
+  { value: 'kg', label: t('sales.pricingTypes.kg') },
+  { value: 'quintal', label: t('sales.pricingTypes.quintal') },
+  { value: 'ton', label: t('sales.pricingTypes.ton') },
+  { value: 'bag', label: t('sales.pricingTypes.bag') }
 ];
 
-// Commission types
-const commissionTypeOptions = [
-  { value: 'fixed', label: 'Fixed Amount' },
-  { value: 'percent', label: 'Percentage' }
+// Commission types with translations
+const getCommissionTypeOptions = (t) => [
+  { value: 'fixed', label: t('sales.commissionTypes.fixed') },
+  { value: 'percent', label: t('sales.commissionTypes.percent') }
 ];
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -131,6 +132,15 @@ const AddSale = () => {
     netAmount: 0
   });
 
+  const pricingTypeOptions = getPricingTypeOptions(t);
+  const commissionTypeOptions = getCommissionTypeOptions(t);
+
+  const steps = [
+    t('sales.steps.buyerInfo'),
+    t('sales.steps.productLines'),
+    t('sales.steps.deductions')
+  ];
+
   const [formData, setFormData] = useState({
     buyerId: '',
     saleDate: new Date().toISOString().split('T')[0],
@@ -144,7 +154,8 @@ const AddSale = () => {
         actualQty: '',
         qualityDeduction: '',
         rate: '',
-        notes: ''
+        notes: '',
+        isAutoCalculated: false
       }
     ],
     deductions: {
@@ -158,12 +169,6 @@ const AddSale = () => {
     notes: ''
   });
 
-  const steps = [
-    'Buyer Information',
-    'Product Lines',
-    'Deductions & Summary'
-  ];
-
   const getToken = () => localStorage.getItem('token');
 
   useEffect(() => {
@@ -171,7 +176,6 @@ const AddSale = () => {
     fetchProducts();
   }, []);
 
-  // Updated fetchBuyers to use the dropdown API
   const fetchBuyers = async () => {
     try {
       const token = getToken();
@@ -195,7 +199,6 @@ const AddSale = () => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.data.success) {
-        // Filter only active products
         const activeProducts = response.data.data.filter(p => p.isActive === true);
         setProducts(activeProducts);
       }
@@ -213,7 +216,6 @@ const AddSale = () => {
     const netQty = quantity - (parseFloat(line.qualityDeduction) || 0);
     let total = netQty * (parseFloat(line.rate) || 0);
     
-    // For bag pricing, calculate differently
     if (line.pricingType === 'bag') {
       total = (parseFloat(line.bags) || 0) * (parseFloat(line.rate) || 0);
     }
@@ -265,7 +267,8 @@ const AddSale = () => {
       actualQty: '',
       qualityDeduction: '',
       bags: '',
-      weightPerBag: ''
+      weightPerBag: '',
+      isAutoCalculated: false
     };
     setFormData(prev => ({ ...prev, lines: updatedLines }));
     
@@ -278,7 +281,7 @@ const AddSale = () => {
     const updatedLines = [...formData.lines];
     updatedLines[index][field] = value;
 
-    // Auto-calculate actualQty when bags and weightPerBag are both present (for kg pricing)
+    // Auto-calculate quantity when bags and weight per bag are both filled for kg pricing
     if ((field === 'bags' || field === 'weightPerBag') &&
       updatedLines[index].bags && updatedLines[index].bags !== '' &&
       updatedLines[index].weightPerBag && updatedLines[index].weightPerBag !== '' &&
@@ -286,9 +289,16 @@ const AddSale = () => {
       const bags = parseFloat(updatedLines[index].bags) || 0;
       const weightPerBag = parseFloat(updatedLines[index].weightPerBag) || 0;
       updatedLines[index].actualQty = (bags * weightPerBag).toString();
+      // Mark that quantity is auto-calculated
+      updatedLines[index].isAutoCalculated = true;
+    } else if ((field === 'bags' || field === 'weightPerBag') && 
+               (!updatedLines[index].bags || updatedLines[index].bags === '' || 
+                !updatedLines[index].weightPerBag || updatedLines[index].weightPerBag === '')) {
+      // If bags or weight is cleared, allow manual entry
+      updatedLines[index].isAutoCalculated = false;
     }
 
-    // Auto-calculate bags when actualQty and weightPerBag are present
+    // Calculate bags when quantity is manually entered
     if (field === 'actualQty' && updatedLines[index].pricingType === 'kg' &&
       updatedLines[index].weightPerBag && updatedLines[index].weightPerBag !== '') {
       const actualQty = parseFloat(updatedLines[index].actualQty) || 0;
@@ -296,6 +306,8 @@ const AddSale = () => {
       if (weightPerBag > 0) {
         updatedLines[index].bags = Math.ceil(actualQty / weightPerBag).toString();
       }
+      // If user manually edits quantity, disable auto-calculation
+      updatedLines[index].isAutoCalculated = false;
     }
 
     setFormData(prev => ({ ...prev, lines: updatedLines }));
@@ -313,7 +325,8 @@ const AddSale = () => {
         actualQty: '',
         qualityDeduction: '',
         rate: '',
-        notes: ''
+        notes: '',
+        isAutoCalculated: false
       }]
     }));
   };
@@ -337,32 +350,32 @@ const AddSale = () => {
 
     if (step === 0) {
       if (!formData.buyerId) {
-        errors.buyerId = 'Please select a buyer';
+        errors.buyerId = t('sales.errors.buyerRequired');
         isValid = false;
       }
       if (!formData.saleDate) {
-        errors.saleDate = 'Sale date is required';
+        errors.saleDate = t('sales.errors.dateRequired');
         isValid = false;
       }
     } else if (step === 1) {
       formData.lines.forEach((line, idx) => {
         if (!line.productName) {
-          errors[`line_${idx}_product`] = 'Please select a product';
+          errors[`line_${idx}_product`] = t('sales.errors.productRequired');
           isValid = false;
         }
         if (!line.rate || parseFloat(line.rate) <= 0) {
-          errors[`line_${idx}_rate`] = 'Valid rate required';
+          errors[`line_${idx}_rate`] = t('sales.errors.rateRequired');
           isValid = false;
         }
         if (!line.actualQty || parseFloat(line.actualQty) <= 0) {
-          errors[`line_${idx}_qty`] = 'Valid quantity required';
+          errors[`line_${idx}_qty`] = t('sales.errors.qtyRequired');
           isValid = false;
         }
       });
     }
 
     setFieldErrors(errors);
-    if (!isValid) setError('Please fill all required fields correctly');
+    if (!isValid) setError(t('common.fillCorrectly'));
     return isValid;
   };
 
@@ -385,11 +398,11 @@ const AddSale = () => {
 
   const handleSubmit = async () => {
     if (!formData.buyerId) {
-      showError('Please select a buyer');
+      showError(t('sales.errors.buyerRequired'));
       return;
     }
     if (formData.lines.some(line => !line.productName || !line.rate || parseFloat(line.rate) <= 0 || !line.actualQty || parseFloat(line.actualQty) <= 0)) {
-      showError('Please complete all product lines');
+      showError(t('sales.errors.completeLines'));
       return;
     }
 
@@ -432,7 +445,7 @@ const AddSale = () => {
         setSuccess(true);
         setTimeout(() => navigate('/sales'), 2000);
       } else {
-        const errorMessage = response.data.message || response.data.error || 'Failed to create sale';
+        const errorMessage = response.data.message || response.data.error || t('sales.errors.createFailed');
         showError(errorMessage);
       }
     } catch (error) {
@@ -440,7 +453,7 @@ const AddSale = () => {
       const errorMessage = error.response?.data?.message || 
                           error.response?.data?.error || 
                           error.message || 
-                          'Network error. Please check your connection.';
+                          t('common.networkError');
       showError(errorMessage);
     } finally {
       setLoading(false);
@@ -453,7 +466,6 @@ const AddSale = () => {
     }).format(amount || 0);
   };
 
-  // Label component
   const Label = ({ children, required }) => (
     <Typography sx={{ 
       fontSize: '0.7rem', 
@@ -466,7 +478,6 @@ const AddSale = () => {
     </Typography>
   );
 
-  // Input styling
   const inputSx = {
     '& .MuiOutlinedInput-root': {
       borderRadius: 1.5,
@@ -502,10 +513,10 @@ const AddSale = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            New Sale
+            {t('sales.addTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Create a new sale invoice
+            {t('sales.addSubtitle')}
           </Typography>
         </Box>
       </Box>
@@ -518,7 +529,7 @@ const AddSale = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Sale created successfully! Redirecting...
+          {t('sales.messages.createSuccess')}
         </Alert>
       )}
 
@@ -545,7 +556,7 @@ const AddSale = () => {
                 </Box>
                 <Box>
                   <Typography variant="caption" sx={{ color: currentStep >= index ? '#2E7D32' : '#8D6E63', display: 'block', textAlign: 'left' }}>
-                    Step {index + 1}
+                    {t('common.step')} {index + 1}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500, color: currentStep >= index ? '#1B5E20' : '#8D6E63' }}>
                     {step}
@@ -566,14 +577,14 @@ const AddSale = () => {
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <ShoppingCart sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
-              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>Sale Information</Typography>
+              <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>{t('sales.saleInformation')}</Typography>
             </Stack>
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-              {/* SELECT BUYER - First column - Using dropdown API */}
+              {/* SELECT BUYER */}
               <Box>
-                <Label required>Select Buyer</Label>
+                <Label required>{t('sales.selectBuyer')}</Label>
                 <Autocomplete
                   fullWidth
                   options={buyers}
@@ -586,7 +597,7 @@ const AddSale = () => {
                     <TextField
                       {...params}
                       size="small"
-                      placeholder="Search buyer by name or mobile..."
+                      placeholder={t('sales.placeholders.selectBuyer')}
                       error={!!fieldErrors.buyerId}
                       helperText={fieldErrors.buyerId}
                       sx={inputSx}
@@ -621,21 +632,21 @@ const AddSale = () => {
                 {selectedBuyer && (
                   <Box sx={{ mt: 2, p: 1.5, bgcolor: COLORS.primaryLight, borderRadius: 1.5 }}>
                     <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
-                      Selected Buyer
+                      {t('sales.selectedBuyer')}
                     </Typography>
                     <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem', color: COLORS.text.primary }}>
                       {selectedBuyer.displayName || selectedBuyer.name}
                     </Typography>
                     <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                      {selectedBuyer.businessName || 'Individual'} • {selectedBuyer.city || 'Location not specified'}
+                      {selectedBuyer.businessName || 'Individual'} • {selectedBuyer.city || t('sales.locationNotSpecified')}
                     </Typography>
                   </Box>
                 )}
               </Box>
 
-              {/* SALE DATE - Second column */}
+              {/* SALE DATE */}
               <Box>
-                <Label required>Sale Date</Label>
+                <Label required>{t('sales.saleDate')}</Label>
                 <TextField
                   fullWidth
                   type="date"
@@ -648,9 +659,9 @@ const AddSale = () => {
                 />
               </Box>
 
-              {/* ADDITIONAL NOTES - spans both columns */}
+              {/* ADDITIONAL NOTES */}
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label>Notes</Label>
+                <Label>{t('common.notes')}</Label>
                 <TextField
                   fullWidth
                   multiline
@@ -658,7 +669,7 @@ const AddSale = () => {
                   size="small"
                   value={formData.notes}
                   onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                  placeholder="Additional notes about this sale..."
+                  placeholder={t('sales.placeholders.notes')}
                   sx={inputSx}
                 />
               </Box>
@@ -681,7 +692,7 @@ const AddSale = () => {
                   <Stack direction="row" spacing={1} alignItems="center">
                     <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
                     <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
-                      Product Line {index + 1}
+                      {t('sales.productLine')} {index + 1}
                     </Typography>
                   </Stack>
                   {formData.lines.length > 1 && (
@@ -692,9 +703,9 @@ const AddSale = () => {
                 </Box>
                 <Box sx={{ p: 2.5 }}>
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                    {/* PRODUCT NAME - spans both columns - Now with Autocomplete */}
+                    {/* PRODUCT NAME */}
                     <Box sx={{ gridColumn: 'span 2' }}>
-                      <Label required>Product Name</Label>
+                      <Label required>{t('sales.productName')}</Label>
                       <Autocomplete
                         fullWidth
                         options={products}
@@ -707,7 +718,7 @@ const AddSale = () => {
                           <TextField
                             {...params}
                             size="small"
-                            placeholder="Search or select product..."
+                            placeholder={t('sales.placeholders.selectProduct')}
                             error={!!fieldErrors[`line_${index}_product`]}
                             helperText={fieldErrors[`line_${index}_product`]}
                             sx={inputSx}
@@ -727,7 +738,7 @@ const AddSale = () => {
                                 )}
                               </Box>
                               <Typography variant="caption" sx={{ fontSize: '0.65rem', color: option.isActive ? '#2E7D32' : '#D32F2F' }}>
-                                {option.isActive ? 'Active' : 'Inactive'}
+                                {option.isActive ? t('products.status.active') : t('products.status.inactive')}
                               </Typography>
                             </Box>
                           </li>
@@ -746,9 +757,9 @@ const AddSale = () => {
                       />
                     </Box>
 
-                    {/* PRICING TYPE - first column */}
+                    {/* PRICING TYPE */}
                     <Box>
-                      <Label required>Pricing Type</Label>
+                      <Label required>{t('sales.pricingType')}</Label>
                       <Autocomplete
                         fullWidth
                         options={pricingTypeOptions}
@@ -762,7 +773,7 @@ const AddSale = () => {
                           <TextField
                             {...params}
                             size="small"
-                            placeholder="Select pricing type"
+                            placeholder={t('sales.placeholders.selectPricingType')}
                             sx={inputSx}
                           />
                         )}
@@ -771,29 +782,19 @@ const AddSale = () => {
                             <Typography sx={{ fontSize: '0.75rem' }}>{option.label}</Typography>
                           </li>
                         )}
-                        ListboxProps={{
-                          sx: {
-                            maxHeight: '300px',
-                            '& .MuiAutocomplete-option': {
-                              fontSize: '0.75rem',
-                              py: 1,
-                              px: 1.5
-                            }
-                          }
-                        }}
                       />
                     </Box>
 
-                    {/* RATE - second column */}
+                    {/* RATE */}
                     <Box>
-                      <Label required>Rate</Label>
+                      <Label required>{t('sales.rate')}</Label>
                       <TextField
                         fullWidth
                         type="number"
                         size="small"
                         value={line.rate}
                         onChange={(e) => handleLineChange(index, 'rate', e.target.value)}
-                        placeholder="Enter rate"
+                        placeholder={t('sales.placeholders.rate')}
                         error={!!fieldErrors[`line_${index}_rate`]}
                         helperText={fieldErrors[`line_${index}_rate`]}
                         sx={inputSx}
@@ -814,86 +815,99 @@ const AddSale = () => {
                     {line.pricingType === 'kg' && (
                       <>
                         <Box>
-                          <Label>Number of Bags</Label>
+                          <Label>{t('sales.numberOfBags')}</Label>
                           <TextField
                             fullWidth
                             type="number"
                             size="small"
                             value={line.bags}
                             onChange={(e) => handleLineChange(index, 'bags', e.target.value)}
-                            placeholder="Number of bags"
+                            placeholder={t('sales.placeholders.numberOfBags')}
                             sx={inputSx}
                           />
                         </Box>
                         <Box>
-                          <Label>Weight Per Bag (kg)</Label>
+                          <Label>{t('sales.weightPerBag')}</Label>
                           <TextField
                             fullWidth
                             type="number"
                             size="small"
                             value={line.weightPerBag}
                             onChange={(e) => handleLineChange(index, 'weightPerBag', e.target.value)}
-                            placeholder="Weight per bag"
+                            placeholder={t('sales.placeholders.weightPerBag')}
                             sx={inputSx}
                           />
                         </Box>
                       </>
                     )}
 
-                    {/* QUANTITY - first column */}
+                    {/* QUANTITY - Disabled when auto-calculated */}
                     <Box>
-                      <Label required>Quantity</Label>
+                      <Label required>{t('sales.quantity')}</Label>
                       <TextField
                         fullWidth
                         type="number"
                         size="small"
                         value={line.actualQty}
                         onChange={(e) => handleLineChange(index, 'actualQty', e.target.value)}
-                        placeholder="Enter quantity"
+                        placeholder={t('sales.placeholders.quantity')}
                         error={!!fieldErrors[`line_${index}_qty`]}
                         helperText={fieldErrors[`line_${index}_qty`]}
-                        sx={inputSx}
+                        disabled={line.pricingType === 'kg' && line.bags && line.bags !== '' && line.weightPerBag && line.weightPerBag !== '' && line.isAutoCalculated}
+                        sx={{
+                          ...inputSx,
+                          '& .MuiInputBase-input.Mui-disabled': {
+                            backgroundColor: '#F5F5F5',
+                            color: COLORS.text.secondary,
+                            WebkitTextFillColor: COLORS.text.secondary,
+                          }
+                        }}
                       />
-                      {line.pricingType === 'kg' && line.bags && line.bags !== '' && line.weightPerBag && line.weightPerBag !== '' && (
+                      {line.pricingType === 'kg' && line.bags && line.bags !== '' && line.weightPerBag && line.weightPerBag !== '' && line.isAutoCalculated && (
+                        <Typography variant="caption" sx={{ mt: 0.5, display: 'block', color: '#2E7D32', fontSize: '0.65rem' }}>
+                          {t('sales.autoCalculatedFromBags')}: {line.bags} {t('sales.bags')} × {line.weightPerBag} kg = {(parseFloat(line.bags) * parseFloat(line.weightPerBag)).toFixed(2)} kg
+                        </Typography>
+                      )}
+                      {line.pricingType === 'kg' && line.bags && line.bags !== '' && line.weightPerBag && line.weightPerBag !== '' && !line.isAutoCalculated && (
                         <Typography variant="caption" sx={{ mt: 0.5, display: 'block', color: '#8D6E63', fontSize: '0.65rem' }}>
-                          Auto-calculated: {line.bags} bags × {line.weightPerBag} kg = {parseFloat(line.bags) * parseFloat(line.weightPerBag)} kg
+                          {t('sales.bagsCalculatedFromQty')}: {line.bags} {t('sales.bags')} × {line.weightPerBag} kg = {(parseFloat(line.bags) * parseFloat(line.weightPerBag)).toFixed(2)} kg
                         </Typography>
                       )}
                     </Box>
 
-                    {/* QUALITY DEDUCTION - second column */}
+                    {/* QUALITY DEDUCTION */}
                     <Box>
-                      <Label>Quality Deduction (kg)</Label>
+                      <Label>{t('sales.qualityDeduction')}</Label>
                       <TextField
                         fullWidth
                         type="number"
                         size="small"
                         value={line.qualityDeduction}
                         onChange={(e) => handleLineChange(index, 'qualityDeduction', e.target.value)}
-                        placeholder="Quality deduction"
+                        placeholder={t('sales.placeholders.qualityDeduction')}
                         sx={inputSx}
                       />
                     </Box>
 
-                    {/* LINE NOTES - spans both columns */}
+                    {/* LINE NOTES */}
                     <Box sx={{ gridColumn: 'span 2' }}>
-                      <Label>Line Notes</Label>
+                      <Label>{t('sales.lineNotes')}</Label>
                       <TextField
                         fullWidth
                         size="small"
                         value={line.notes}
                         onChange={(e) => handleLineChange(index, 'notes', e.target.value)}
-                        placeholder="Notes for this product line"
+                        placeholder={t('sales.placeholders.lineNotes')}
                         sx={inputSx}
                       />
                     </Box>
 
-                    {/* LINE TOTAL - spans both columns */}
+                    {/* LINE TOTAL */}
                     <Box sx={{ gridColumn: 'span 2' }}>
                       <Box sx={{ p: 2, bgcolor: COLORS.primaryLight, borderRadius: 1.5 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                           <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>
-                            Line Total:
+                            {t('sales.lineTotal')}:
                           </Typography>
                           <Typography sx={{ fontSize: '0.9rem', fontWeight: 700, color: COLORS.primaryDark }}>
                             {formatCurrency(lineTotal)}
@@ -922,7 +936,7 @@ const AddSale = () => {
               '&:hover': { borderColor: COLORS.primary, bgcolor: COLORS.primaryLight }
             }}
           >
-            <AddIcon sx={{ mr: 0.5, fontSize: '1rem' }} /> Add Another Product
+            <AddIcon sx={{ mr: 0.5, fontSize: '1rem' }} /> {t('sales.addAnotherProduct')}
           </Button>
         </Stack>
       )}
@@ -936,42 +950,42 @@ const AddSale = () => {
               <Stack direction="row" spacing={1} alignItems="center">
                 <Settings sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
                 <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
-                  Deductions & Charges
+                  {t('sales.deductionsCharges')}
                 </Typography>
               </Stack>
             </Box>
             <Box sx={{ p: 2.5 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 <Box>
-                  <Label>Transport Charges</Label>
+                  <Label>{t('sales.transportCharges')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.transport}
                     onChange={(e) => handleDeductionChange('transport', e.target.value)}
-                    placeholder="Transport charges"
+                    placeholder={t('sales.placeholders.transportCharges')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
                 </Box>
 
                 <Box>
-                  <Label>Labour Charges</Label>
+                  <Label>{t('sales.labourCharges')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.labour}
                     onChange={(e) => handleDeductionChange('labour', e.target.value)}
-                    placeholder="Labour charges"
+                    placeholder={t('sales.placeholders.labourCharges')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
                 </Box>
 
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label>Commission</Label>
+                  <Label>{t('sales.commission')}</Label>
                   <Stack direction="row" spacing={1}>
                     <TextField
                       fullWidth
@@ -980,8 +994,8 @@ const AddSale = () => {
                       value={formData.deductions.commission}
                       onChange={(e) => handleDeductionChange('commission', e.target.value)}
                       placeholder={formData.deductions.commissionType === 'percent' 
-                        ? 'Commission percentage' 
-                        : 'Commission amount'}
+                        ? t('sales.placeholders.commissionPercent') 
+                        : t('sales.placeholders.commissionAmount')}
                       sx={{ ...inputSx, flex: 2 }}
                       InputProps={{
                         startAdornment: (
@@ -1005,7 +1019,7 @@ const AddSale = () => {
                           <TextField
                             {...params}
                             size="small"
-                            placeholder="Type"
+                            placeholder={t('sales.placeholders.commissionType')}
                             sx={inputSx}
                           />
                         )}
@@ -1020,28 +1034,28 @@ const AddSale = () => {
                 </Box>
 
                 <Box>
-                  <Label>Storage Charges</Label>
+                  <Label>{t('sales.storageCharges')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.storage}
                     onChange={(e) => handleDeductionChange('storage', e.target.value)}
-                    placeholder="Storage charges"
+                    placeholder={t('sales.placeholders.storageCharges')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
                 </Box>
 
                 <Box>
-                  <Label>Advance Adjusted</Label>
+                  <Label>{t('sales.advanceAdjusted')}</Label>
                   <TextField
                     fullWidth
                     type="number"
                     size="small"
                     value={formData.deductions.advanceAdjusted}
                     onChange={(e) => handleDeductionChange('advanceAdjusted', e.target.value)}
-                    placeholder="Advance amount to adjust"
+                    placeholder={t('sales.placeholders.advanceAdjusted')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
                   />
@@ -1053,12 +1067,12 @@ const AddSale = () => {
           {/* Summary Section */}
           <Paper sx={{ p: 2.5, bgcolor: COLORS.primaryLight, borderRadius: 2.5, border: `1px solid ${COLORS.primary}` }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, color: COLORS.primaryDark, mb: 2, fontSize: '0.85rem' }}>
-              Sale Summary
+              {t('sales.saleSummary')}
             </Typography>
             <Stack spacing={1.5}>
               <Stack direction="row" justifyContent="space-between">
                 <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>
-                  Gross Total
+                  {t('sales.grossTotal')}
                 </Typography>
                 <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: COLORS.text.primary }}>
                   {formatCurrency(calculations.grossTotal)}
@@ -1066,7 +1080,7 @@ const AddSale = () => {
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <Typography sx={{ fontSize: '0.7rem', color: COLORS.text.secondary }}>
-                  Total Deductions
+                  {t('sales.totalDeductions')}
                 </Typography>
                 <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: '#D32F2F' }}>
                   - {formatCurrency(calculations.totalDeductions)}
@@ -1075,7 +1089,7 @@ const AddSale = () => {
               <Box sx={{ pt: 1, mt: 1, borderTop: `1px solid ${COLORS.primary}` }}>
                 <Stack direction="row" justifyContent="space-between">
                   <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: COLORS.primaryDark }}>
-                    Net Amount
+                    {t('sales.netAmount')}
                   </Typography>
                   <Typography sx={{ fontSize: '0.9rem', fontWeight: 700, color: COLORS.primaryDark }}>
                     {formatCurrency(calculations.netAmount)}
@@ -1091,7 +1105,7 @@ const AddSale = () => {
               <Stack direction="row" spacing={1} alignItems="center">
                 <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
                 <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
-                  Products Summary
+                  {t('sales.productsSummary')}
                 </Typography>
               </Stack>
             </Box>
@@ -1100,16 +1114,16 @@ const AddSale = () => {
                 <TableHead>
                   <TableRow sx={{ bgcolor: COLORS.primaryLight }}>
                     <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>
-                      Product
+                      {t('sales.table.product')}
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>
-                      Quantity
+                      {t('sales.table.quantity')}
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>
-                      Rate
+                      {t('sales.table.rate')}
                     </TableCell>
                     <TableCell align="right" sx={{ fontWeight: 600, fontSize: '0.7rem', color: COLORS.text.secondary }}>
-                      Total
+                      {t('sales.table.total')}
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -1130,7 +1144,7 @@ const AddSale = () => {
                         <TableCell sx={{ fontSize: '0.7rem' }}>{line.productName || '-'}</TableCell>
                         <TableCell sx={{ fontSize: '0.7rem' }}>
                           {line.pricingType === 'bag' 
-                            ? `${line.bags || 0} bags`
+                            ? `${line.bags || 0} ${t('sales.bags')}`
                             : `${displayQty.toFixed(2)} ${displayUnit}`}
                         </TableCell>
                         <TableCell sx={{ fontSize: '0.7rem' }}>
@@ -1169,7 +1183,7 @@ const AddSale = () => {
               }
             }}
           >
-            Previous
+            {t('common.previous')}
           </Button>
         )}
         {currentStep < 2 && (
@@ -1191,7 +1205,7 @@ const AddSale = () => {
               }
             }}
           >
-            Next
+            {t('common.next')}
           </Button>
         )}
         {currentStep === 2 && (
@@ -1217,7 +1231,7 @@ const AddSale = () => {
               }
             }}
           >
-            {loading ? 'Creating...' : 'Create Sale'}
+            {loading ? t('common.creating') : t('sales.createSale')}
           </Button>
         )}
       </Box>

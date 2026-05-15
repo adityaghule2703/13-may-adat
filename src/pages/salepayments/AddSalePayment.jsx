@@ -57,16 +57,17 @@ const COLORS = {
   border: '#E3E8EF'
 };
 
-// Payment mode options with icons
-const PAYMENT_MODES = [
-  { value: 'cash', label: 'Cash', icon: CashIcon, color: '#2E7D32', bg: '#E8F5E9' },
-  { value: 'upi', label: 'UPI', icon: UpiIcon, color: '#1976D2', bg: '#E3F2FD' },
-  { value: 'bank', label: 'Bank Transfer', icon: BankTransferIcon, color: '#F57C00', bg: '#FFF3E0' },
-  { value: 'cheque', label: 'Cheque', icon: ChequeIcon, color: '#7B1FA2', bg: '#F3E5F5' }
+// Payment mode options with icons - will use translations
+const getPaymentModes = (t) => [
+  { value: 'cash', label: t('salePayments.modes.cash'), icon: CashIcon, color: '#2E7D32', bg: '#E8F5E9' },
+  { value: 'upi', label: t('salePayments.modes.upi'), icon: UpiIcon, color: '#1976D2', bg: '#E3F2FD' },
+  { value: 'bank', label: t('salePayments.modes.bank'), icon: BankTransferIcon, color: '#F57C00', bg: '#FFF3E0' },
+  { value: 'cheque', label: t('salePayments.modes.cheque'), icon: ChequeIcon, color: '#7B1FA2', bg: '#F3E5F5' }
 ];
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -114,6 +115,8 @@ const AddSalePayment = () => {
   const [selectedSale, setSelectedSale] = useState(null);
   const [amountDue, setAmountDue] = useState(0);
 
+  const PAYMENT_MODES = getPaymentModes(t);
+
   const [formData, setFormData] = useState({
     saleId: '',
     amount: '',
@@ -157,7 +160,7 @@ const AddSalePayment = () => {
       const errorMessage = error.response?.data?.message || 
                           error.response?.data?.error || 
                           error.message || 
-                          'Failed to load sales';
+                          t('common.networkError');
       setError(errorMessage);
     } finally {
       setLoadingSales(false);
@@ -207,40 +210,40 @@ const AddSalePayment = () => {
     let isValid = true;
 
     if (!formData.saleId) {
-      errors.saleId = 'Please select a sale';
+      errors.saleId = t('salePayments.errors.saleRequired');
       isValid = false;
     }
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
-      errors.amount = 'Valid payment amount is required';
+      errors.amount = t('salePayments.errors.amountRequired');
       isValid = false;
     }
     if (parseFloat(formData.amount) > amountDue) {
-      errors.amount = `Payment amount cannot exceed amount due (${formatCurrency(amountDue)})`;
+      errors.amount = t('salePayments.errors.amountExceedsDue', { amount: formatCurrency(amountDue) });
       isValid = false;
     }
     if (!formData.paymentDate) {
-      errors.paymentDate = 'Payment date is required';
+      errors.paymentDate = t('salePayments.errors.dateRequired');
       isValid = false;
     }
     if (!formData.paymentMode) {
-      errors.paymentMode = 'Payment mode is required';
+      errors.paymentMode = t('salePayments.errors.paymentModeRequired');
       isValid = false;
     }
     
     // UPI validation
     if (formData.paymentMode === 'upi' && !formData.referenceNumber) {
-      errors.referenceNumber = 'UPI Transaction ID / Reference number is required';
+      errors.referenceNumber = t('salePayments.errors.referenceRequired');
       isValid = false;
     }
     
     // Bank Transfer validation
     if (formData.paymentMode === 'bank') {
       if (!formData.referenceNumber) {
-        errors.referenceNumber = 'Bank reference number is required';
+        errors.referenceNumber = t('salePayments.errors.referenceRequired');
         isValid = false;
       }
       if (!formData.bankName) {
-        errors.bankName = 'Bank name is required';
+        errors.bankName = t('salePayments.errors.bankNameRequired');
         isValid = false;
       }
     }
@@ -248,22 +251,22 @@ const AddSalePayment = () => {
     // Cheque validation
     if (formData.paymentMode === 'cheque') {
       if (!formData.chequeNumber) {
-        errors.chequeNumber = 'Cheque number is required';
+        errors.chequeNumber = t('salePayments.errors.chequeNumberRequired');
         isValid = false;
       }
       if (!formData.chequeDate) {
-        errors.chequeDate = 'Cheque date is required';
+        errors.chequeDate = t('salePayments.errors.chequeDateRequired');
         isValid = false;
       }
       if (!formData.bankName) {
-        errors.bankName = 'Bank name is required';
+        errors.bankName = t('salePayments.errors.bankNameRequired');
         isValid = false;
       }
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields correctly');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -327,7 +330,7 @@ const AddSalePayment = () => {
         setSuccess(true);
         setTimeout(() => navigate('/sale-payments'), 2000);
       } else {
-        const errorMessage = response.data.message || response.data.error || 'Failed to add payment';
+        const errorMessage = response.data.message || response.data.error || t('salePayments.errors.createFailed');
         showError(errorMessage);
       }
     } catch (error) {
@@ -335,7 +338,7 @@ const AddSalePayment = () => {
       const errorMessage = error.response?.data?.message || 
                           error.response?.data?.error || 
                           error.message || 
-                          'Network error. Please try again.';
+                          t('common.networkError');
       showError(errorMessage);
     } finally {
       setLoading(false);
@@ -379,7 +382,7 @@ const AddSalePayment = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '400px' }}>
         <CircularProgress sx={{ color: COLORS.primary }} />
         <Typography sx={{ ml: 2, color: COLORS.text.primary }}>
-          Loading sales...
+          {t('common.loading')}
         </Typography>
       </Box>
     );
@@ -404,10 +407,10 @@ const AddSalePayment = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Add Sale Payment
+            {t('salePayments.addTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Record a payment received from a buyer
+            {t('salePayments.addSubtitle')}
           </Typography>
         </Box>
       </Box>
@@ -420,7 +423,7 @@ const AddSalePayment = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Payment added successfully! Redirecting...
+          {t('salePayments.messages.createSuccess')}
         </Alert>
       )}
 
@@ -430,7 +433,7 @@ const AddSalePayment = () => {
           <Stack direction="row" spacing={1} alignItems="center">
             <CreditCardIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
             <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
-              Payment Information
+              {t('salePayments.paymentInformation')}
             </Typography>
           </Stack>
         </Box>
@@ -438,7 +441,7 @@ const AddSalePayment = () => {
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
             {/* SELECT SALE */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label required>Select Sale</Label>
+              <Label required>{t('salePayments.selectSale')}</Label>
               <Autocomplete
                 fullWidth
                 options={sales}
@@ -447,14 +450,14 @@ const AddSalePayment = () => {
                 onChange={handleSaleChange}
                 getOptionLabel={(option) => {
                   const buyerName = option.buyer?.displayName || option.buyer?.name || option.buyerName || 'N/A';
-                  return `${option.invoiceNumber} - ${buyerName} (Due: ${formatCurrency(option.amountDue || option.finalReceivable || 0)})`;
+                  return `${option.invoiceNumber} - ${buyerName} (${t('salePayments.dueAmount')}: ${formatCurrency(option.amountDue || option.finalReceivable || 0)})`;
                 }}
                 isOptionEqualToValue={(option, value) => option._id === value?._id}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Search by invoice number or buyer name..."
+                    placeholder={t('salePayments.placeholders.selectSale')}
                     error={!!fieldErrors.saleId}
                     helperText={fieldErrors.saleId}
                     sx={inputSx}
@@ -476,7 +479,7 @@ const AddSalePayment = () => {
                         </Box>
                         <Box sx={{ textAlign: 'right' }}>
                           <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
-                            Amount Due
+                            {t('salePayments.amountDue')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.75rem', color: dueAmount > 0 ? '#D32F2F' : '#2E7D32' }}>
                             {formatCurrency(dueAmount)}
@@ -490,16 +493,16 @@ const AddSalePayment = () => {
               {selectedSale && (
                 <Box sx={{ mt: 2, p: 1.5, bgcolor: COLORS.primaryLight, borderRadius: 1.5 }}>
                   <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
-                    Selected Sale Details
+                    {t('salePayments.selectedSale')}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem', color: COLORS.text.primary }}>
-                    Invoice: {selectedSale.invoiceNumber}
+                    {t('sales.table.invoiceNo')}: {selectedSale.invoiceNumber}
                   </Typography>
                   <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                    Buyer: {selectedSale.buyer?.displayName || selectedSale.buyer?.name || selectedSale.buyerName}
+                    {t('sales.buyerName')}: {selectedSale.buyer?.displayName || selectedSale.buyer?.name || selectedSale.buyerName}
                   </Typography>
                   <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary, display: 'block' }}>
-                    Amount Due: <span style={{ color: amountDue > 0 ? '#D32F2F' : '#2E7D32', fontWeight: 600 }}>{formatCurrency(amountDue)}</span>
+                    {t('salePayments.dueAmount')}: <span style={{ color: amountDue > 0 ? '#D32F2F' : '#2E7D32', fontWeight: 600 }}>{formatCurrency(amountDue)}</span>
                   </Typography>
                 </Box>
               )}
@@ -507,7 +510,7 @@ const AddSalePayment = () => {
 
             {/* PAYMENT DATE */}
             <Box>
-              <Label required>Payment Date</Label>
+              <Label required>{t('salePayments.paymentDate')}</Label>
               <TextField
                 fullWidth
                 type="date"
@@ -526,7 +529,7 @@ const AddSalePayment = () => {
 
             {/* AMOUNT */}
             <Box>
-              <Label required>Amount</Label>
+              <Label required>{t('salePayments.amount')}</Label>
               <TextField
                 fullWidth
                 type="number"
@@ -534,7 +537,7 @@ const AddSalePayment = () => {
                 name="amount"
                 value={formData.amount}
                 onChange={handleNumberChange}
-                placeholder="Enter payment amount"
+                placeholder={t('salePayments.placeholders.amount')}
                 error={!!fieldErrors.amount}
                 helperText={fieldErrors.amount}
                 sx={inputSx}
@@ -544,14 +547,14 @@ const AddSalePayment = () => {
               />
               {selectedSale && amountDue > 0 && (
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                  Maximum payable: {formatCurrency(amountDue)}
+                  {t('salePayments.maximumPayable')}: {formatCurrency(amountDue)}
                 </Typography>
               )}
             </Box>
 
             {/* PAYMENT MODE - Enhanced Autocomplete with Search */}
             <Box>
-              <Label required>Payment Mode</Label>
+              <Label required>{t('salePayments.paymentMode')}</Label>
               <Autocomplete
                 fullWidth
                 options={PAYMENT_MODES}
@@ -576,7 +579,7 @@ const AddSalePayment = () => {
                   <TextField
                     {...params}
                     size="small"
-                    placeholder="Select payment mode"
+                    placeholder={t('salePayments.placeholders.selectPaymentMode')}
                     error={!!fieldErrors.paymentMode}
                     helperText={fieldErrors.paymentMode}
                     sx={inputSx}
@@ -609,14 +612,14 @@ const AddSalePayment = () => {
             {/* UPI Reference Number */}
             {formData.paymentMode === 'upi' && (
               <Box sx={{ gridColumn: 'span 2' }}>
-                <Label required>UPI Transaction ID / Reference Number</Label>
+                <Label required>{t('salePayments.upiReference')}</Label>
                 <TextField
                   fullWidth
                   size="small"
                   name="referenceNumber"
                   value={formData.referenceNumber}
                   onChange={handleChange}
-                  placeholder="e.g., 1234567890@ybl or UPI123456789"
+                  placeholder={t('salePayments.placeholders.upiReference')}
                   error={!!fieldErrors.referenceNumber}
                   helperText={fieldErrors.referenceNumber}
                   sx={inputSx}
@@ -631,14 +634,14 @@ const AddSalePayment = () => {
             {formData.paymentMode === 'bank' && (
               <>
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label required>Bank Reference Number</Label>
+                  <Label required>{t('salePayments.referenceNumber')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="referenceNumber"
                     value={formData.referenceNumber}
                     onChange={handleChange}
-                    placeholder="Bank transaction reference number"
+                    placeholder={t('salePayments.placeholders.bankReference')}
                     error={!!fieldErrors.referenceNumber}
                     helperText={fieldErrors.referenceNumber}
                     sx={inputSx}
@@ -648,14 +651,14 @@ const AddSalePayment = () => {
                   />
                 </Box>
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label required>Bank Name</Label>
+                  <Label required>{t('salePayments.bankName')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="bankName"
                     value={formData.bankName}
                     onChange={handleChange}
-                    placeholder="Enter bank name (e.g., State Bank of India)"
+                    placeholder={t('salePayments.placeholders.bankName')}
                     error={!!fieldErrors.bankName}
                     helperText={fieldErrors.bankName}
                     sx={inputSx}
@@ -671,14 +674,14 @@ const AddSalePayment = () => {
             {formData.paymentMode === 'cheque' && (
               <>
                 <Box>
-                  <Label required>Cheque Number</Label>
+                  <Label required>{t('salePayments.chequeNumber')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="chequeNumber"
                     value={formData.chequeNumber}
                     onChange={handleChange}
-                    placeholder="Cheque number"
+                    placeholder={t('salePayments.placeholders.chequeNumber')}
                     error={!!fieldErrors.chequeNumber}
                     helperText={fieldErrors.chequeNumber}
                     sx={inputSx}
@@ -689,7 +692,7 @@ const AddSalePayment = () => {
                 </Box>
 
                 <Box>
-                  <Label required>Cheque Date</Label>
+                  <Label required>{t('salePayments.chequeDate')}</Label>
                   <TextField
                     fullWidth
                     type="date"
@@ -704,14 +707,14 @@ const AddSalePayment = () => {
                 </Box>
 
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label required>Bank Name</Label>
+                  <Label required>{t('salePayments.bankName')}</Label>
                   <TextField
                     fullWidth
                     size="small"
                     name="bankName"
                     value={formData.bankName}
                     onChange={handleChange}
-                    placeholder="Bank name (e.g., State Bank of India)"
+                    placeholder={t('salePayments.placeholders.bankName')}
                     error={!!fieldErrors.bankName}
                     helperText={fieldErrors.bankName}
                     sx={inputSx}
@@ -725,7 +728,7 @@ const AddSalePayment = () => {
 
             {/* Notes */}
             <Box sx={{ gridColumn: 'span 2' }}>
-              <Label>Notes</Label>
+              <Label>{t('common.notes')}</Label>
               <TextField
                 fullWidth
                 multiline
@@ -734,7 +737,7 @@ const AddSalePayment = () => {
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                placeholder="Additional notes about this payment..."
+                placeholder={t('salePayments.placeholders.notes')}
                 sx={inputSx}
                 InputProps={{
                   startAdornment: <InputAdornment position="start"><NotesIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary }} /></InputAdornment>
@@ -764,7 +767,7 @@ const AddSalePayment = () => {
             }
           }}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={handleSubmit}
@@ -788,7 +791,7 @@ const AddSalePayment = () => {
             }
           }}
         >
-          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Record Payment</>}
+          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('salePayments.buttons.recordPayment')}</>}
         </Button>
       </Box>
     </Box>

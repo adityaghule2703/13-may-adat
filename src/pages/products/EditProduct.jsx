@@ -52,6 +52,7 @@ const COLORS = {
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
+  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -143,14 +144,14 @@ const EditProduct = () => {
           isActive: product.isActive ?? true
         });
       } else {
-        setError(response.data.message || 'Failed to fetch product details');
+        setError(response.data.message || t('products.errors.fetchFailed'));
       }
     } catch (error) {
       console.error('Error fetching product:', error);
       const errorMessage = error.response?.data?.message || 
                           error.response?.data?.error || 
                           error.message || 
-                          'Network error. Please check your connection.';
+                          t('common.networkError');
       setError(errorMessage);
     } finally {
       setFetching(false);
@@ -183,16 +184,16 @@ const EditProduct = () => {
     let isValid = true;
 
     if (!formData.productName.trim()) {
-      errors.productName = 'Product name is required';
+      errors.productName = t('products.errors.nameRequired');
       isValid = false;
     } else if (!validateProductName(formData.productName)) {
-      errors.productName = 'Product name should only contain letters, numbers, spaces, dots, and hyphens';
+      errors.productName = t('products.errors.nameInvalid');
       isValid = false;
     }
 
     setFieldErrors(errors);
     if (!isValid) {
-      setError('Please fill all required fields correctly');
+      setError(t('common.fillCorrectly'));
       setTimeout(() => setError(''), 3000);
     }
     return isValid;
@@ -237,7 +238,7 @@ const EditProduct = () => {
         setSuccess(true);
         setTimeout(() => navigate('/products'), 2000);
       } else {
-        const errorMessage = response.data.message || response.data.error || 'Failed to update product';
+        const errorMessage = response.data.message || response.data.error || t('products.errors.updateFailed');
         showError(errorMessage);
       }
     } catch (error) {
@@ -245,7 +246,7 @@ const EditProduct = () => {
       const errorMessage = error.response?.data?.message || 
                           error.response?.data?.error || 
                           error.message || 
-                          'Network error. Please try again.';
+                          t('common.networkError');
       showError(errorMessage);
     } finally {
       setLoading(false);
@@ -290,7 +291,7 @@ const EditProduct = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '400px' }}>
         <CircularProgress sx={{ color: COLORS.primary }} />
         <Typography sx={{ ml: 2, color: COLORS.text.primary }}>
-          Loading product details...
+          {t('common.loading')}
         </Typography>
       </Box>
     );
@@ -312,10 +313,10 @@ const EditProduct = () => {
         </IconButton>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.text.primary }}>
-            Edit Product
+            {t('products.editTitle')}
           </Typography>
           <Typography variant="caption" sx={{ color: COLORS.text.tertiary }}>
-            Update product information
+            {t('products.editSubtitle')}
           </Typography>
         </Box>
       </Box>
@@ -328,7 +329,7 @@ const EditProduct = () => {
       {/* Success Message */}
       {success && (
         <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
-          Product updated successfully! Redirecting...
+          {t('products.messages.updateSuccess')}
         </Alert>
       )}
 
@@ -338,7 +339,7 @@ const EditProduct = () => {
           <Stack direction="row" spacing={1} alignItems="center">
             <PackageIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
             <Typography sx={{ fontWeight: 600, color: COLORS.text.primary }}>
-              Product Information
+              {t('products.productInformation')}
             </Typography>
           </Stack>
         </Box>
@@ -346,14 +347,14 @@ const EditProduct = () => {
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2 }}>
             {/* Product Name */}
             <Box>
-              <Label required>Product Name</Label>
+              <Label required>{t('products.productName')}</Label>
               <TextField
                 fullWidth
                 size="small"
                 name="productName"
                 value={formData.productName}
                 onChange={handleChange}
-                placeholder="Enter product name"
+                placeholder={t('products.placeholders.productName')}
                 error={!!fieldErrors.productName}
                 helperText={fieldErrors.productName}
                 sx={inputSx}
@@ -362,13 +363,13 @@ const EditProduct = () => {
                 }}
               />
               <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                Enter a unique name for the product (e.g., Wheat, Rice, Onion, etc.)
+                {t('products.productNameHint')}
               </Typography>
             </Box>
 
             {/* Description */}
             <Box>
-              <Label>Description</Label>
+              <Label>{t('products.description')}</Label>
               <TextField
                 fullWidth
                 multiline
@@ -377,20 +378,20 @@ const EditProduct = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Enter product description (optional)"
+                placeholder={t('products.placeholders.description')}
                 sx={inputSx}
                 InputProps={{
                   startAdornment: <InputAdornment position="start"><DescriptionIcon sx={{ fontSize: '1rem', color: COLORS.text.tertiary }} /></InputAdornment>
                 }}
               />
               <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                Add any additional details about the product
+                {t('products.descriptionHint')}
               </Typography>
             </Box>
 
             {/* Status Switch */}
             <Box>
-              <Label>Status</Label>
+              <Label>{t('products.status.label')}</Label>
               <Box sx={{ mt: 1 }}>
                 <FormControlLabel
                   control={
@@ -412,15 +413,13 @@ const EditProduct = () => {
                   }
                   label={
                     <Typography sx={{ fontSize: '0.75rem', color: COLORS.text.primary }}>
-                      {formData.isActive ? 'Active' : 'Inactive'}
+                      {formData.isActive ? t('products.status.active') : t('products.status.inactive')}
                     </Typography>
                   }
                 />
               </Box>
               <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: '#8D6E63', fontSize: '0.65rem' }}>
-                {formData.isActive 
-                  ? 'Product is currently active and available for selection' 
-                  : 'Product is currently inactive and will not appear in selections'}
+                {formData.isActive ? t('products.status.activeHint') : t('products.status.inactiveHint')}
               </Typography>
             </Box>
           </Box>
@@ -446,7 +445,7 @@ const EditProduct = () => {
             }
           }}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={handleSubmit}
@@ -470,7 +469,7 @@ const EditProduct = () => {
             }
           }}
         >
-          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> Update Product</>}
+          {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('common.save')}</>}
         </Button>
       </Box>
     </Box>

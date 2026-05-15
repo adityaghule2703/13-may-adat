@@ -357,544 +357,580 @@ const Payments = () => {
     return convert(num);
   };
 
-  const handlePrintReceipt = (payment) => {
-  const isMarathi = i18n.language === 'mr';
+const handlePrintReceipt = (paymentId) => {
+  const token = getToken();
   
-  // Format date from API response
-  const paymentDate = payment.paymentDate ? new Date(payment.paymentDate) : new Date();
-  const day = paymentDate.getDate();
-  const month = paymentDate.getMonth() + 1;
-  const year = paymentDate.getFullYear();
-  const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
-  
-  // Format amount with commas
-  const formattedAmount = new Intl.NumberFormat('en-IN').format(payment.amount || 0);
-  
-  // Get farmer details
-  const farmerName = payment.farmer?.name || 'N/A';
-  const farmerVillage = payment.farmer?.village || payment.farmer?.city || '—';
-  const farmerMobile = payment.farmer?.mobile || '';
-  
-  // Get purchase details
-  const receiptNumber = payment.purchase?.receiptNumber || payment.purchaseSummary?.receiptNumber || `PAY-${payment.id?.slice(-6)}`;
-  const finalPayable = payment.purchase?.finalPayable || payment.purchaseSummary?.finalPayable || 0;
-  const amountPaid = payment.amount || 0;
-  const amountDue = payment.purchase?.amountDue || payment.purchaseSummary?.amountDue || 0;
-  const paymentStatus = payment.purchaseSummary?.status || (amountDue === 0 ? 'paid' : 'partial');
-  
-  // Get payment mode display text
-  const getPaymentModeText = () => {
-    switch(payment.paymentMode) {
-      case 'cash': return isMarathi ? 'रोख' : 'Cash';
-      case 'upi': return isMarathi ? 'यूपीआय' : 'UPI';
-      case 'bank': return isMarathi ? 'बँक ट्रान्सफर' : 'Bank Transfer';
-      case 'cheque': return isMarathi ? 'चेक' : 'Cheque';
-      default: return payment.paymentMode || (isMarathi ? 'इतर' : 'Other');
+  fetch(`${BASE_URL}/payments/${paymentId}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (!data.success) {
+      alert(t('payments.errors.receiptFetchFailed'));
+      return;
     }
-  };
-  
-  // Get payment mode extra info
-  const getPaymentExtraInfo = () => {
-    switch(payment.paymentMode) {
-      case 'cash':
-        return '';
-      case 'upi':
-        return `${isMarathi ? 'संदर्भ क्रमांक' : 'Ref No.'}: ${payment.referenceNumber || '—'}`;
-      case 'bank':
-        return `${isMarathi ? 'बँक नाव' : 'Bank'}: ${payment.bankName || '—'} | ${isMarathi ? 'संदर्भ क्रमांक' : 'Ref No.'}: ${payment.referenceNumber || '—'}`;
-      case 'cheque':
-        const chequeDate = payment.chequeDate ? new Date(payment.chequeDate) : null;
-        const formattedChequeDate = chequeDate ? `${chequeDate.getDate().toString().padStart(2, '0')}/${(chequeDate.getMonth() + 1).toString().padStart(2, '0')}/${chequeDate.getFullYear()}` : '—';
-        const chequeStatusMap = {
-          'pending_clearance': isMarathi ? 'प्रलंबित' : 'Pending',
-          'cleared': isMarathi ? 'क्लियर' : 'Cleared',
-          'bounced': isMarathi ? 'बाउन्स' : 'Bounced'
+    
+    const payment = data.data;
+    const isMarathi = i18n.language === 'mr';
+    
+    // Get business details from API response
+    const businessDetails = payment.businessDetails || {};
+    const businessName = businessDetails.name || (isMarathi ? 'जय शिवराय व्हेजिटेबल' : 'Jai Shivrai Vegetable Co.');
+    const businessAddress = businessDetails.address || (isMarathi ? 'वेसराणे, ता. कळवण जि. नाशिक' : 'Vesarane, Tal. Kalwan, Dist. Nashik');
+    const businessPhone = businessDetails.phone || (isMarathi ? 'प्रो. रोकेश हिरे मो. ९०२१६९९९९१ / ९६२३९५६३९६' : 'Prop. Rakesh Hire M: 9021699991 / 9623956396');
+    const businessEmail = businessDetails.email || '';
+    const businessGst = businessDetails.gstNumber || '';
+    const businessPan = businessDetails.panNumber || '';
+    
+    // Format date from API response
+    const paymentDate = payment.paymentDate ? new Date(payment.paymentDate) : new Date();
+    const day = paymentDate.getDate();
+    const month = paymentDate.getMonth() + 1;
+    const year = paymentDate.getFullYear();
+    const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+    
+    // Format amount with commas
+    const formattedAmount = new Intl.NumberFormat('en-IN').format(payment.amount || 0);
+    
+    // Get farmer details
+    const farmerName = payment.farmer?.name || 'N/A';
+    const farmerVillage = payment.farmer?.village || payment.farmer?.city || '—';
+    const farmerMobile = payment.farmer?.mobile || '';
+    const farmerAddress = payment.farmer?.address || '';
+    
+    // Get purchase details from purchaseSummary or purchase object
+    const receiptNumber = payment.purchaseSummary?.receiptNumber || payment.purchase?.receiptNumber || `PAY-${payment.id?.slice(-6)}`;
+    const finalPayable = payment.purchaseSummary?.finalPayable || payment.purchase?.finalPayable || 0;
+    const amountPaid = payment.amount || 0;
+    const amountDue = payment.purchaseSummary?.amountDue || payment.purchase?.amountDue || 0;
+    
+    // Get payment mode display text
+    const getPaymentModeText = () => {
+      switch(payment.paymentMode) {
+        case 'cash': return isMarathi ? 'रोख' : 'Cash';
+        case 'upi': return isMarathi ? 'यूपीआय' : 'UPI';
+        case 'bank': return isMarathi ? 'बँक ट्रान्सफर' : 'Bank Transfer';
+        case 'cheque': return isMarathi ? 'चेक' : 'Cheque';
+        default: return payment.paymentMode || (isMarathi ? 'इतर' : 'Other');
+      }
+    };
+    
+    // Get payment mode extra info
+    const getPaymentExtraInfo = () => {
+      switch(payment.paymentMode) {
+        case 'cash':
+          return '';
+        case 'upi':
+          return `${isMarathi ? 'संदर्भ क्रमांक' : 'Ref No.'}: ${payment.referenceNumber || '—'}`;
+        case 'bank':
+          return `${isMarathi ? 'बँक नाव' : 'Bank'}: ${payment.bankName || '—'} | ${isMarathi ? 'संदर्भ क्रमांक' : 'Ref No.'}: ${payment.referenceNumber || '—'}`;
+        case 'cheque':
+          const chequeDate = payment.chequeDate ? new Date(payment.chequeDate) : null;
+          const formattedChequeDate = chequeDate ? `${chequeDate.getDate().toString().padStart(2, '0')}/${(chequeDate.getMonth() + 1).toString().padStart(2, '0')}/${chequeDate.getFullYear()}` : '—';
+          const chequeStatusMap = {
+            'pending_clearance': isMarathi ? 'प्रलंबित' : 'Pending',
+            'cleared': isMarathi ? 'क्लियर' : 'Cleared',
+            'bounced': isMarathi ? 'बाउन्स' : 'Bounced'
+          };
+          return `${isMarathi ? 'चेक क्र.' : 'Cheque No.'}: ${payment.chequeNumber || '—'} | ${isMarathi ? 'चेक तारीख' : 'Cheque Date'}: ${formattedChequeDate} | ${isMarathi ? 'बँक' : 'Bank'}: ${payment.bankName || '—'} | ${isMarathi ? 'स्थिती' : 'Status'}: ${chequeStatusMap[payment.chequeStatus] || (isMarathi ? 'प्रलंबित' : 'Pending')}`;
+        default:
+          return '';
+      }
+    };
+    
+    const paymentModeText = getPaymentModeText();
+    const paymentExtraInfo = getPaymentExtraInfo();
+    
+    // Determine payment status display
+    const getStatusDisplay = () => {
+      if (amountDue === 0) {
+        return {
+          text: isMarathi ? 'पूर्ण भरले' : 'Fully Paid',
+          color: '#2E7D32',
+          bg: '#E8F5E9'
         };
-        return `${isMarathi ? 'चेक क्र.' : 'Cheque No.'}: ${payment.chequeNumber || '—'} | ${isMarathi ? 'चेक तारीख' : 'Cheque Date'}: ${formattedChequeDate} | ${isMarathi ? 'बँक' : 'Bank'}: ${payment.bankName || '—'} | ${isMarathi ? 'स्थिती' : 'Status'}: ${chequeStatusMap[payment.chequeStatus] || (isMarathi ? 'प्रलंबित' : 'Pending')}`;
-      default:
-        return '';
-    }
-  };
-  
-  const paymentModeText = getPaymentModeText();
-  const paymentExtraInfo = getPaymentExtraInfo();
-  
-  // Determine payment status display
-  const getStatusDisplay = () => {
-    if (amountDue === 0) {
-      return {
-        text: isMarathi ? 'पूर्ण भरले' : 'Fully Paid',
-        color: '#2E7D32',
-        bg: '#E8F5E9'
-      };
-    } else if (amountPaid > 0) {
-      return {
-        text: isMarathi ? 'अंशतः भरले' : 'Partially Paid',
-        color: '#FF6F00',
-        bg: '#FFF3E0'
-      };
-    } else {
-      return {
-        text: isMarathi ? 'प्रलंबित' : 'Pending',
-        color: '#D32F2F',
-        bg: '#FFEBEE'
-      };
-    }
-  };
-  
-  const statusDisplay = getStatusDisplay();
-  const remainingAmount = amountDue;
-  
-  // Number to words function
-  const numberToWords = (num) => {
-    if (num === 0) return 'Zero';
-    const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-    const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-    
-    function convertLessThanThousand(n) {
-      if (n === 0) return '';
-      if (n < 20) return ones[n];
-      if (n < 100) {
-        const t = Math.floor(n / 10);
-        const o = n % 10;
-        return tens[t] + (o ? ' ' + ones[o] : '');
+      } else if (amountPaid > 0) {
+        return {
+          text: isMarathi ? 'अंशतः भरले' : 'Partially Paid',
+          color: '#FF6F00',
+          bg: '#FFF3E0'
+        };
+      } else {
+        return {
+          text: isMarathi ? 'प्रलंबित' : 'Pending',
+          color: '#D32F2F',
+          bg: '#FFEBEE'
+        };
       }
-      const h = Math.floor(n / 100);
-      const rest = n % 100;
-      return ones[h] + ' Hundred' + (rest ? ' ' + convertLessThanThousand(rest) : '');
-    }
+    };
     
-    function convert(n) {
-      if (n === 0) return '';
-      if (n < 1000) return convertLessThanThousand(n);
-      if (n < 100000) {
-        const th = Math.floor(n / 1000);
-        const rest = n % 1000;
-        return convertLessThanThousand(th) + ' Thousand' + (rest ? ' ' + convertLessThanThousand(rest) : '');
-      }
-      if (n < 10000000) {
-        const l = Math.floor(n / 100000);
-        const rest = n % 100000;
-        return convertLessThanThousand(l) + ' Lakh' + (rest ? ' ' + convert(rest) : '');
-      }
-      const c = Math.floor(n / 10000000);
-      const rest = n % 10000000;
-      return convertLessThanThousand(c) + ' Crore' + (rest ? ' ' + convert(rest) : '');
-    }
+    const statusDisplay = getStatusDisplay();
+    const remainingAmount = amountDue;
     
-    return convert(num);
-  };
-  
-  const amountInWords = `${numberToWords(payment.amount)} ${isMarathi ? 'रुपये फक्त' : 'Rupees Only'}`;
-  
-  const printWindow = window.open('', '_blank');
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html lang="${isMarathi ? 'mr' : 'en'}">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      <title>${isMarathi ? 'पेमेंट पावती' : 'Payment Receipt'} - ${receiptNumber}</title>
-      <style>
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          user-select: none;
+    // Number to words function
+    const numberToWords = (num) => {
+      if (num === 0) return 'Zero';
+      const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+      const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+      
+      function convertLessThanThousand(n) {
+        if (n === 0) return '';
+        if (n < 20) return ones[n];
+        if (n < 100) {
+          const t = Math.floor(n / 10);
+          const o = n % 10;
+          return tens[t] + (o ? ' ' + ones[o] : '');
         }
-        body {
-          background: #e5e5e5;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          padding: 30px 20px;
-          font-family: 'Arial', 'Noto Sans', 'Segoe UI', sans-serif;
+        const h = Math.floor(n / 100);
+        const rest = n % 100;
+        return ones[h] + ' Hundred' + (rest ? ' ' + convertLessThanThousand(rest) : '');
+      }
+      
+      function convert(n) {
+        if (n === 0) return '';
+        if (n < 1000) return convertLessThanThousand(n);
+        if (n < 100000) {
+          const th = Math.floor(n / 1000);
+          const rest = n % 1000;
+          return convertLessThanThousand(th) + ' Thousand' + (rest ? ' ' + convertLessThanThousand(rest) : '');
         }
-        .receipt {
-          width: 780px;
-          max-width: 100%;
-          background: #fff;
-          border: 2px solid #b3153f;
-          color: #b3153f;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        if (n < 10000000) {
+          const l = Math.floor(n / 100000);
+          const rest = n % 100000;
+          return convertLessThanThousand(l) + ' Lakh' + (rest ? ' ' + convert(rest) : '');
         }
-        /* HEADER */
-        .top-header {
-          border-bottom: 2px solid #b3153f;
-          padding: 12px 15px 8px;
-        }
-        .top-line {
-          display: flex;
-          justify-content: center;
-          font-size: 13px;
-          font-weight: bold;
-          margin-bottom: 5px;
-          letter-spacing: 1px;
-        }
-        .title-section {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 15px;
-        }
-        .center-title {
-          flex: 1;
-          text-align: center;
-          padding: 0 10px;
-        }
-        .center-title h1 {
-          font-size: 38px;
-          font-weight: 700;
-          line-height: 1.2;
-          margin-bottom: 6px;
-          letter-spacing: 1px;
-        }
-        .sub {
-          font-size: 16px;
-          font-weight: bold;
-        }
-        .receipt-badge {
-          display: inline-block;
-          background: #b3153f;
-          color: white;
-          padding: 5px 15px;
-          border-radius: 20px;
-          font-size: 14px;
-          font-weight: bold;
-          margin-top: 8px;
-        }
-        .contact-row {
-          margin-top: 10px;
-          border-top: 2px solid #b3153f;
-          padding-top: 8px;
-          display: flex;
-          justify-content: space-between;
-          font-size: 12px;
-          font-weight: bold;
-          flex-wrap: wrap;
-          gap: 5px;
-        }
-        /* DETAILS TABLE */
-        .details {
-          width: 100%;
-          border-collapse: collapse;
-          color: #b3153f;
-        }
-        .details td {
-          border-bottom: 2px solid #b3153f;
-          padding: 10px 12px;
-          height: 50px;
-          font-size: 16px;
-          position: relative;
-        }
-        .label {
-          font-weight: bold;
-          white-space: nowrap;
-          background: #fff;
-          padding-right: 10px;
-        }
-        .value {
-          color: #000;
-          font-size: 18px;
-          font-weight: 500;
-          padding-left: 15px;
-        }
-        .status-badge {
-          display: inline-block;
-          padding: 4px 12px;
-          border-radius: 20px;
-          font-size: 14px;
-          font-weight: bold;
-          background: ${statusDisplay.bg};
-          color: ${statusDisplay.color};
-        }
-        /* MAIN TABLE */
-        .main-table {
-          width: 100%;
-          border-collapse: collapse;
-          table-layout: fixed;
-          color: #b3153f;
-          margin: 5px 0;
-        }
-        .main-table th,
-        .main-table td {
-          border: 2px solid #b3153f;
-          padding: 12px 10px;
-          vertical-align: middle;
-        }
-        .main-table th {
-          text-align: center;
-          font-weight: bold;
-          font-size: 18px;
-          background: #fff5f5;
-        }
-        .main-table td {
-          color: #000;
-          font-size: 16px;
-        }
-        .col1 { width: 8%; text-align: center; }
-        .col2 { width: 42%; }
-        .col3 { width: 15%; text-align: right; }
-        .col4 { width: 20%; text-align: right; }
-        .col5 { width: 15%; text-align: center; }
-        .total-row td {
-          font-weight: bold;
-          border-top: 2px solid #b3153f;
-        }
-        .payment-row td {
-          background: #fff8f0;
-        }
-        /* FOOTER */
-        .footer {
-          border-top: 2px solid #b3153f;
-          margin-top: 5px;
-        }
-        .footer-row {
-          display: flex;
-          border-bottom: 2px solid #b3153f;
-          flex-wrap: wrap;
-        }
-        .footer-left {
-          flex: 1;
-          padding: 12px 15px;
-          font-size: 16px;
-          font-weight: bold;
-          color: #b3153f;
-          min-width: 200px;
-        }
-        .footer-right {
-          width: 280px;
-          border-left: 2px solid #b3153f;
-          padding: 12px 15px;
-          font-size: 18px;
-          font-weight: bold;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 10px;
-          white-space: nowrap;
-        }
-        .footer-right span {
-          color: #000;
-          font-size: 22px;
-          font-weight: bold;
-          display: inline-block;
-          margin-left: 5px;
-        }
-        .signature-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          padding: 25px 15px 15px;
-          min-height: 130px;
-        }
-        .buyer-sign {
-          font-size: 18px;
-          font-weight: bold;
-          border-top: 1px dashed #b3153f;
-          padding-top: 15px;
-          min-width: 180px;
-          text-align: center;
-        }
-        .shop-sign {
-          text-align: center;
-          font-size: 18px;
-          font-weight: bold;
-          position: relative;
-          padding-top: 15px;
-          border-top: 1px dashed #b3153f;
-          min-width: 200px;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          user-select: none;
-        }
-        .sign-mark {
-          font-size: 50px;
-          font-family: cursive;
-          position: absolute;
-          top: -40px;
-          right: 20px;
-          color: #000;
-          transform: rotate(-10deg);
-        }
-        .amount-in-words {
-          padding: 8px 15px;
-          font-size: 14px;
-          background: #fff8f0;
-          border-top: 1px solid #b3153f;
-          color: #555;
-        }
-        .payment-summary {
-          padding: 10px 15px;
-          background: #f9f9f9;
-          border-top: 1px solid #b3153f;
-          font-size: 14px;
-        }
-        .payment-summary p {
-          margin: 5px 0;
-        }
-        @media print {
-          body { 
-            background: white; 
-            padding: 0;
+        const c = Math.floor(n / 10000000);
+        const rest = n % 10000000;
+        return convertLessThanThousand(c) + ' Crore' + (rest ? ' ' + convert(rest) : '');
+      }
+      
+      return convert(num);
+    };
+    
+    const amountInWords = `${numberToWords(payment.amount)} ${isMarathi ? 'रुपये फक्त' : 'Rupees Only'}`;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html lang="${isMarathi ? 'mr' : 'en'}">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>${isMarathi ? 'पेमेंट पावती' : 'Payment Receipt'} - ${receiptNumber}</title>
+        <style>
+          * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+          }
+          body {
+            background: #e5e5e5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px 20px;
+            font-family: 'Arial', 'Noto Sans', 'Segoe UI', sans-serif;
           }
           .receipt {
-            box-shadow: none;
-            margin: 0;
-            width: 100%;
+            width: 800px;
+            max-width: 100%;
+            background: #fff;
+            border: 2px solid #b3153f;
+            color: #b3153f;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
           }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="receipt">
-        <!-- HEADER -->
-        <div class="top-header">
-          <div class="top-line">
-            ${isMarathi ? '॥ कळवणच्या न्यायक्षेत्रात ॥' : '॥ Under Kalwan Jurisdiction ॥'}
-          </div>
-          <div class="title-section">
-            <div class="center-title">
-              <h1>${isMarathi ? 'जय शिवराय व्हेजिटेबल' : 'Jai Shivrai Vegetable Co.'}</h1>
-              <div class="sub">${isMarathi ? 'वेसराणे, ता. कळवण जि. नाशिक' : 'Vesarane, Tal. Kalwan, Dist. Nashik'}</div>
-              <div class="receipt-badge">${isMarathi ? 'पेमेंट पावती' : 'PAYMENT RECEIPT'}</div>
+          /* HEADER */
+          .top-header {
+            border-bottom: 2px solid #b3153f;
+            padding: 12px 15px 8px;
+          }
+          .top-line {
+            display: flex;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+          }
+          .title-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+          }
+          .center-title {
+            flex: 1;
+            text-align: center;
+            padding: 0 10px;
+          }
+          .center-title h1 {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+          }
+          .sub {
+            font-size: 14px;
+            font-weight: bold;
+          }
+          .receipt-badge {
+            display: inline-block;
+            background: #b3153f;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 8px;
+          }
+          .contact-row {
+            margin-top: 10px;
+            border-top: 2px solid #b3153f;
+            padding-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: bold;
+            flex-wrap: wrap;
+            gap: 5px;
+          }
+          /* DETAILS TABLE */
+          .details {
+            width: 100%;
+            border-collapse: collapse;
+            color: #b3153f;
+          }
+          .details td {
+            border-bottom: 2px solid #b3153f;
+            padding: 10px 12px;
+            height: auto;
+            font-size: 14px;
+            position: relative;
+          }
+          .label {
+            font-weight: bold;
+            white-space: nowrap;
+            background: #fff;
+            padding-right: 10px;
+          }
+          .value {
+            color: #000;
+            font-size: 16px;
+            font-weight: 500;
+            padding-left: 15px;
+            word-break: break-word;
+          }
+          .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            background: ${statusDisplay.bg};
+            color: ${statusDisplay.color};
+          }
+          /* MAIN TABLE */
+          .main-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #b3153f;
+            margin: 5px 0;
+          }
+          .main-table th,
+          .main-table td {
+            border: 2px solid #b3153f;
+            padding: 10px 8px;
+            vertical-align: middle;
+          }
+          .main-table th {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            background: #fff5f5;
+          }
+          .main-table td {
+            color: #000;
+            font-size: 13px;
+          }
+          .col1 { width: 10%; text-align: center; }
+          .col2 { width: 35%; }
+          .col3 { width: 15%; text-align: right; }
+          .col4 { width: 25%; text-align: right; }
+          .col5 { width: 15%; text-align: center; }
+          .total-row td {
+            font-weight: bold;
+            border-top: 2px solid #b3153f;
+          }
+          .payment-row td {
+            background: #fff8f0;
+          }
+          /* FOOTER */
+          .footer {
+            border-top: 2px solid #b3153f;
+            margin-top: 5px;
+          }
+          .footer-row {
+            display: flex;
+            border-bottom: 2px solid #b3153f;
+            flex-wrap: wrap;
+          }
+          .footer-left {
+            flex: 1;
+            padding: 12px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #b3153f;
+            min-width: 200px;
+          }
+          .footer-right {
+            width: 280px;
+            border-left: 2px solid #b3153f;
+            padding: 12px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            white-space: nowrap;
+          }
+          .footer-right span {
+            color: #000;
+            font-size: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 5px;
+          }
+          .signature-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 25px 15px 15px;
+            min-height: 120px;
+            flex-wrap: wrap;
+          }
+          .buyer-sign {
+            font-size: 16px;
+            font-weight: bold;
+            border-top: 1px dashed #b3153f;
+            padding-top: 15px;
+            min-width: 180px;
+            text-align: center;
+          }
+          .shop-sign {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            position: relative;
+            padding-top: 15px;
+            border-top: 1px dashed #b3153f;
+            min-width: 200px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+          }
+          .sign-mark {
+            font-size: 45px;
+            font-family: cursive;
+            position: absolute;
+            top: -35px;
+            right: 20px;
+            color: #000;
+            transform: rotate(-10deg);
+          }
+          .amount-in-words {
+            padding: 8px 15px;
+            font-size: 12px;
+            background: #fff8f0;
+            border-top: 1px solid #b3153f;
+            color: #555;
+            word-break: break-word;
+          }
+          .payment-summary {
+            padding: 10px 15px;
+            background: #f9f9f9;
+            border-top: 1px solid #b3153f;
+            font-size: 13px;
+          }
+          .payment-summary p {
+            margin: 4px 0;
+          }
+          @media print {
+            body { 
+              background: white; 
+              padding: 0;
+              margin: 0;
+            }
+            .receipt {
+              box-shadow: none;
+              margin: 0;
+              width: 100%;
+            }
+          }
+          @media (max-width: 768px) {
+            .center-title h1 { font-size: 24px; }
+            .sub { font-size: 11px; }
+            .main-table th, .main-table td { font-size: 11px; padding: 6px 4px; }
+            .col4 { width: 30%; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="receipt">
+          <!-- HEADER -->
+          <div class="top-header">
+            <div class="top-line">
+              ${isMarathi ? '॥ कळवणच्या न्यायक्षेत्रात ॥' : '॥ Under Kalwan Jurisdiction ॥'}
+            </div>
+            <div class="title-section">
+              <div class="center-title">
+                <h1>${businessName}</h1>
+                <div class="sub">${businessAddress}</div>
+                ${(businessGst || businessPan) ? `<div style="font-size: 11px; margin-top: 4px;">${businessGst ? `${isMarathi ? 'जीएसटी' : 'GST'}: ${businessGst}` : ''}${businessGst && businessPan ? ' | ' : ''}${businessPan ? `${isMarathi ? 'पॅन' : 'PAN'}: ${businessPan}` : ''}</div>` : ''}
+                <div class="receipt-badge">${isMarathi ? 'पेमेंट पावती' : 'PAYMENT RECEIPT'}</div>
+              </div>
+            </div>
+            <div class="contact-row">
+              <div>${businessPhone}</div>
+              ${businessEmail ? `<div>✉️ ${businessEmail}</div>` : ''}
             </div>
           </div>
-          <div class="contact-row">
-            <div>${isMarathi ? 'प्रो. रोकेश हिरे मो. ९०२१६९९९९१ / ९६२३९५६३९६' : 'Prop. Rakesh Hire M: 9021699991 / 9623956396'}</div>
-            <div>${isMarathi ? 'प्रो. स्वजित हिरे मो. ९५६५४५९९९१ / ९९१९९९९९९९' : 'Prop. Swajit Hire M: 9565459991 / 9919999999'}</div>
-          </div>
-        </div>
-        
-        <!-- DETAILS -->
-        <table class="details">
-          <tr>
-            <td style="width: 60%;">
-              <span class="label">${isMarathi ? 'पावती नं.' : 'Receipt No.'}:</span>
-              <span class="value">${receiptNumber}</span>
-            </td>
-            <td style="width: 40%;">
-              <span class="label">${isMarathi ? 'दि.' : 'Date'}:</span>
-              <span class="value">${formattedDate}</span>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span class="label">${isMarathi ? 'श्रीमान' : 'Farmer Name'}:</span>
-              <span class="value">${farmerName}</span>
-            </td>
-            <td>
-              <span class="label">${isMarathi ? 'मो. नं.' : 'Mobile'}:</span>
-              <span class="value">${farmerMobile}</span>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span class="label">${isMarathi ? 'गाव' : 'Village'}:</span>
-              <span class="value">${farmerVillage}</span>
-            </td>
-            <td style="text-align: right;">
-              <span class="status-badge">${statusDisplay.text}</span>
-            </td>
-          </tr>
-        </table>
-        
-        <!-- MAIN TABLE -->
-        <table class="main-table">
-          <colgroup>
-            <col class="col1"/>
-            <col class="col2"/>
-            <col class="col3"/>
-            <col class="col4"/>
-            <col class="col5"/>
-          </colgroup>
-          <thead>
+          
+          <!-- DETAILS -->
+          <table class="details">
             <tr>
-              <th>${isMarathi ? 'क्र.' : 'Sr.'}</th>
-              <th>${isMarathi ? 'तपशील' : 'Description'}</th>
-              <th>${isMarathi ? 'भाव' : 'Rate'}</th>
-              <th>${isMarathi ? 'रक्कम' : 'Amount'}</th>
-              <th>${isMarathi ? 'स्थिती' : 'Status'}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="total-row">
-              <td colspan="3" style="text-align: right; font-weight: bold;">${isMarathi ? 'एकूण बिल रक्कम' : 'Total Bill Amount'}:</td>
-              <td style="text-align: right; font-weight: bold;">₹ ${new Intl.NumberFormat('en-IN').format(finalPayable)}</td>
-              <td style="text-align: center;">—</td>
-            </tr>
-            <tr class="payment-row">
-              <td colspan="3" style="text-align: right; font-weight: bold; color: #b3153f;">${isMarathi ? 'आजचे पेमेंट' : 'Today\'s Payment'}:</td>
-              <td style="text-align: right; font-weight: bold; color: #b3153f; font-size: 20px;">₹ ${formattedAmount}</td>
-              <td style="text-align: center;">
-                <span style="display: inline-block; width: 20px; height: 20px; background: #4CAF50; border-radius: 50%; color: white; line-height: 20px;">✓</span>
+              <td style="width: 60%;">
+                <span class="label">${isMarathi ? 'पावती नं.' : 'Receipt No.'}:</span>
+                <span class="value">${receiptNumber}</span>
+              </td>
+              <td style="width: 40%;">
+                <span class="label">${isMarathi ? 'दि.' : 'Date'}:</span>
+                <span class="value">${formattedDate}</span>
               </td>
             </tr>
-            ${remainingAmount > 0 ? `
             <tr>
-              <td colspan="3" style="text-align: right; font-weight: bold; color: #FF6F00;">${isMarathi ? 'उर्वरित रक्कम' : 'Remaining Amount'}:</td>
-              <td style="text-align: right; font-weight: bold; color: #FF6F00;">₹ ${new Intl.NumberFormat('en-IN').format(remainingAmount)}</td>
-              <td style="text-align: center;">${isMarathi ? 'बाकी' : 'Due'}</td>
+              <td>
+                <span class="label">${isMarathi ? 'श्रीमान' : 'Farmer Name'}:</span>
+                <span class="value">${farmerName}</span>
+              </td>
+              <td>
+                <span class="label">${isMarathi ? 'मो. नं.' : 'Mobile'}:</span>
+                <span class="value">${farmerMobile}</span>
+              </td>
             </tr>
-            ` : ''}
-          </tbody>
-        </table>
-        
-        <!-- FOOTER -->
-        <div class="footer">
-          <div class="amount-in-words">
-            <strong>${isMarathi ? 'अक्षरी रुपये' : 'Amount in Words'}:</strong> ${amountInWords}
-          </div>
+            <tr>
+              <td>
+                <span class="label">${isMarathi ? 'गाव' : 'Village'}:</span>
+                <span class="value">${farmerVillage}</span>
+              </td>
+              <td style="text-align: right;">
+                <span class="status-badge">${statusDisplay.text}</span>
+              </td>
+            </tr>
+          </table>
           
-          ${remainingAmount > 0 ? `
-          <div class="payment-summary">
-            <p><strong>${isMarathi ? 'पेमेंट सारांश' : 'Payment Summary'}:</strong></p>
-            <p>• ${isMarathi ? 'एकूण बिल' : 'Total Bill'}: ₹ ${new Intl.NumberFormat('en-IN').format(finalPayable)}</p>
-            <p>• ${isMarathi ? 'आजचे पेमेंट' : 'Today\'s Payment'}: ₹ ${formattedAmount}</p>
-            <p>• ${isMarathi ? 'पेमेंट पद्धत' : 'Payment Mode'}: ${paymentModeText}</p>
-            ${paymentExtraInfo ? `<p>• ${paymentExtraInfo}</p>` : ''}
-            <p>• ${isMarathi ? 'उर्वरित रक्कम' : 'Remaining Amount'}: ₹ ${new Intl.NumberFormat('en-IN').format(remainingAmount)}</p>
-            <p>• ${isMarathi ? 'स्थिती' : 'Status'}: ${statusDisplay.text}</p>
-          </div>
-          ` : `
-          <div class="payment-summary">
-            <p><strong>${isMarathi ? 'पेमेंट सारांश' : 'Payment Summary'}:</strong></p>
-            <p>• ${isMarathi ? 'एकूण बिल' : 'Total Bill'}: ₹ ${new Intl.NumberFormat('en-IN').format(finalPayable)}</p>
-            <p>• ${isMarathi ? 'एकूण भरले' : 'Total Paid'}: ₹ ${new Intl.NumberFormat('en-IN').format(finalPayable)}</p>
-            <p>• ${isMarathi ? 'पेमेंट पद्धत' : 'Payment Mode'}: ${paymentModeText}</p>
-            ${paymentExtraInfo ? `<p>• ${paymentExtraInfo}</p>` : ''}
-            <p>• ${isMarathi ? 'स्थिती' : 'Status'}: ${isMarathi ? 'पूर्ण भरले' : 'Fully Paid'} ✓</p>
-          </div>
-          `}
+          <!-- MAIN TABLE -->
+          <table class="main-table">
+            <colgroup>
+              <col class="col1"/>
+              <col class="col2"/>
+              <col class="col3"/>
+              <col class="col4"/>
+              <col class="col5"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th>${isMarathi ? 'क्र.' : 'Sr.'}</th>
+                <th>${isMarathi ? 'तपशील' : 'Description'}</th>
+                <th>${isMarathi ? 'दर' : 'Rate'}</th>
+                <th>${isMarathi ? 'रक्कम' : 'Amount'}</th>
+                <th>${isMarathi ? 'स्थिती' : 'Status'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="total-row">
+                <td colspan="3" style="text-align: right; font-weight: bold;">${isMarathi ? 'एकूण बिल रक्कम' : 'Total Bill Amount'}:</td>
+                <td style="text-align: right; font-weight: bold;">₹ ${new Intl.NumberFormat('en-IN').format(finalPayable)}</td>
+                <td style="text-align: center;">—</td>
+              </tr>
+              <tr class="payment-row">
+                <td colspan="3" style="text-align: right; font-weight: bold; color: #b3153f;">${isMarathi ? 'आजचे पेमेंट' : "Today's Payment"}:</td>
+                <td style="text-align: right; font-weight: bold; color: #b3153f; font-size: 18px;">₹ ${formattedAmount}</td>
+                <td style="text-align: center;">
+                  <span style="display: inline-block; width: 18px; height: 18px; background: #4CAF50; border-radius: 50%; color: white; line-height: 18px; font-size: 12px;">✓</span>
+                </td>
+              </tr>
+              ${remainingAmount > 0 ? `
+              <tr>
+                <td colspan="3" style="text-align: right; font-weight: bold; color: #FF6F00;">${isMarathi ? 'उर्वरित रक्कम' : 'Remaining Amount'}:</td>
+                <td style="text-align: right; font-weight: bold; color: #FF6F00;">₹ ${new Intl.NumberFormat('en-IN').format(remainingAmount)}</td>
+                <td style="text-align: center;">${isMarathi ? 'बाकी' : 'Due'}</td>
+              </tr>
+              ` : ''}
+            </tbody>
+          </table>
           
-          <div class="footer-row">
-            <div class="footer-left">
-              ${isMarathi ? 'धन्यवाद!' : 'Thank You!'}
+          <!-- FOOTER -->
+          <div class="footer">
+            <div class="amount-in-words">
+              <strong>${isMarathi ? 'अक्षरी रुपये' : 'Amount in Words'}:</strong> ${amountInWords}
             </div>
-            <div class="footer-right">
-              ${isMarathi ? 'पेमेंट रक्कम' : 'Payment Amount'}:
-              <span>₹ ${formattedAmount}</span>
+            
+            ${remainingAmount > 0 ? `
+            <div class="payment-summary">
+              <p><strong>${isMarathi ? 'पेमेंट सारांश' : 'Payment Summary'}:</strong></p>
+              <p>• ${isMarathi ? 'एकूण बिल' : 'Total Bill'}: ₹ ${new Intl.NumberFormat('en-IN').format(finalPayable)}</p>
+              <p>• ${isMarathi ? 'आजचे पेमेंट' : "Today's Payment"}: ₹ ${formattedAmount}</p>
+              <p>• ${isMarathi ? 'पेमेंट पद्धत' : 'Payment Mode'}: ${paymentModeText}</p>
+              ${paymentExtraInfo ? `<p>• ${paymentExtraInfo}</p>` : ''}
+              <p>• ${isMarathi ? 'उर्वरित रक्कम' : 'Remaining Amount'}: ₹ ${new Intl.NumberFormat('en-IN').format(remainingAmount)}</p>
+              <p>• ${isMarathi ? 'स्थिती' : 'Status'}: ${statusDisplay.text}</p>
             </div>
-          </div>
-          <div class="signature-row">
-            <div class="buyer-sign">
-              ${isMarathi ? 'खरेदीदाराची सही' : "Buyer's Signature"}
+            ` : `
+            <div class="payment-summary">
+              <p><strong>${isMarathi ? 'पेमेंट सारांश' : 'Payment Summary'}:</strong></p>
+              <p>• ${isMarathi ? 'एकूण बिल' : 'Total Bill'}: ₹ ${new Intl.NumberFormat('en-IN').format(finalPayable)}</p>
+              <p>• ${isMarathi ? 'एकूण भरले' : 'Total Paid'}: ₹ ${new Intl.NumberFormat('en-IN').format(finalPayable)}</p>
+              <p>• ${isMarathi ? 'पेमेंट पद्धत' : 'Payment Mode'}: ${paymentModeText}</p>
+              ${paymentExtraInfo ? `<p>• ${paymentExtraInfo}</p>` : ''}
+              <p>• ${isMarathi ? 'स्थिती' : 'Status'}: ${isMarathi ? 'पूर्ण भरले' : 'Fully Paid'} ✓</p>
             </div>
-            <div class="shop-sign" oncontextmenu="return false;">
-              <div class="sign-mark">✓</div>
-              ${isMarathi ? 'जय शिवराय व्हेजिटेबल कळवण' : 'Jai Shivrai Vegetable Co., Kalwan'}
+            `}
+            
+            <div class="footer-row">
+              <div class="footer-left">
+                ${isMarathi ? 'धन्यवाद!' : 'Thank You!'}
+              </div>
+              <div class="footer-right">
+                ${isMarathi ? 'पेमेंट रक्कम' : 'Payment Amount'}:
+                <span>₹ ${formattedAmount}</span>
+              </div>
+            </div>
+            <div class="signature-row">
+              <div class="buyer-sign">
+                ${isMarathi ? 'खरेदीदाराची सही' : "Buyer's Signature"}
+              </div>
+              <div class="shop-sign" oncontextmenu="return false;">
+                <div class="sign-mark">✓</div>
+                ${businessName}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </body>
-    </html>
-  `);
-  printWindow.document.close();
-  printWindow.print();
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  })
+  .catch(error => {
+    console.error('Error fetching payment receipt:', error);
+    alert(t('common.networkError'));
+  });
 };
 
   const getPaymentModeIcon = (mode) => {
@@ -1228,17 +1264,18 @@ const Payments = () => {
                                 {t('common.viewDetails')}
                               </button>
 
-                              <button
-                                onClick={() => {
-                                  handlePrintReceipt(payment);
-                                  handleActionMenuClose();
-                                }}
-                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-blue-50 flex items-center gap-2 transition-colors"
-                                style={{ color: '#1565C0' }}
-                              >
-                                <Printer className="w-4 h-4" />
-                                {t('common.print')}
-                              </button>
+                             
+<button
+  onClick={() => {
+    handlePrintReceipt(payment._id);
+    handleActionMenuClose();
+  }}
+  className="w-full px-4 py-2.5 text-left text-sm hover:bg-blue-50 flex items-center gap-2 transition-colors"
+  style={{ color: '#1565C0' }}
+>
+  <Printer className="w-4 h-4" />
+  {t('common.print')}
+</button>
 
                               <button
                                 onClick={handleDueSummary}

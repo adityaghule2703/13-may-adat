@@ -105,6 +105,7 @@ const AddPayment = () => {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [farmers, setFarmers] = useState([]);
+  const [filteredFarmers, setFilteredFarmers] = useState([]); // New state for filtered farmers
   const [purchases, setPurchases] = useState([]);
   const [loadingFarmers, setLoadingFarmers] = useState(true);
   const [loadingPurchases, setLoadingPurchases] = useState(false);
@@ -136,13 +137,29 @@ const AddPayment = () => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.data.success) {
-        setFarmers(response.data.data);
+        const allFarmers = response.data.data;
+        
+        // Filter farmers who have pending dues > 0
+        const farmersWithDues = allFarmers.filter(farmer => 
+          (farmer.pendingDues || 0) > 0
+        );
+        
+        setFarmers(allFarmers);
+        setFilteredFarmers(farmersWithDues);
+        
+        // Check if pre-selected farmer exists and has dues
         if (preSelectedFarmerId) {
-          const farmer = response.data.data.find(f => f._id === preSelectedFarmerId);
-          if (farmer) {
+          const farmer = allFarmers.find(f => f._id === preSelectedFarmerId);
+          if (farmer && (farmer.pendingDues || 0) > 0) {
             setSelectedFarmer(farmer);
             await fetchPurchases(farmer._id);
+          } else if (farmer && (farmer.pendingDues || 0) === 0) {
+            setError(t('payments.errors.farmerNoDues'));
           }
+        }
+        
+        if (farmersWithDues.length === 0 && !preSelectedFarmerId) {
+          setError(t('payments.errors.noFarmersWithDues'));
         }
       } else {
         const errorMessage = response.data.message || response.data.error || t('farmers.errors.fetchFailed');
@@ -181,7 +198,7 @@ const AddPayment = () => {
       if (response.data.success) {
         const pendingPurchases = response.data.data.filter(purchase => 
           purchase.amountDue > 0 && 
-          ['saved', 'partial', 'draft'].includes(purchase.status)
+          ['partial', 'pending'].includes(purchase.status)
         );
         
         setPurchases(pendingPurchases);
@@ -192,6 +209,10 @@ const AddPayment = () => {
             setSelectedPurchase(purchase);
             setFormData(prev => ({ ...prev, amount: purchase.amountDue.toString() }));
           }
+        }
+        
+        if (pendingPurchases.length === 0) {
+          setError(t('payments.errors.noPendingPurchases'));
         }
       } else {
         const errorMessage = response.data.message || response.data.error || t('payments.errors.fetchFailed');
@@ -443,17 +464,18 @@ const AddPayment = () => {
               <Label required>{t('payments.selectFarmer')}</Label>
               <Autocomplete
                 fullWidth
-                options={farmers}
+                options={filteredFarmers} // Use filtered farmers instead of all farmers
                 loading={loadingFarmers}
                 value={selectedFarmer}
                 onChange={handleFarmerChange}
                 getOptionLabel={(option) => `${option.name} - ${option.mobile} (${option.village || option.city})`}
                 isOptionEqualToValue={(option, value) => option._id === value?._id}
+                noOptionsText={t('payments.errors.noFarmersWithDues')}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     size="small"
-                    placeholder={t('payments.placeholders.selectFarmer')}
+                    placeholder={loadingFarmers ? t('common.loading') : t('payments.placeholders.selectFarmer')}
                     sx={inputSx}
                   />
                 )}
@@ -713,7 +735,7 @@ const AddPayment = () => {
                   />
                 </Box>
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label required>{t('payments.bankName')}</Label>
+                  <Label required>{t('payments.placeholders.bankName')}</Label>
                   <TextField
                     fullWidth
                     size="small"
@@ -761,7 +783,7 @@ const AddPayment = () => {
                   />
                 </Box>
                 <Box sx={{ gridColumn: 'span 2' }}>
-                  <Label required>{t('payments.bankName')}</Label>
+                  <Label required>{t('payments.placeholders.bankName')}</Label>
                   <TextField
                     fullWidth
                     size="small"

@@ -370,74 +370,74 @@ const AddPurchase = () => {
     setTimeout(() => setError(''), 5000);
   };
 
- const handleSubmit = async () => {
-  if (!formData.farmerId) {
-    showError(t('purchases.errors.farmerRequired'));
-    return;
-  }
-  if (formData.lines.some(line => !line.productName || !line.rate || parseFloat(line.rate) <= 0 || !line.actualQty || parseFloat(line.actualQty) <= 0)) {
-    showError(t('purchases.errors.completeLines'));
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const token = getToken();
-    const purchaseData = {
-      farmerId: formData.farmerId,
-      purchaseDate: formData.purchaseDate,
-      lines: formData.lines.map(line => ({
-        productName: line.productName,
-        pricingType: line.pricingType,
-        bags: parseInt(line.bags) || 0,
-        weightPerBag: parseInt(line.weightPerBag) || 0,
-        actualQty: parseFloat(line.actualQty) || 0,
-        qualityDeduction: parseFloat(line.qualityDeduction) || 0,
-        rate: parseFloat(line.rate) || 0,
-        notes: line.notes || ''
-      })),
-      deductions: {
-        transport: parseFloat(formData.deductions.transport) || 0,
-        labour: parseFloat(formData.deductions.labour) || 0,
-        commission: parseFloat(formData.deductions.commission) || 0,
-        commissionType: formData.deductions.commissionType,
-        storage: parseFloat(formData.deductions.storage) || 0,
-        storageNote: formData.deductions.storageNote || '',
-        returnDeduction: parseFloat(formData.deductions.returnDeduction) || 0,
-        returnNote: formData.deductions.returnNote || '',
-        advanceAdjusted: parseFloat(formData.deductions.advanceAdjusted) || 0,
-        other: parseFloat(formData.deductions.other) || 0,
-        otherNote: formData.deductions.otherNote || ''
-      },
-      notes: formData.notes || ''
-    };
-
-    const response = await axios.post(`${BASE_URL}/purchases`, purchaseData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.data.success) {
-      setSuccess(true);
-      setTimeout(() => navigate('/purchases'), 2000);
-    } else {
-      const errorMessage = response.data.message || response.data.error || t('purchases.errors.createFailed');
-      showError(errorMessage);
+  const handleSubmit = async () => {
+    if (!formData.farmerId) {
+      showError(t('purchases.errors.farmerRequired'));
+      return;
     }
-  } catch (error) {
-    console.error('Error creating purchase:', error);
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        error.message || 
-                        t('common.networkError');
-    showError(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+    if (formData.lines.some(line => !line.productName || !line.rate || parseFloat(line.rate) <= 0 || !line.actualQty || parseFloat(line.actualQty) <= 0)) {
+      showError(t('purchases.errors.completeLines'));
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const token = getToken();
+      const purchaseData = {
+        farmerId: formData.farmerId,
+        purchaseDate: formData.purchaseDate,
+        lines: formData.lines.map(line => ({
+          productName: line.productName,
+          pricingType: line.pricingType,
+          bags: parseInt(line.bags) || 0,
+          weightPerBag: parseInt(line.weightPerBag) || 0,
+          actualQty: parseFloat(line.actualQty) || 0,
+          qualityDeduction: parseFloat(line.qualityDeduction) || 0,
+          rate: parseFloat(line.rate) || 0,
+          notes: line.notes || ''
+        })),
+        deductions: {
+          transport: parseFloat(formData.deductions.transport) || 0,
+          labour: parseFloat(formData.deductions.labour) || 0,
+          commission: parseFloat(formData.deductions.commission) || 0,
+          commissionType: formData.deductions.commissionType,
+          storage: parseFloat(formData.deductions.storage) || 0,
+          storageNote: formData.deductions.storageNote || '',
+          returnDeduction: parseFloat(formData.deductions.returnDeduction) || 0,
+          returnNote: formData.deductions.returnNote || '',
+          advanceAdjusted: parseFloat(formData.deductions.advanceAdjusted) || 0,
+          other: parseFloat(formData.deductions.other) || 0,
+          otherNote: formData.deductions.otherNote || ''
+        },
+        notes: formData.notes || ''
+      };
+
+      const response = await axios.post(`${BASE_URL}/purchases`, purchaseData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.data.success) {
+        setSuccess(true);
+        setTimeout(() => navigate('/purchases'), 2000);
+      } else {
+        const errorMessage = response.data.message || response.data.error || t('purchases.errors.createFailed');
+        showError(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error creating purchase:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          t('common.networkError');
+      showError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
@@ -697,7 +697,7 @@ const AddPurchase = () => {
                           <TextField
                             {...params}
                             size="small"
-                            placeholder="Search or select product..."
+                            placeholder={t('purchases.placeholders.selectProduct')}
                             error={!!fieldErrors[`line_${index}_product`]}
                             helperText={fieldErrors[`line_${index}_product`]}
                             sx={inputSx}
@@ -717,7 +717,7 @@ const AddPurchase = () => {
                                 )}
                               </Box>
                               <Typography variant="caption" sx={{ fontSize: '0.65rem', color: option.isActive ? '#2E7D32' : '#D32F2F' }}>
-                                {option.isActive ? 'Active' : 'Inactive'}
+                                {option.isActive ? t('products.status.active') : t('products.status.inactive')}
                               </Typography>
                             </Box>
                           </li>
@@ -835,6 +835,7 @@ const AddPurchase = () => {
                         placeholder={t('purchases.placeholders.quantity')}
                         error={!!fieldErrors[`line_${index}_qty`]}
                         helperText={fieldErrors[`line_${index}_qty`]}
+                        disabled={line.pricingType === 'kg' && line.bags && line.bags !== '' && line.weightPerBag && line.weightPerBag !== ''}
                         sx={inputSx}
                       />
                       {line.pricingType === 'kg' && line.bags && line.bags !== '' && line.weightPerBag && line.weightPerBag !== '' && (
@@ -1233,6 +1234,7 @@ const AddPurchase = () => {
             disabled={loading}
             variant="contained"
             sx={{
+              ml: 'auto',
               height: 32,
               px: 2,
               borderRadius: 1.5,
@@ -1250,7 +1252,7 @@ const AddPurchase = () => {
               }
             }}
           >
-            {loading ? t('common.creating') : t('common.create')}
+            {loading ? t('common.creating') : t('purchases.createPurchase')}
           </Button>
         )}
       </Box>

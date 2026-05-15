@@ -160,10 +160,10 @@ const EditPurchase = () => {
 
   // Calculate line total
   const calculateLineTotal = (line) => {
-    let quantity = line.actualQty || 0;
-    if (line.pricingType === 'quintal') quantity = (line.actualQty || 0) * 100;
-    const netQty = quantity - (line.qualityDeduction || 0);
-    return netQty * (line.rate || 0);
+    let quantity = parseFloat(line.actualQty) || 0;
+    if (line.pricingType === 'quintal') quantity = (parseFloat(line.actualQty) || 0) * 100;
+    const netQty = quantity - (parseFloat(line.qualityDeduction) || 0);
+    return netQty * (parseFloat(line.rate) || 0);
   };
 
   // Fetch products
@@ -219,11 +219,11 @@ const EditPurchase = () => {
           productId: null,
           productName: line.productName,
           pricingType: line.pricingType || 'kg',
-          bags: line.bags || 0,
-          weightPerBag: line.weightPerBag || 0,
-          actualQty: line.actualQty || 0,
-          qualityDeduction: line.qualityDeduction || 0,
-          rate: line.rate || 0,
+          bags: line.bags || '',
+          weightPerBag: line.weightPerBag || '',
+          actualQty: line.actualQty || '',
+          qualityDeduction: line.qualityDeduction || '',
+          rate: line.rate || '',
           notes: line.notes || ''
         }));
 
@@ -312,10 +312,16 @@ const EditPurchase = () => {
     const updatedLines = [...formData.lines];
     updatedLines[index][field] = value;
     
+    // Auto-calculate actualQty when bags and weightPerBag are both present and pricingType is 'kg'
     if ((field === 'bags' || field === 'weightPerBag') && 
-        updatedLines[index].bags && updatedLines[index].weightPerBag && 
+        updatedLines[index].bags && 
+        updatedLines[index].bags !== '' &&
+        updatedLines[index].weightPerBag && 
+        updatedLines[index].weightPerBag !== '' && 
         updatedLines[index].pricingType === 'kg') {
-      updatedLines[index].actualQty = updatedLines[index].bags * updatedLines[index].weightPerBag;
+      const bags = parseFloat(updatedLines[index].bags) || 0;
+      const weightPerBag = parseFloat(updatedLines[index].weightPerBag) || 0;
+      updatedLines[index].actualQty = (bags * weightPerBag).toString();
     }
     
     setFormData(prev => ({ ...prev, lines: updatedLines }));
@@ -328,11 +334,11 @@ const EditPurchase = () => {
         productId: null,
         productName: '', 
         pricingType: 'kg', 
-        bags: 0, 
-        weightPerBag: 0,
-        actualQty: 0, 
-        qualityDeduction: 0, 
-        rate: 0, 
+        bags: '', 
+        weightPerBag: '',
+        actualQty: '', 
+        qualityDeduction: '', 
+        rate: '', 
         notes: ''
       }]
     }));
@@ -366,11 +372,11 @@ const EditPurchase = () => {
           errors[`line_${idx}_product`] = t('purchases.errors.productRequired');
           isValid = false;
         }
-        if (line.rate <= 0) {
+        if (!line.rate || parseFloat(line.rate) <= 0) {
           errors[`line_${idx}_rate`] = t('purchases.errors.rateRequired');
           isValid = false;
         }
-        if (line.actualQty <= 0) {
+        if (!line.actualQty || parseFloat(line.actualQty) <= 0) {
           errors[`line_${idx}_qty`] = t('purchases.errors.qtyRequired');
           isValid = false;
         }
@@ -400,7 +406,7 @@ const EditPurchase = () => {
   };
 
   const handleSubmit = async () => {
-    if (formData.lines.some(line => !line.productName || line.rate <= 0 || line.actualQty <= 0)) {
+    if (formData.lines.some(line => !line.productName || !line.rate || parseFloat(line.rate) <= 0 || !line.actualQty || parseFloat(line.actualQty) <= 0)) {
       showError(t('purchases.errors.completeLines'));
       return;
     }
@@ -414,14 +420,14 @@ const EditPurchase = () => {
       const purchaseData = {
         purchaseDate: formData.purchaseDate,
         lines: formData.lines.map(line => {
-          const quantity = line.actualQty || 0;
+          const quantity = parseFloat(line.actualQty) || 0;
           let qtyInBaseUnit = quantity;
           if (line.pricingType === 'quintal') {
             qtyInBaseUnit = quantity * 100;
           }
           
-          const billedQty = qtyInBaseUnit - (line.qualityDeduction || 0);
-          const lineTotal = billedQty * (line.rate || 0);
+          const billedQty = qtyInBaseUnit - (parseFloat(line.qualityDeduction) || 0);
+          const lineTotal = billedQty * (parseFloat(line.rate) || 0);
           
           const lineData = {
             productName: line.productName,
@@ -703,6 +709,9 @@ const EditPurchase = () => {
             // Find the product by name from the products list
             const selectedProduct = getSelectedProduct(line.productName);
             
+            // Check if quantity should be disabled (auto-calculated)
+            const isQuantityAutoCalculated = line.pricingType === 'kg' && line.bags && line.bags !== '' && line.weightPerBag && line.weightPerBag !== '';
+            
             return (
               <Paper key={index} sx={{ borderRadius: 2.5, overflow: 'visible', border: `1px solid ${COLORS.border}` }}>
                 <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -820,7 +829,7 @@ const EditPurchase = () => {
                         type="number"
                         size="small"
                         value={line.rate}
-                        onChange={(e) => handleLineChange(index, 'rate', parseFloat(e.target.value) || 0)}
+                        onChange={(e) => handleLineChange(index, 'rate', e.target.value)}
                         placeholder={t('purchases.placeholders.rate')}
                         error={!!fieldErrors[`line_${index}_rate`]}
                         helperText={fieldErrors[`line_${index}_rate`]}
@@ -841,7 +850,7 @@ const EditPurchase = () => {
                             type="number"
                             size="small"
                             value={line.bags}
-                            onChange={(e) => handleLineChange(index, 'bags', parseInt(e.target.value) || 0)}
+                            onChange={(e) => handleLineChange(index, 'bags', e.target.value)}
                             placeholder={t('purchases.placeholders.numberOfBags')}
                             sx={inputSx}
                           />
@@ -853,7 +862,7 @@ const EditPurchase = () => {
                             type="number"
                             size="small"
                             value={line.weightPerBag}
-                            onChange={(e) => handleLineChange(index, 'weightPerBag', parseInt(e.target.value) || 0)}
+                            onChange={(e) => handleLineChange(index, 'weightPerBag', e.target.value)}
                             placeholder={t('purchases.placeholders.weightPerBag')}
                             sx={inputSx}
                           />
@@ -869,15 +878,24 @@ const EditPurchase = () => {
                         type="number"
                         size="small"
                         value={line.actualQty}
-                        onChange={(e) => handleLineChange(index, 'actualQty', parseFloat(e.target.value) || 0)}
+                        onChange={(e) => handleLineChange(index, 'actualQty', e.target.value)}
                         placeholder={t('purchases.placeholders.quantity')}
                         error={!!fieldErrors[`line_${index}_qty`]}
                         helperText={fieldErrors[`line_${index}_qty`]}
-                        sx={inputSx}
+                        sx={{
+                          ...inputSx,
+                          '& .MuiInputBase-root.Mui-disabled': {
+                            backgroundColor: '#F5F5F5',
+                          }
+                        }}
+                        disabled={isQuantityAutoCalculated}
+                        InputProps={{
+                          readOnly: isQuantityAutoCalculated,
+                        }}
                       />
-                      {line.pricingType === 'kg' && line.bags > 0 && line.weightPerBag > 0 && (
+                      {isQuantityAutoCalculated && (
                         <Typography variant="caption" sx={{ mt: 0.5, display: 'block', color: '#8D6E63', fontSize: '0.65rem' }}>
-                          {t('purchases.usingBagsCalculation')}
+                          {t('purchases.autoCalculated')}: {line.bags} {t('purchases.bags')} × {line.weightPerBag} kg = {parseFloat(line.bags) * parseFloat(line.weightPerBag)} kg
                         </Typography>
                       )}
                     </Box>
@@ -890,7 +908,7 @@ const EditPurchase = () => {
                         type="number"
                         size="small"
                         value={line.qualityDeduction}
-                        onChange={(e) => handleLineChange(index, 'qualityDeduction', parseFloat(e.target.value) || 0)}
+                        onChange={(e) => handleLineChange(index, 'qualityDeduction', e.target.value)}
                         placeholder={t('purchases.placeholders.qualityDeduction')}
                         sx={inputSx}
                       />
@@ -966,7 +984,7 @@ const EditPurchase = () => {
                     type="number"
                     size="small"
                     value={formData.deductions.transport}
-                    onChange={(e) => handleDeductionChange('transport', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleDeductionChange('transport', e.target.value)}
                     placeholder={t('purchases.placeholders.transportCharges')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
@@ -980,7 +998,7 @@ const EditPurchase = () => {
                     type="number"
                     size="small"
                     value={formData.deductions.labour}
-                    onChange={(e) => handleDeductionChange('labour', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleDeductionChange('labour', e.target.value)}
                     placeholder={t('purchases.placeholders.labourCharges')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
@@ -995,7 +1013,7 @@ const EditPurchase = () => {
                       type="number"
                       size="small"
                       value={formData.deductions.commission}
-                      onChange={(e) => handleDeductionChange('commission', parseFloat(e.target.value) || 0)}
+                      onChange={(e) => handleDeductionChange('commission', e.target.value)}
                       placeholder={t('purchases.placeholders.commissionAmount')}
                       sx={{ ...inputSx, flex: 2 }}
                       InputProps={{
@@ -1050,7 +1068,7 @@ const EditPurchase = () => {
                     type="number"
                     size="small"
                     value={formData.deductions.storage}
-                    onChange={(e) => handleDeductionChange('storage', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleDeductionChange('storage', e.target.value)}
                     placeholder={t('purchases.placeholders.storageCharges')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
@@ -1072,7 +1090,7 @@ const EditPurchase = () => {
                     type="number"
                     size="small"
                     value={formData.deductions.returnDeduction}
-                    onChange={(e) => handleDeductionChange('returnDeduction', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleDeductionChange('returnDeduction', e.target.value)}
                     placeholder={t('purchases.placeholders.returnDeduction')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
@@ -1094,7 +1112,7 @@ const EditPurchase = () => {
                     type="number"
                     size="small"
                     value={formData.deductions.advanceAdjusted}
-                    onChange={(e) => handleDeductionChange('advanceAdjusted', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleDeductionChange('advanceAdjusted', e.target.value)}
                     placeholder={t('purchases.placeholders.advanceAdjusted')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
@@ -1108,7 +1126,7 @@ const EditPurchase = () => {
                     type="number"
                     size="small"
                     value={formData.deductions.other}
-                    onChange={(e) => handleDeductionChange('other', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => handleDeductionChange('other', e.target.value)}
                     placeholder={t('purchases.placeholders.otherDeductions')}
                     sx={inputSx}
                     InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
@@ -1187,14 +1205,14 @@ const EditPurchase = () => {
                 </TableHead>
                 <TableBody>
                   {formData.lines.map((line, idx) => {
-                    let quantity = line.actualQty || 0;
-                    if (line.pricingType === 'quintal') quantity = line.actualQty * 100;
-                    const netQty = quantity - (line.qualityDeduction || 0);
+                    let quantity = parseFloat(line.actualQty) || 0;
+                    if (line.pricingType === 'quintal') quantity = (parseFloat(line.actualQty) || 0) * 100;
+                    const netQty = quantity - (parseFloat(line.qualityDeduction) || 0);
                     return (
                       <TableRow key={idx} sx={{ '&:hover': { bgcolor: COLORS.primaryLight } }}>
                         <TableCell sx={{ fontSize: '0.7rem' }}>{line.productName || '-'}</TableCell>
                         <TableCell sx={{ fontSize: '0.7rem' }}>{netQty.toFixed(2)} {line.pricingType}</TableCell>
-                        <TableCell sx={{ fontSize: '0.7rem' }}>{formatCurrency(line.rate)}/{line.pricingType === 'kg' ? 'kg' : line.pricingType}</TableCell>
+                        <TableCell sx={{ fontSize: '0.7rem' }}>{formatCurrency(parseFloat(line.rate) || 0)}/{line.pricingType === 'kg' ? 'kg' : line.pricingType}</TableCell>
                         <TableCell align="right" sx={{ fontSize: '0.7rem', fontWeight: 600, color: COLORS.primaryDark }}>
                           {formatCurrency(calculateLineTotal(line))}
                         </TableCell>
@@ -1253,32 +1271,32 @@ const EditPurchase = () => {
             {t('common.next')}
           </Button>
         )}
-        {currentStep === 2 && (
-          <Button
-            onClick={handleSubmit}
-            disabled={loading}
-            variant="contained"
-            sx={{
-              height: 32,
-              px: 2,
-              borderRadius: 1.5,
-              bgcolor: COLORS.primary,
-              fontSize: '0.7rem',
-              fontWeight: 500,
-              textTransform: 'none',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-              '&:hover': {
-                bgcolor: COLORS.primaryDark,
-              },
-              '&:disabled': {
-                bgcolor: COLORS.border,
-                color: COLORS.text.tertiary
-              }
-            }}
-          >
-            {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : t('common.update')}
-          </Button>
-        )}
+       {currentStep === 2 && (
+  <Button
+    onClick={handleSubmit}
+    disabled={loading}
+    variant="contained"
+    sx={{
+      height: 32,
+      px: 2,
+      borderRadius: 1.5,
+      bgcolor: COLORS.primary,
+      fontSize: '0.7rem',
+      fontWeight: 500,
+      textTransform: 'none',
+      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+      '&:hover': {
+        bgcolor: COLORS.primaryDark,
+      },
+      '&:disabled': {
+        bgcolor: COLORS.border,
+        color: COLORS.text.tertiary
+      }
+    }}
+  >
+    {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : t('purchases.updatePurchase')}
+  </Button>
+)}
       </Box>
     </Box>
   );

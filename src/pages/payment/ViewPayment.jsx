@@ -164,7 +164,7 @@ const ViewPayment = () => {
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <button
             onClick={handleRefresh}
             disabled={refreshing}
@@ -198,7 +198,7 @@ const ViewPayment = () => {
               {t('payments.buttons.updateChequeStatus')}
             </button>
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* Payment Status Banner */}

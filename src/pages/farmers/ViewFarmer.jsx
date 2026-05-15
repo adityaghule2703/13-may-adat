@@ -237,7 +237,7 @@ const ViewFarmer = () => {
             <p className="text-sm mt-0.5" style={{ color: '#8D6E63' }}>{t('farmers.farmerId')}: {farmer._id?.slice(-8)}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <button 
             onClick={() => navigate(`/farmers/edit/${farmer._id}`)} 
             className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all hover:scale-105"
@@ -252,7 +252,7 @@ const ViewFarmer = () => {
           >
             <Plus className="w-4 h-4" /> {t('farmers.actions.advancePayment')}
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Status Banner */}
@@ -294,7 +294,7 @@ const ViewFarmer = () => {
           >
             {t('farmers.tabs.farmerDetails')}
           </button>
-          <button 
+          {/* <button 
             onClick={() => setActiveTab('ledger')} 
             className={`pb-2 px-1 text-sm font-medium transition-colors ${
               activeTab === 'ledger' 
@@ -303,7 +303,7 @@ const ViewFarmer = () => {
             }`}
           >
             {t('farmers.tabs.ledgerStatement')}
-          </button>
+          </button> */}
         </nav>
       </div>
 

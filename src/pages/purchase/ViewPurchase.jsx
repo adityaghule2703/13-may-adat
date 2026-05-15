@@ -486,7 +486,7 @@ const ViewPurchase = () => {
             <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>{t('purchases.receipt')}: {purchase.receiptNumber}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <button className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 border hover:bg-gray-50 transition-all hover:scale-105" style={{ borderColor: '#C8E6C9', color: '#2E7D32' }}>
             <Printer className="w-4 h-4" /> {t('common.print')}
           </button>
@@ -508,7 +508,7 @@ const ViewPurchase = () => {
               <DollarSign className="w-4 h-4" /> {t('payments.buttons.newPayment')}
             </button>
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* Status Bar */}
