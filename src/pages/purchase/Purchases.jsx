@@ -203,9 +203,9 @@ const handlePrintReceipt = (purchaseId) => {
     
     // Get business details from API response (root level, not inside data)
     const businessDetails = data.businessDetails || {};
-    const businessName = businessDetails.name || businessDetails.businessName || (isMarathi ? 'जय शिवराय व्हेजिटेबल' : 'Jai Shivrai Vegetable Co.');
-    const businessAddress = businessDetails.fullAddress || businessDetails.address || businessDetails.businessAddress || (isMarathi ? 'वेसराणे, ता. कळवण जि. नाशिक' : 'Vesarane, Tal. Kalwan, Dist. Nashik');
-    const businessPhone = businessDetails.phone || businessDetails.businessPhone || (isMarathi ? 'प्रो. रोकेश हिरे मो. ९०२१६९९९९१ / ९६२३९५६३९६' : 'Prop. Rakesh Hire M: 9021699991 / 9623956396');
+    const businessName = businessDetails.name || businessDetails.businessName || "N/A";
+    const businessAddress = businessDetails.fullAddress || businessDetails.address || businessDetails.businessAddress ||  "N/A";
+    const businessPhone = businessDetails.phone || businessDetails.businessPhone ||  "N/A";
     const businessEmail = businessDetails.email || businessDetails.businessEmail || '';
     const businessGst = businessDetails.gstNumber || '';
     const businessPan = businessDetails.panNumber || '';
@@ -736,9 +736,7 @@ const handlePrintReceipt = (purchaseId) => {
       <body>
         <div class="receipt">
           <div class="top-header">
-            <div class="top-line">
-              ${isMarathi ? '॥ कळवणच्या न्यायक्षेत्रात ॥' : '॥ Under Kalwan Jurisdiction ॥'}
-            </div>
+           
             <div class="title-section">
               <div class="center-title">
                 <h1>${businessName}</h1>
@@ -748,8 +746,8 @@ const handlePrintReceipt = (purchaseId) => {
               </div>
             </div>
             <div class="contact-row">
-              <div class="contact-phone">📞 ${businessPhone}</div>
-              ${businessEmail ? `<div class="contact-email">✉️ ${businessEmail}</div>` : ''}
+              <div class="contact-phone"> ${businessPhone}</div>
+              ${businessEmail ? `<div class="contact-email"> ${businessEmail}</div>` : ''}
             </div>
           </div>
           

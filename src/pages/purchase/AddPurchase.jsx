@@ -252,6 +252,18 @@ const AddPurchase = () => {
     }
   };
 
+  const handleAddFarmer = () => {
+    // Store current step and form data in session storage to come back
+    sessionStorage.setItem('returnToPurchase', 'true');
+    sessionStorage.setItem('purchaseFormData', JSON.stringify({
+      currentStep,
+      formData,
+      selectedFarmer
+    }));
+    // Navigate to add farmer page
+    navigate('/farmermodal/add');
+  };
+
   const handleProductChange = (index, product) => {
     const updatedLines = [...formData.lines];
     updatedLines[index] = {
@@ -563,53 +575,67 @@ const AddPurchase = () => {
           </Box>
           <Box sx={{ p: 2.5 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-              {/* SELECT FARMER - First column */}
+              {/* SELECT FARMER - First column with Add button */}
               <Box>
                 <Label required>{t('purchases.selectFarmer')}</Label>
-                <Autocomplete
-                  fullWidth
-                  options={farmers}
-                  loading={loadingFarmers}
-                  value={selectedFarmer}
-                  onChange={handleFarmerChange}
-                  getOptionLabel={(option) => `${option.name} - ${option.mobile} (${option.village}, ${option.city})`}
-                  isOptionEqualToValue={(option, value) => option._id === value?._id}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      size="small"
-                      placeholder={t('purchases.placeholders.selectFarmer')}
-                      error={!!fieldErrors.farmerId}
-                      helperText={fieldErrors.farmerId}
-                      sx={inputSx}
-                    />
-                  )}
-                  renderOption={(props, option) => (
-                    <li {...props}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                        <Box>
-                          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem' }}>
-                            {option.name}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
-                            {option.mobile} • {option.village}, {option.city || 'N/A'}
-                          </Typography>
+                <Stack direction="row" spacing={1} alignItems="flex-start">
+                  <Autocomplete
+                    fullWidth
+                    options={farmers}
+                    loading={loadingFarmers}
+                    value={selectedFarmer}
+                    onChange={handleFarmerChange}
+                    getOptionLabel={(option) => `${option.name} - ${option.mobile} (${option.village}, ${option.city})`}
+                    isOptionEqualToValue={(option, value) => option._id === value?._id}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        size="small"
+                        placeholder={t('purchases.placeholders.selectFarmer')}
+                        error={!!fieldErrors.farmerId}
+                        helperText={fieldErrors.farmerId}
+                        sx={inputSx}
+                      />
+                    )}
+                    renderOption={(props, option) => (
+                      <li {...props}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem' }}>
+                              {option.name}
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: COLORS.text.tertiary }}>
+                              {option.mobile} • {option.village}, {option.city || 'N/A'}
+                            </Typography>
+                          </Box>
                         </Box>
-                      </Box>
-                    </li>
-                  )}
-                  ListboxProps={{
-                    sx: {
-                      maxHeight: '300px',
-                      overflowY: 'auto',
-                      '& .MuiAutocomplete-option': {
-                        fontSize: '0.75rem',
-                        py: 1,
-                        px: 1.5
+                      </li>
+                    )}
+                    ListboxProps={{
+                      sx: {
+                        maxHeight: '300px',
+                        overflowY: 'auto',
+                        '& .MuiAutocomplete-option': {
+                          fontSize: '0.75rem',
+                          py: 1,
+                          px: 1.5
+                        }
                       }
-                    }
-                  }}
-                />
+                    }}
+                  />
+                  <IconButton 
+                    onClick={handleAddFarmer}
+                    sx={{ 
+                      p: 1, 
+                      borderRadius: 1.5,
+                      bgcolor: COLORS.primaryLight,
+                      '&:hover': { bgcolor: COLORS.primaryLight, opacity: 0.8 }
+                    }}
+                    title={t('farmers.addTitle')}
+                  >
+                    <AddIcon sx={{ fontSize: '1rem', color: COLORS.primary }} />
+                  </IconButton>
+                </Stack>
                 {selectedFarmer && (
                   <Box sx={{ mt: 2, p: 1.5, bgcolor: COLORS.primaryLight, borderRadius: 1.5 }}>
                     <Typography variant="caption" sx={{ fontSize: '0.65rem', color: COLORS.text.tertiary }}>
@@ -697,7 +723,7 @@ const AddPurchase = () => {
                           <TextField
                             {...params}
                             size="small"
-                            placeholder={t('purchases.placeholders.selectProduct')}
+                            
                             error={!!fieldErrors[`line_${index}_product`]}
                             helperText={fieldErrors[`line_${index}_product`]}
                             sx={inputSx}

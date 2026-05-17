@@ -4,11 +4,14 @@
         "subtitle": "वित्त आणि व्यापार",
         "search": "शेतकरी, खरेदीदार, व्यवहार शोधा...",
         "searchPlaceholder": "व्यवहार शोधा...",
+        "update": "अद्यतनित करा",
         "logout": "लॉगआउट",
          "english": "English",
     "marathi": "मराठी",
         "save": "जतन करा",
         "cancel": "रद्द करा",
+        "lastUpdated": "शेवटचे अद्यतन",
+        "createdBy": "निर्मिती कर्ता",
         "edit": "संपादित करा",
         "delete": "हटवा",
         "view": "पहा",
@@ -465,6 +468,7 @@
 
     "sidebar": {
         "todaySummary": "आजचा सारांश",
+        "sales": "एकूण विक्री",
         "marketInsights": "बाजार अंतर्दृष्टी",
         "marketMessage": "गव्हाच्या किंमती या आठवड्यात ८% वाढण्याची शक्यता",
         "buying": "खरेदी",
@@ -482,6 +486,8 @@
         "loadingPayments": "देयक इतिहास लोड होत आहे...",
         "loadingDues": "बाकी माहिती लोड करत आहे...",
         "searchPlaceholder": "शेतकरी शोधा...",
+       "businessName": "व्यवसायाचे नाव",
+"panNumber": "पॅन क्रमांक",
         "noFarmersFound": "शेतकरी आढळले नाहीत",
         "farmerId": "शेतकरी आयडी",
         "memberSince": "सदस्यता दिनांक",
@@ -692,7 +698,8 @@
   "pending": "प्रलंबित",
   "paid": "भरलेले",
   "completed": "पूर्ण",
-  "cancelled": "रद्द"
+  "cancelled": "रद्द",
+  "partialPayment": "अंशतः देयक"
 },
         "filters": {
             "startDate": "प्रारंभ दिनांक",
@@ -967,236 +974,256 @@
     },
 
     "inventory": {
-        "title": "स्टॉक",
-        "subtitle": "सर्व स्टॉक पातळी व्यवस्थापित करा",
-        "loading": "स्टॉक लोड होत आहे...",
-        "loadingStockDetails": "स्टॉक तपशील लोड करत आहे...",
-        "stockDetailsSubtitle": "सर्व गोदामांमधील स्टॉक तपशील",
-        "totalStockAllWarehouses": "सर्व गोदामांमधील एकूण स्टॉक",
-        "units": "युनिट्स",
-        "stockByWarehouse": "गोदाम निहाय स्टॉक",
-        "searchPlaceholder": "उत्पादने शोधा...",
-        "noItemsFound": "स्टॉक आढळले नाहीत",
-        "stats": {
-            "totalProducts": "एकूण उत्पादने",
-            "totalStock": "एकूण स्टॉक (युनिट्स)",
-            "lowStockItems": "कमी स्टॉक असलेल्या वस्तू",
-            "warehouses": "गोदामे"
-        },
-        "status": {
-            "outOfStock": "स्टॉक संपला",
-            "lowStock": "कमी स्टॉक",
-            "inStock": "स्टॉकमध्ये"
-        },
-        "table": {
-            "product": "उत्पादन",
-            "warehouse": "गोदाम",
-            "currentStock": "सध्याचा स्टॉक",
-            "unit": "युनिट",
-            "status": "स्थिती",
-            "lastUpdated": "शेवटचे अद्यतन",
-            "actions": "क्रिया"
-        },
-        "filters": {
-            "warehouse": "गोदाम",
-            "allWarehouses": "सर्व गोदामे",
-            "lowStockOnly": "फक्त कमी स्टॉक",
-            "lowStockLabel": "फक्त १० युनिट्सपेक्षा कमी स्टॉक असलेली उत्पादने दाखवा"
-        },
-        "buttons": {
-            "adjustStock": "स्टॉक समायोजित करा",
-            "transferStock": "स्टॉक स्थानांतरित करा"
-        },
-        "pagination": {
-            "showing": "{{start}} ते {{end}} दाखवत आहे, एकूण {{total}} वस्तू"
-        },
-        "errors": {
-            "fetchFailed": "स्टॉक आणण्यात अयशस्वी",
-            "fetchStockFailed": "स्टॉक तपशील आणण्यात अयशस्वी",
-            "warehouseRequired": "कृपया गोदाम निवडा",
-            "productRequired": "कृपया उत्पादन निवडा",
-            "validQuantityRequired": "कृपया वैध समायोजन प्रमाण प्रविष्ट करा",
-            "reasonRequired": "कृपया समायोजनाचे कारण प्रदान करा",
-            "adjustFailed": "स्टॉक समायोजित करण्यात अयशस्वी",
-            "sourceWarehouseRequired": "कृपया स्रोत गोदाम निवडा",
-            "destWarehouseRequired": "कृपया गंतव्य गोदाम निवडा",
-            "sameWarehouse": "स्रोत आणि गंतव्य गोदाम समान असू शकत नाहीत",
-            "insufficientStock": "अपुरा स्टॉक. फक्त {{stock}} {{unit}} उपलब्ध",
-            "transferFailed": "स्टॉक स्थानांतरित करण्यात अयशस्वी",
-            "productNotFound": "स्रोत गोदामात उत्पादन आढळले नाही"
-        },
-        "adjustTitle": "स्टॉक समायोजित करा",
-        "adjustSubtitle": "स्टॉक वाढवा किंवा कमी करा",
-        "stockAdjustmentDetails": "स्टॉक समायोजन तपशील",
-        "warehouse": "गोदाम",
-        "productName": "उत्पादन नाव",
-        "adjustmentType": "समायोजन प्रकार",
-        "addStock": "स्टॉक वाढवा",
-        "removeStock": "स्टॉक कमी करा",
-        "quantity": "प्रमाण",
-        "reasonForAdjustment": "समायोजनाचे कारण",
-        "current": "सध्याचे",
-        "currentStock": "सध्याचा स्टॉक",
-        "unit": "युनिट",
-        "adjustmentNote": "स्टॉक वाढवल्यास इन्व्हेंटरी वाढेल. स्टॉक कमी केल्यास इन्व्हेंटरी कमी होईल. सर्व समायोजने ऑडिट हेतूंसाठी लॉग केली जातात.",
-        "noWarehousesFound": "गोदामे आढळली नाहीत. कृपया प्रथम गोदाम जोडा.",
-        "noProductsInWarehouse": "या गोदामात उत्पादने आढळली नाहीत.",
-        "placeholders": {
-            "selectWarehouse": "गोदाम निवडा",
-            "selectProduct": "उत्पादन शोधा आणि निवडा",
-            "selectWarehouseFirst": "कृपया प्रथम गोदाम निवडा",
-            "quantity": "प्रमाण प्रविष्ट करा",
-            "reason": "उदा., नवीन हंगाम प्राप्त, खराब झालेल्या वस्तू, कालबाह्य उत्पादने, इ.",
-            "selectSourceWarehouse": "स्रोत गोदाम निवडा",
-            "selectDestinationWarehouse": "गंतव्य गोदाम निवडा",
-            "selectSourceFirst": "कृपया प्रथम स्रोत गोदाम निवडा"
-        },
-        "messages": {
-            "adjustSuccess": "स्टॉक यशस्वीरित्या समायोजित! पुनर्निर्देशित करत आहे..."
-        },
-        "transferTitle": "स्टॉक स्थानांतरित करा",
-        "transferSubtitle": "गोदामांदरम्यान स्टॉक हलवा",
-        "transferDetails": "स्थानांतरण तपशील",
-        "fromWarehouse": "स्रोत गोदाम",
-        "toWarehouse": "गंतव्य गोदाम",
-        "quantityToTransfer": "स्थानांतरित करण्याचे प्रमाण",
-        "availableStock": "उपलब्ध स्टॉक",
-        "stock": "स्टॉक",
-        "in": "मध्ये",
-        "totalStock": "एकूण स्टॉक",
-        "transferNote": "स्टॉक स्थानांतरित केल्याने स्रोत गोदामातील प्रमाण कमी होईल आणि गंतव्य गोदामातील प्रमाण वाढेल."
+    "title": "इन्व्हेंटरी",
+    "subtitle": "सर्व स्टॉक पातळी व्यवस्थापित करा आणि ट्रॅक करा",
+    "loading": "इन्व्हेंटरी लोड होत आहे...",
+    "loadingStockDetails": "स्टॉक तपशील लोड होत आहेत...",
+    "stockDetailsSubtitle": "सर्व गोदामांमधील स्टॉक तपशील",
+    "totalStockAllWarehouses": "सर्व गोदामांमधील एकूण स्टॉक",
+   
+    "units": {
+      "default": "एकके",
+  "kgLabel": "किलोग्रॅम (KG)",
+  "tonLabel": "टन (TON)",
+  "quintalLabel": "क्विंटल (100 KG)"
+},
+    "stockByWarehouse": "गोदामानुसार स्टॉक",
+    "searchPlaceholder": "उत्पादने शोधा...",
+    "noItemsFound": "इन्व्हेंटरीमध्ये कोणतीही वस्तू आढळली नाही",
+    "stats": {
+      "totalProducts": "एकूण उत्पादने",
+      "totalStock": "एकूण स्टॉक (युनिट्स)",
+      "lowStockItems": "कमी स्टॉक असलेल्या वस्तू",
+      "warehouses": "गोदामे"
     },
+    "status": {
+      "outOfStock": "स्टॉक संपला",
+      "lowStock": "कमी स्टॉक",
+      "inStock": "स्टॉकमध्ये"
+    },
+    "table": {
+      "product": "उत्पादन",
+      "warehouse": "गोदाम",
+      "currentStock": "सध्याचा स्टॉक",
+      "unit": "एकक",
+      "status": "स्थिती",
+      "lastUpdated": "शेवटचे अद्यतन",
+      "actions": "क्रिया"
+    },
+    "filters": {
+      "warehouse": "गोदाम",
+      "allWarehouses": "सर्व गोदामे",
+      "lowStockOnly": "फक्त कमी स्टॉक",
+      "lowStockLabel": "फक्त 10 किंवा त्यापेक्षा कमी स्टॉक असलेली उत्पादने दाखवा"
+    },
+    "buttons": {
+      "adjustStock": "स्टॉक समायोजित करा",
+      "transferStock": "स्टॉक हस्तांतरित करा"
+    },
+    "pagination": {
+      "showing": "{{start}} ते {{end}} दाखवत आहे, एकूण {{total}} वस्तू"
+    },
+    "errors": {
+      "fetchFailed": "इन्व्हेंटरी आणण्यात अयशस्वी",
+      "fetchStockFailed": "स्टॉक तपशील आणण्यात अयशस्वी",
+      "warehouseRequired": "कृपया गोदाम निवडा",
+      "productRequired": "कृपया उत्पादन निवडा",
+      "validQuantityRequired": "कृपया वैध समायोजन प्रमाण प्रविष्ट करा",
+      "reasonRequired": "कृपया समायोजनाचे कारण प्रदान करा",
+      "adjustFailed": "स्टॉक समायोजित करण्यात अयशस्वी",
+      "sourceWarehouseRequired": "कृपया स्त्रोत गोदाम निवडा",
+      "destWarehouseRequired": "कृपया गंतव्य गोदाम निवडा",
+      "sameWarehouse": "स्त्रोत आणि गंतव्य गोदाम समान असू शकत नाहीत",
+      "insufficientStock": "अपुरा स्टॉक. फक्त {{stock}} {{unit}} उपलब्ध",
+      "transferFailed": "स्टॉक हस्तांतरित करण्यात अयशस्वी",
+      "productNotFound": "स्त्रोत गोदामात उत्पादन सापडले नाही"
+    },
+    "adjustTitle": "स्टॉक समायोजित करा",
+    "adjustSubtitle": "इन्व्हेंटरी स्टॉक वाढवा किंवा कमी करा",
+    "stockAdjustmentDetails": "स्टॉक समायोजन तपशील",
+    "warehouse": "गोदाम",
+    "productName": "उत्पादन नाव",
+    "adjustmentType": "समायोजन प्रकार",
+    "addStock": "स्टॉक वाढवा",
+    "removeStock": "स्टॉक कमी करा",
+    "quantity": "प्रमाण",
+    "reasonForAdjustment": "समायोजनाचे कारण",
+    "current": "सध्याचा",
+    "currentStock": "सध्याचा स्टॉक",
+    "unit": "एकक",
+    "adjustmentNote": "स्टॉक वाढवल्याने इन्व्हेंटरी वाढेल. स्टॉक कमी केल्याने इन्व्हेंटरी कमी होईल. सर्व समायोजने ऑडिट उद्देशांसाठी लॉग केली जातात.",
+    "noWarehousesFound": "कोणतीही गोदामे आढळली नाहीत. कृपया प्रथम गोदाम जोडा.",
+    "noProductsInWarehouse": "या गोदामात कोणतीही उत्पादने आढळली नाहीत.",
+    "placeholders": {
+      "selectWarehouse": "गोदाम निवडा",
+      "selectProduct": "उत्पादन शोधा आणि निवडा",
+      "selectWarehouseFirst": "कृपया प्रथम गोदाम निवडा",
+      "quantity": "प्रमाण प्रविष्ट करा",
+      "reason": "उदा., नवीन कापणी प्राप्त झाली, खराब झालेले सामान, कालबाह्य उत्पादने, इ."
+    },
+    "messages": {
+      "adjustSuccess": "स्टॉक यशस्वीरित्या समायोजित झाला! पुनर्निर्देशित करत आहे..."
+    },
+    "transferTitle": "स्टॉक हस्तांतरित करा",
+    "transferSubtitle": "गोदामांदरम्यान स्टॉक हलवा",
+    "transferDetails": "हस्तांतरण तपशील",
+    "fromWarehouse": "स्त्रोत गोदाम (स्रोत)",
+    "toWarehouse": "गंतव्य गोदाम (गंतव्य)",
+    "quantityToTransfer": "हस्तांतरित करण्याचे प्रमाण",
+    "availableStock": "उपलब्ध स्टॉक",
+    "stock": "स्टॉक",
+    "in": "मध्ये",
+    "totalStock": "एकूण स्टॉक",
+    "transferNote": "स्टॉक हस्तांतरित केल्याने स्त्रोत गोदामातील प्रमाण कमी होईल आणि गंतव्य गोदामातील प्रमाण वाढेल."
+  },
 
-    "warehouses": {
-        "title": "गोदामे",
-        "subtitle": "सर्व स्टोरेज सुविधा व्यवस्थापित करा",
-        "loading": "गोदामे लोड होत आहेत...",
-        "searchPlaceholder": "नाव, कोड किंवा शहरानुसार शोधा...",
-        "noWarehousesFound": "गोदामे आढळली नाहीत",
-        "units": "युनिट्स",
-        "unitLabel": "युनिट्स",
-        "used": "वापरलेले",
-        "productsCount": "उत्पादने",
-        "code": "कोड",
-        "warehouseInformation": "गोदाम माहिती",
-        "location": "ठिकाण",
-        "managerDetails": "व्यवस्थापक तपशील",
-        "managerName": "व्यवस्थापक नाव",
-        "capacityUsage": "क्षमता वापर",
-        "total": "एकूण",
-        "capacityUtilized": "क्षमता वापरली",
-        "inventorySummary": "स्टॉक सारांश",
-        "productsStored": "साठवलेली उत्पादने",
-        "totalStockUnits": "एकूण स्टॉक युनिट्स",
-        "stockDetails": "स्टॉक तपशील",
-        "createdBy": "निर्मिती कर्ता",
-        "stats": {
-            "totalWarehouses": "एकूण गोदामे",
-            "activeWarehouses": "सक्रिय गोदामे",
-            "totalCapacity": "एकूण क्षमता",
-            "totalStock": "एकूण स्टॉक"
-        },
-        "status": {
-            "active": "सक्रिय",
-            "inactive": "निष्क्रिय",
-            "label": "स्थिती"
-        },
-        "table": {
-            "code": "कोड",
-            "name": "नाव",
-            "location": "ठिकाण",
-            "manager": "व्यवस्थापक",
-            "capacity": "क्षमता",
-            "stock": "स्टॉक",
-            "status": "स्थिती",
-            "actions": "क्रिया"
-        },
-        "filters": {
-            "status": "स्थिती"
-        },
-        "buttons": {
-            "addWarehouse": "गोदाम जोडा",
-            "deactivate": "निष्क्रिय करा",
-            "deletePermanently": "कायमचे हटवा"
-        },
-        "modals": {
-            "deactivate": {
-                "title": "गोदाम निष्क्रिय करा",
-                "subtitle": "निष्क्रियतेची पुष्टी करा",
-                "confirmMessage": "तुम्ही खात्री करून {{name}} ला निष्क्रिय करू इच्छिता?",
-                "warningMessage": "हे गोदाम निष्क्रिय होईल आणि भविष्यातील व्यवहारांसाठी वापरले जाऊ शकणार नाही."
-            },
-            "delete": {
-                "title": "गोदाम हटवा",
-                "subtitle": "गोदाम कायमचे हटवा",
-                "confirmMessage": "तुम्ही खात्री करून {{name}} कायमचे हटवू इच्छिता?",
-                "warningMessage": "ही क्रिया उलटवता येणार नाही. या गोदामाशी संबंधित सर्व डेटा कायमचा हटविला जाईल."
-            }
-        },
-        "pagination": {
-            "showing": "{{start}} ते {{end}} दाखवत आहे, एकूण {{total}} गोदामे"
-        },
-        "errors": {
-            "fetchFailed": "गोदामे आणण्यात अयशस्वी",
-            "deactivateFailed": "गोदाम निष्क्रिय करण्यात अयशस्वी",
-            "deleteFailed": "गोदाम हटविण्यात अयशस्वी",
-            "nameRequired": "गोदामाचे नाव आवश्यक आहे",
-            "codeRequired": "गोदाम कोड आवश्यक आहे",
-            "cityRequired": "शहर आवश्यक आहे",
-            "stateRequired": "राज्य आवश्यक आहे",
-            "managerNameRequired": "व्यवस्थापकाचे नाव आवश्यक आहे",
-            "managerPhoneRequired": "व्यवस्थापकाचा फोन नंबर आवश्यक आहे",
-            "invalidPhone": "वैध 10-अंकी मोबाईल क्रमांक प्रविष्ट करा",
-            "capacityRequired": "एकूण क्षमता आवश्यक आहे",
-            "addFailed": "गोदाम तयार करण्यात अयशस्वी"
-        },
-        "messages": {
-            "addSuccess": "गोदाम यशस्वीरित्या तयार झाले! पुनर्निर्देशित करत आहे..."
-        },
-        "addTitle": "नवीन गोदाम जोडा",
-        "addSubtitle": "नवीन स्टोरेज सुविधा नोंदणी करा",
-        "createWarehouse": "गोदाम तयार करा",
-        "basicInformation": "मूलभूत माहिती",
-        "locationDetails": "स्थान तपशील",
-        "capacityDetails": "क्षमता तपशील",
-        "additionalNotes": "अतिरिक्त नोंदी",
-        "warehouseName": "गोदामाचे नाव",
-        "warehouseCode": "गोदाम कोड",
-        "address": "पत्ता",
-        "city": "शहर",
-        "state": "राज्य",
-        "pincode": "पिनकोड",
-        "phoneNumber": "फोन नंबर",
-        "totalCapacity": "एकूण क्षमता",
-        "usedCapacity": "वापरलेली क्षमता (ऐच्छिक)",
-        "unit": "एकक",
-        "usedCapacityHint": "माहित नसल्यास 0 ठेवा",
-        "steps": {
-            "basicInfo": "मूलभूत माहिती",
-            "locationManager": "स्थान आणि व्यवस्थापक",
-            "capacityNotes": "क्षमता आणि नोंदी"
-        },
-        "units": {
-            "kg": "किलोग्रॅम (KG)",
-            "ton": "टन (TON)",
-            "quintal": "क्विंटल (100 KG)"
-        },
-        "placeholders": {
-            "warehouseName": "गोदामाचे नाव प्रविष्ट करा",
-            "warehouseCode": "उदा., WH001, CS001",
-            "address": "संपूर्ण पत्ता प्रविष्ट करा",
-            "city": "शहर प्रविष्ट करा",
-            "state": "राज्य प्रविष्ट करा",
-            "pincode": "पिनकोड प्रविष्ट करा",
-            "managerName": "व्यवस्थापकाचे नाव प्रविष्ट करा",
-            "phoneNumber": "10-अंकी मोबाईल क्रमांक",
-            "email": "ईमेल पत्ता प्रविष्ट करा",
-            "totalCapacity": "एकूण क्षमता प्रविष्ट करा",
-            "usedCapacity": "सध्याची वापरलेली क्षमता",
-            "selectUnit": "एकक निवडा",
-            "notes": "या गोदामाबद्दल अतिरिक्त नोंदी प्रविष्ट करा..."
-        }
+   
+  "warehouses": {
+    "title": "गोदामे",
+    "subtitle": "सर्व स्टोरेज सुविधा व्यवस्थापित करा",
+    "loading": "गोदामे लोड होत आहेत...",
+    "searchPlaceholder": "नाव, कोड किंवा शहरानुसार शोधा...",
+    "noWarehousesFound": "गोदामे आढळली नाहीत",
+    "email": "ईमेल पत्ता",
+    "createdOn": "निर्मिती दिनांक",
+    "noCapacityData": "क्षमता डेटा उपलब्ध नाही",
+    "lowStockAlert": "कमी स्टॉक अलर्ट",
+    "lowStockProducts": "कमी स्टॉक उत्पादने",
+    "products": "उत्पादने",
+    "totalUnits": "एकूण युनिट्स",
+    "name": "गोदामाचे नाव",
+    "units": "युनिट्स",
+    "unitLabel": "युनिट्स",
+    "used": "वापरलेले",
+    "productsCount": "उत्पादने",
+    "code": "कोड",
+    "warehouseInformation": "गोदाम माहिती",
+    "location": "ठिकाण",
+    "managerDetails": "व्यवस्थापक तपशील",
+    "managerName": "व्यवस्थापक नाव",
+    "capacityUsage": "क्षमता वापर",
+    "total": "एकूण",
+    "capacityUtilized": "क्षमता वापरली",
+    "inventorySummary": "स्टॉक सारांश",
+    "productsStored": "साठवलेली उत्पादने",
+    "totalStockUnits": "एकूण स्टॉक युनिट्स",
+    "stockDetails": "स्टॉक तपशील",
+    "createdBy": "निर्मिती कर्ता",
+    "editTitle": "गोदाम संपादित करा",
+    "editSubtitle": "गोदाम माहिती अद्यतनित करा",
+    "updateSuccess": "गोदाम यशस्वीरित्या अद्यतनित झाले! पुनर्निर्देशित करत आहे...",
+    "updateFailed": "गोदाम अद्यतनित करण्यात अयशस्वी",
+    "totalCapacityRequired": "एकूण क्षमता आवश्यक आहे",
+    "nameReadOnlyTooltip": "गोदामाचे नाव निर्मितीनंतर बदलता येत नाही",
+    "codeReadOnlyTooltip": "गोदाम कोड निर्मितीनंतर बदलता येत नाही",
+    "stats": {
+      "totalWarehouses": "एकूण गोदामे",
+      "activeWarehouses": "सक्रिय गोदामे",
+      "totalCapacity": "एकूण क्षमता",
+      "totalStock": "एकूण स्टॉक"
     },
+    "status": {
+      "active": "सक्रिय",
+      "inactive": "निष्क्रिय",
+      "label": "स्थिती"
+    },
+    "table": {
+      "code": "कोड",
+      "name": "नाव",
+      "location": "ठिकाण",
+      "manager": "व्यवस्थापक",
+      "capacity": "क्षमता",
+      "stock": "स्टॉक",
+      "status": "स्थिती",
+      "actions": "क्रिया"
+    },
+    "filters": {
+      "status": "स्थिती"
+    },
+    "buttons": {
+      "addWarehouse": "गोदाम जोडा",
+      "deactivate": "निष्क्रिय करा",
+      "deletePermanently": "कायमचे हटवा"
+    },
+    "modals": {
+      "deactivate": {
+        "title": "गोदाम निष्क्रिय करा",
+        "subtitle": "निष्क्रियतेची पुष्टी करा",
+        "confirmMessage": "तुम्ही खात्री करून {{name}} ला निष्क्रिय करू इच्छिता?",
+        "warningMessage": "हे गोदाम निष्क्रिय होईल आणि भविष्यातील व्यवहारांसाठी वापरले जाऊ शकणार नाही."
+      },
+      "delete": {
+        "title": "गोदाम हटवा",
+        "subtitle": "गोदाम कायमचे हटवा",
+        "confirmMessage": "तुम्ही खात्री करून {{name}} कायमचे हटवू इच्छिता?",
+        "warningMessage": "ही क्रिया उलटवता येणार नाही. या गोदामाशी संबंधित सर्व डेटा कायमचा हटविला जाईल."
+      }
+    },
+    "pagination": {
+      "showing": "{{start}} ते {{end}} दाखवत आहे, एकूण {{total}} गोदामे"
+    },
+    "errors": {
+      "fetchFailed": "गोदामे आणण्यात अयशस्वी",
+      "deactivateFailed": "गोदाम निष्क्रिय करण्यात अयशस्वी",
+      "deleteFailed": "गोदाम हटविण्यात अयशस्वी",
+      "nameRequired": "गोदामाचे नाव आवश्यक आहे",
+      "codeRequired": "गोदाम कोड आवश्यक आहे",
+      "cityRequired": "शहर आवश्यक आहे",
+      "stateRequired": "राज्य आवश्यक आहे",
+      "managerNameRequired": "व्यवस्थापकाचे नाव आवश्यक आहे",
+      "managerPhoneRequired": "व्यवस्थापकाचा फोन नंबर आवश्यक आहे",
+      "invalidPhone": "वैध 10-अंकी मोबाईल क्रमांक प्रविष्ट करा",
+      "capacityRequired": "एकूण क्षमता आवश्यक आहे",
+      "addFailed": "गोदाम तयार करण्यात अयशस्वी"
+    },
+    "messages": {
+      "addSuccess": "गोदाम यशस्वीरित्या तयार झाले! पुनर्निर्देशित करत आहे...",
+      "updateSuccess": "वेअरहाउस यशस्वीरित्या अपडेट केले! पुनर्निर्देशित करत आहे..."
+    },
+    "addTitle": "नवीन गोदाम जोडा",
+    "addSubtitle": "नवीन स्टोरेज सुविधा नोंदणी करा",
+    "createWarehouse": "गोदाम तयार करा",
+    "basicInformation": "मूलभूत माहिती",
+    "locationDetails": "स्थान तपशील",
+    "capacityDetails": "क्षमता तपशील",
+    "additionalNotes": "अतिरिक्त नोंदी",
+    "warehouseName": "गोदामाचे नाव",
+    "warehouseCode": "गोदाम कोड",
+    "address": "पत्ता",
+    "city": "शहर",
+    "state": "राज्य",
+    "pincode": "पिनकोड",
+    "phoneNumber": "फोन नंबर",
+    "totalCapacity": "एकूण क्षमता",
+    "usedCapacity": "वापरलेली क्षमता (ऐच्छिक)",
+    "unit": "एकक",
+    "usedCapacityHint": "माहित नसल्यास 0 ठेवा",
+    "steps": {
+      "basicInfo": "मूलभूत माहिती",
+      "locationManager": "स्थान आणि व्यवस्थापक",
+      "capacityNotes": "क्षमता आणि नोंदी"
+    },
+    "units": {
+      "kg": "किलोग्रॅम (KG)",
+      "ton": "टन (TON)",
+      "quintal": "क्विंटल (100 KG)"
+    },
+    "placeholders": {
+      "warehouseName": "गोदामाचे नाव प्रविष्ट करा",
+      "warehouseCode": "उदा., WH001, CS001",
+      "address": "संपूर्ण पत्ता प्रविष्ट करा",
+      "city": "शहर प्रविष्ट करा",
+      "state": "राज्य प्रविष्ट करा",
+      "pincode": "पिनकोड प्रविष्ट करा",
+      "managerName": "व्यवस्थापकाचे नाव प्रविष्ट करा",
+      "phoneNumber": "10-अंकी मोबाईल क्रमांक",
+      "email": "ईमेल पत्ता प्रविष्ट करा",
+      "totalCapacity": "एकूण क्षमता प्रविष्ट करा",
+      "usedCapacity": "सध्याची वापरलेली क्षमता",
+      "selectUnit": "एकक निवडा",
+      "notes": "या गोदामाबद्दल अतिरिक्त नोंदी प्रविष्ट करा..."
+    }
+  },
 
    
  
@@ -1445,6 +1472,7 @@
     },
     "stats": {
       "totalFarmers": "एकूण शेतकरी",
+      "totalBuyers": "एकूण खरेदीदार",
       "totalTransactions": "एकूण व्यवहार",
       "totalPayments": "एकूण देयके",
       "totalPurchases": "एकूण खरेदी",
@@ -1629,6 +1657,7 @@
             "userInfoFailed": "वापरकर्ता माहिती मिळवू शकत नाही. कृपया पुन्हा प्रयत्न करा.",
             "statusUpdateFailed": "चेक स्थिती अपडेट करण्यात अयशस्वी",
             "notFound": "पेमेंट आढळले नाही",
+            "noPendingPurchases": "या शेतकऱ्यासाठी प्रलंबित खरेदी आढळली नाही",
             "operatorNotFound": "ऑपरेटर आयडी आढळला नाही",
             "purchaseRequired": "कृपया खरेदी निवडा",
             "validAmountRequired": "कृपया वैध रक्कम प्रविष्ट करा",
@@ -1972,6 +2001,8 @@
         "subtitle": "सिस्टम वापरकर्ते आणि त्यांच्या भूमिका व्यवस्थापित करा",
         "loading": "वापरकर्ते लोड होत आहेत...",
         "searchPlaceholder": "नाव, ईमेल किंवा फोनद्वारे शोधा...",
+        "lastLogin": "शेवटचे लॉगिन",
+
         "noUsersFound": "वापरकर्ते आढळले नाहीत",
         "noPhone": "फोन नाही",
         "neverLogged": "कधीही नाही",
@@ -2310,6 +2341,13 @@
     "subtitle": "सर्व खरेदीदार व्यवस्थापित करा",
     "loading": "खरेदीदार लोड होत आहेत...",
     "searchPlaceholder": "नाव, ईमेल, मोबाईल किंवा व्यवसायानुसार शोधा...",
+    "mobileHint": "10-अंकी मोबाइल क्रमांक प्रविष्ट करा (6,7,8,9 ने सुरू होणारा)",
+"pincodeHint": "6-अंकी पिनकोड प्रविष्ट करा",
+"gstHint": "15-अक्षरी GSTIN (उदा., 27AAAAA0000A1Z)",
+"panHint": "10-अक्षरी PAN (उदा., AAAAA1234A)",
+"creditLimitHint": "कमाल क्रेडिट रक्कम (पर्यायी)",
+"creditDaysHint": "क्रेडिट पेमेंटसाठी दिवसांची संख्या (पर्यायी)",
+"creditOptional": "ही फील्ड्स पर्यायी आहेत - लागू नसल्यास रिकामे सोडा",
     "noBuyersFound": "खरेदीदार आढळले नाहीत",
     "addTitle": "नवीन खरेदीदार जोडा",
     "addSubtitle": "आपल्या नेटवर्कमध्ये खरेदीदार जोडण्यासाठी तपशील प्रविष्ट करा",

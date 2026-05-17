@@ -184,7 +184,7 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
     { path: "/sale-payments",name: t('nav.salepayments'), icon: ShoppingBag, requiredRole: ['superadmin', 'admin', 'operator'] },
     { path: "/expenses",     name: t('nav.expenses'),     icon: Wallet, requiredRole: ['superadmin', 'admin', 'operator'] },
     { path: "/ledger",       name: t('nav.ledger'),       icon: Receipt, requiredRole: ['superadmin', 'admin', 'operator'] },
-    { path: "/budget-alerts",name: t('nav.budgetAlerts'), icon: Bell, requiredRole: ['superadmin', 'admin', 'operator'] },
+    // { path: "/budget-alerts",name: t('nav.budgetAlerts'), icon: Bell, requiredRole: ['superadmin', 'admin', 'operator'] },
     { path: "/audit-logs",   name: t('nav.auditLogs'),    icon: History, requiredRole: ['superadmin', 'admin'] },
     { path: "/users",        name: t('nav.usersRoles'),   icon: UserCog, requiredRole: ['superadmin', 'admin'] },
   ];
@@ -242,12 +242,12 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
           <>
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-[10px] text-gray-400">{t('sidebar.purchases')}</p>
-                <p className="text-white font-bold text-sm">{formatCurrency(summaryData.totalPurchases || 0)}</p>
+                <p className="text-[10px] text-gray-400">{t('sidebar.sales') || 'Total Sales'}</p>
+                <p className="text-white font-bold text-sm">{formatCurrency(summaryData.totalSales || 0)}</p>
               </div>
               <div className="text-right">
-                <p className="text-[10px] text-gray-400">{t('sidebar.expenses')}</p>
-                <p className="text-white font-bold text-sm">{formatCurrency(summaryData.totalExpenses || 0)}</p>
+                <p className="text-[10px] text-gray-400">{t('sidebar.purchases')}</p>
+                <p className="text-white font-bold text-sm">{formatCurrency(summaryData.totalPurchases || 0)}</p>
               </div>
             </div>
 

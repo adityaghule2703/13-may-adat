@@ -86,6 +86,8 @@ import ViewProduct from "./pages/products/ViewProduct";
 import SalePayments from "./pages/salepayments/SalePayments";
 import AddSalePayment from "./pages/salepayments/AddSalePayment";
 import ViewSalePayment from "./pages/salepayments/ViewSalePayment";
+import FarmerModal from "./pages/purchase/FarmerModal";
+import OpeningBalance from "./pages/openingbalance/OpeningBalance";
 
 
 // Protected Route Component
@@ -103,7 +105,7 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
   return (
     <BrowserRouter>
-        {/* //  <BrowserRouter basename="/agri_tred-front">  */}
+        {/* <BrowserRouter basename="/agri_tred-front">   */}
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
@@ -141,6 +143,7 @@ const App = () => {
           {/* ========== PURCHASE MODULE ========== */}
           <Route path="purchases" element={<Purchases />} />
           <Route path="purchases/add" element={<AddPurchase />} />
+          <Route path="farmermodal/add" element={<FarmerModal />} />
           <Route path="purchases/view/:id" element={<ViewPurchase />} />
           <Route path="purchases/summary" element={<PurchaseSummary />} />
           <Route path="purchases/edit/:id" element={<EditPurchase />} />
@@ -159,6 +162,9 @@ const App = () => {
           <Route path="inventory/adjust" element={<AdjustStock />} />
           <Route path="inventory/transfer" element={<TransferStock />} />
           <Route path="inventory/product/:productName" element={<ProductStockDetails />} />
+
+
+          <Route path="openingbalance" element={<OpeningBalance />} />
 
           {/* ========== WAREHOUSE MODULE ========== */}
           <Route path="warehouses" element={<Warehouses />} />

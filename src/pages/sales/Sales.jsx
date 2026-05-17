@@ -568,20 +568,18 @@ const handlePrintInvoice = (saleId) => {
       <body>
         <div class="receipt">
           <div class="top-header">
-            <div class="top-line">
-              ${isMarathi ? '॥ कळवणच्या न्यायक्षेत्रात ॥' : '॥ Under Kalwan Jurisdiction ॥'}
-            </div>
+           
             <div class="title-section">
               <div class="center-title">
                 <h1>${businessName}</h1>
                 <div class="sub">${businessAddress}</div>
                 ${(businessGst || businessPan) ? `<div style="font-size: 11px; margin-top: 4px;">${businessGst ? `${isMarathi ? 'जीएसटी' : 'GST'}: ${businessGst}` : ''}${businessGst && businessPan ? ' | ' : ''}${businessPan ? `${isMarathi ? 'पॅन' : 'PAN'}: ${businessPan}` : ''}</div>` : ''}
-                <div class="receipt-badge">${isMarathi ? 'विक्री पावती' : 'TAX INVOICE'}</div>
+                <div class="receipt-badge">${isMarathi ? 'विक्री पावती' : 'SALE INVOICE'}</div>
               </div>
             </div>
             <div class="contact-row">
-              <div class="contact-phone">📞 ${businessPhone}</div>
-              ${businessEmail ? `<div class="contact-email">✉️ ${businessEmail}</div>` : ''}
+              <div class="contact-phone">Mobile : ${businessPhone}</div>
+              ${businessEmail ? `<div class="contact-email">Email : ${businessEmail}</div>` : ''}
             </div>
           </div>
           

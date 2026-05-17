@@ -224,12 +224,12 @@ const Buyers = () => {
     });
   };
 
-  const formatCurrency = (amount) =>
-    new Intl.NumberFormat(t('common.locale') === 'mr' ? 'mr-IN' : 'en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0
-    }).format(amount || 0);
+ const formatCurrency = (amount) =>
+  new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0
+  }).format(amount || 0);
 
   const MENU_HEIGHT = 200;
   const anchorRect = actionMenuAnchor?.getBoundingClientRect();
@@ -476,9 +476,7 @@ const Buyers = () => {
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-[#F1F8E9] flex items-center justify-center">
-                              <User className="w-4 h-4" style={{ color: '#2E7D32' }} />
-                            </div>
+                           
                             <div>
                               <p className="text-sm font-medium" style={{ color: '#2E7D32' }}>{buyer.displayName || buyer.name}</p>
                               {buyer.businessName && (
@@ -591,7 +589,7 @@ const Buyers = () => {
                                 {t('common.edit')}
                               </button>
 
-                              <button
+                              {/* <button
                                 onClick={() => {
                                   navigate(`/buyers/purchases/${buyer._id}`);
                                   handleActionMenuClose();
@@ -601,18 +599,9 @@ const Buyers = () => {
                               >
                                 <DollarSign className="w-4 h-4" />
                                 {t('buyers.actions.viewPurchases')}
-                              </button>
+                              </button> */}
 
-                              {buyer.isActive && (
-                                <button
-                                  onClick={() => openDeactivateModal(buyer)}
-                                  className="w-full px-4 py-2.5 text-left text-sm hover:bg-red-50 flex items-center gap-2 transition-colors"
-                                  style={{ color: '#D32F2F' }}
-                                >
-                                  <PowerOff className="w-4 h-4" />
-                                  {t('common.deactivate')}
-                                </button>
-                              )}
+                            
                             </div>
                           )}
                         </td>

@@ -161,7 +161,6 @@ const Payments = () => {
         }
       });
     }
-    handleActionMenuClose();
   };
 
   const handleUpdateChequeStatus = (payment) => {
@@ -375,9 +374,9 @@ const handlePrintReceipt = (paymentId) => {
     
     // Get business details from API response
     const businessDetails = payment.businessDetails || {};
-    const businessName = businessDetails.name || (isMarathi ? 'जय शिवराय व्हेजिटेबल' : 'Jai Shivrai Vegetable Co.');
-    const businessAddress = businessDetails.address || (isMarathi ? 'वेसराणे, ता. कळवण जि. नाशिक' : 'Vesarane, Tal. Kalwan, Dist. Nashik');
-    const businessPhone = businessDetails.phone || (isMarathi ? 'प्रो. रोकेश हिरे मो. ९०२१६९९९९१ / ९६२३९५६३९६' : 'Prop. Rakesh Hire M: 9021699991 / 9623956396');
+    const businessName = businessDetails.name || "N/A";
+    const businessAddress = businessDetails.address || "N/A";
+    const businessPhone = businessDetails.phone || "N/A";
     const businessEmail = businessDetails.email || '';
     const businessGst = businessDetails.gstNumber || '';
     const businessPan = businessDetails.panNumber || '';
@@ -783,9 +782,7 @@ const handlePrintReceipt = (paymentId) => {
         <div class="receipt">
           <!-- HEADER -->
           <div class="top-header">
-            <div class="top-line">
-              ${isMarathi ? '॥ कळवणच्या न्यायक्षेत्रात ॥' : '॥ Under Kalwan Jurisdiction ॥'}
-            </div>
+            
             <div class="title-section">
               <div class="center-title">
                 <h1>${businessName}</h1>
@@ -796,7 +793,7 @@ const handlePrintReceipt = (paymentId) => {
             </div>
             <div class="contact-row">
               <div>${businessPhone}</div>
-              ${businessEmail ? `<div>✉️ ${businessEmail}</div>` : ''}
+              ${businessEmail ? `<div> ${businessEmail}</div>` : ''}
             </div>
           </div>
           
@@ -953,7 +950,7 @@ const handlePrintReceipt = (paymentId) => {
     setSelectedPaymentForMenu(null);
   };
 
-  const MENU_HEIGHT = 200;
+  const MENU_HEIGHT = 140;
   const anchorRect = actionMenuAnchor?.getBoundingClientRect();
   const spaceBelow = anchorRect ? window.innerHeight - anchorRect.bottom : 0;
   const openUpward = anchorRect ? spaceBelow < MENU_HEIGHT + 8 : false;
@@ -1049,6 +1046,13 @@ const handlePrintReceipt = (paymentId) => {
           </div>
           
           <div className="flex gap-3">
+            <button
+              onClick={handleDueSummary}
+              className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 hover:scale-105 transition-all"
+              style={{ background: 'linear-gradient(135deg, #FF6F00, #fc7f1f)' }}
+            >
+              <FileTextIcon className="w-4 h-4" /> {t('payments.buttons.dueSummary')}
+            </button>
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`px-4 py-2 border rounded-lg flex items-center gap-2 ${showFilters ? 'bg-[#F1F8E9]' : 'hover:bg-gray-50'}`}
@@ -1264,26 +1268,16 @@ const handlePrintReceipt = (paymentId) => {
                                 {t('common.viewDetails')}
                               </button>
 
-                             
-<button
-  onClick={() => {
-    handlePrintReceipt(payment._id);
-    handleActionMenuClose();
-  }}
-  className="w-full px-4 py-2.5 text-left text-sm hover:bg-blue-50 flex items-center gap-2 transition-colors"
-  style={{ color: '#1565C0' }}
->
-  <Printer className="w-4 h-4" />
-  {t('common.print')}
-</button>
-
                               <button
-                                onClick={handleDueSummary}
-                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-purple-50 flex items-center gap-2 transition-colors"
-                                style={{ color: '#6A1B9A' }}
+                                onClick={() => {
+                                  handlePrintReceipt(payment._id);
+                                  handleActionMenuClose();
+                                }}
+                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-blue-50 flex items-center gap-2 transition-colors"
+                                style={{ color: '#1565C0' }}
                               >
-                                <FileTextIcon className="w-4 h-4" />
-                                {t('payments.buttons.dueSummary')}
+                                <Printer className="w-4 h-4" />
+                                {t('common.print')}
                               </button>
 
                               {payment.paymentMode === 'cheque' && (!payment.chequeStatus || payment.chequeStatus !== 'cleared') && (

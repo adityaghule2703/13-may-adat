@@ -158,14 +158,14 @@ const ViewSale = () => {
             </p>
           </div>
         </div>
-        <button
+        {/* <button
           onClick={() => window.print()}
           className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all hover:scale-105"
           style={{ background: 'linear-gradient(135deg, #2E7D32, #43A047)', color: 'white' }}
         >
           <Printer className="w-4 h-4" />
           {t('sales.buttons.printInvoice')}
-        </button>
+        </button> */}
       </div>
 
       {/* Status Banner */}

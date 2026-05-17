@@ -737,9 +737,7 @@ const printFarmerSummary = (farmerData) => {
     <body>
       <div class="receipt">
         <div class="top-header">
-          <div class="top-line">
-            ${isMarathi ? '॥ कळवणच्या न्यायक्षेत्रात ॥' : '॥ Under Kalwan Jurisdiction ॥'}
-          </div>
+         
           <div class="title-section">
             <div class="center-title">
               <h1>${businessName}</h1>
@@ -750,11 +748,11 @@ const printFarmerSummary = (farmerData) => {
           </div>
           <div class="contact-row">
             <div class="contact-phone">
-              📞 ${businessPhone}
+             Mobile : ${businessPhone}
             </div>
             ${businessEmail ? `
             <div class="contact-email">
-              ✉️ ${businessEmail}
+             Email : ${businessEmail}
             </div>
             ` : ''}
           </div>
@@ -777,8 +775,7 @@ const printFarmerSummary = (farmerData) => {
               <span class="value">${farmer.mobile || 'N/A'}</span>
             </td>
             <td>
-              <span class="label">${isMarathi ? 'पत्ता' : 'Address'}:</span>
-              <span class="value">${formattedAddress}</span>
+             
             </td>
           </tr>
         </table>
@@ -792,10 +789,10 @@ const printFarmerSummary = (farmerData) => {
             <h4>${isMarathi ? 'एकूण नावे' : 'Total Credit'}</h4>
             <div class="amount">${formatCurrency(totalCredit)}</div>
           </div>
-          <div class="summary-card balance">
-            <h4>${isMarathi ? 'शिल्लक रक्कम' : 'Balance'}</h4>
-            <div class="amount">${formatCurrency(absCurrentBalance)} (${balanceText})</div>
-          </div>
+         <div class="summary-card balance">
+  <h4>${isMarathi ? 'शिल्लक रक्कम' : 'Balance'}</h4>
+  <div class="amount">${formatCurrency(absCurrentBalance)}</div> 
+</div>
         </div>
         
         <table class="main-table">
@@ -831,10 +828,10 @@ const printFarmerSummary = (farmerData) => {
             <div class="footer-left">
               ${isMarathi ? 'धन्यवाद!' : 'Thank You!'}
             </div>
-            <div class="footer-right">
-              ${isMarathi ? 'शिल्लक रक्कम' : 'Balance'}:
-              <span>${formatCurrency(absCurrentBalance)} (${balanceText})</span>
-            </div>
+           <div class="footer-right">
+  ${isMarathi ? 'शिल्लक रक्कम' : 'Balance'}:
+  <span>${formatCurrency(absCurrentBalance)}</span> 
+</div>
           </div>
           <div class="signature-row">
             <div class="buyer-sign">
@@ -989,7 +986,7 @@ const printOperatorSummary = (operatorData) => {
   
   const absNetProfit = Math.abs(netProfit);
   const profitType = netProfit >= 0 ? (isMarathi ? 'नफा' : 'Profit') : (isMarathi ? 'तोटा' : 'Loss');
-  const profitInWords = `${numberToIndianWords(absNetProfit)} Rupees Only`;
+  const profitInWords = `${numberToIndianWords(Math.floor(absNetProfit))} Rupees Only`;
   const profitColor = netProfit >= 0 ? '#2E7D32' : '#D32F2F';
   
   // Calculate closing balance from running balance
@@ -1295,9 +1292,7 @@ const printOperatorSummary = (operatorData) => {
     <body>
       <div class="receipt">
         <div class="top-header">
-          <div class="top-line">
-            ${isMarathi ? '॥ कळवणच्या न्यायक्षेत्रात ॥' : '॥ Under Kalwan Jurisdiction ॥'}
-          </div>
+         
           <div class="title-section">
             <div class="center-title">
               <h1>${businessName}</h1>
@@ -1308,11 +1303,11 @@ const printOperatorSummary = (operatorData) => {
           </div>
           <div class="contact-row">
             <div class="contact-phone">
-              📞 ${businessPhone}
+              Mobile : ${businessPhone}
             </div>
             ${businessEmail ? `
             <div class="contact-email">
-              ✉️ ${businessEmail}
+              Email : ${businessEmail}
             </div>
             ` : ''}
           </div>
@@ -1362,15 +1357,13 @@ const printOperatorSummary = (operatorData) => {
             <h4>${isMarathi ? 'एकूण खर्च' : 'Total Expenses'}</h4>
             <div class="amount">${formatCurrency(financialSummary.totalExpenses || 0)}</div>
           </div>
-          <div class="summary-card profit">
-            <h4>${isMarathi ? 'निव्वळ नफा / तोटा' : 'Net Profit / Loss'}</h4>
-            <div class="amount">${formatCurrency(absNetProfit)} (${profitType})</div>
-          </div>
+         <div class="summary-card profit">
+  <h4>${isMarathi ? 'निव्वळ नफा / तोटा' : 'Net Profit / Loss'}</h4>
+  <div class="amount">${formatCurrency(absNetProfit)}</div> 
+</div>
         </div>
         
-        <div style="padding: 8px 15px; background: #fff0e6; margin: 5px 0; font-size: 11px; color: #b3153f; text-align: center;">
-          ⚠️ ${isMarathi ? 'सूचना: डेबिट (DR) म्हणजे मिळणारी रक्कम, क्रेडिट (CR) म्हणजे द्यावी लागणारी रक्कम' : 'Note: DR = Receivable (To Receive), CR = Payable (To Pay)'}
-        </div>
+       
         
         <table class="main-table">
           <colgroup>
@@ -1400,7 +1393,7 @@ const printOperatorSummary = (operatorData) => {
         
         <div class="footer">
           <div class="amount-in-words">
-            <strong>${isMarathi ? 'निव्वळ नफा/तोटा शब्दांत' : 'Net Profit/Loss in Words'}:</strong> ${profitInWords}
+          <strong>${isMarathi ? 'शिल्लक रक्कम शब्दांत' : 'Balance Amount in Words'}:</strong> ${numberToIndianWords(Math.floor(absClosingBalance))} Rupees ${Math.round((absClosingBalance % 1) * 100) > 0 ? 'and ' + Math.round((absClosingBalance % 1) * 100) + ' Paise' : 'Only'}
           </div>
           
           <div class="footer-row">
@@ -1409,7 +1402,7 @@ const printOperatorSummary = (operatorData) => {
             </div>
             <div class="footer-right">
               ${isMarathi ? 'शिल्लक रक्कम' : 'Closing Balance'}:
-              <span>${absClosingBalance > 0 ? formatCurrency(absClosingBalance) : '₹ 0'} (${balanceText})</span>
+             <span>${absClosingBalance > 0 ? formatCurrency(absClosingBalance) : '₹ 0'}</span>
             </div>
           </div>
           <div class="signature-row">
@@ -1510,7 +1503,7 @@ const printBuyerSummary = (buyerData) => {
   const finalBalance = runningBalance;
   const finalBalanceType = finalBalance > 0 ? (isMarathi ? 'क्रेडिट' : 'CR') : (finalBalance < 0 ? (isMarathi ? 'डेबिट' : 'DR') : '');
   const absFinalBalance = Math.abs(finalBalance);
-  const amountInWords = `${numberToIndianWords(absFinalBalance)} Rupees Only`;
+ const amountInWords = `${numberToIndianWords(Math.floor(absFinalBalance))} Rupees ${Math.round((absFinalBalance % 1) * 100) > 0 ? 'and ' + Math.round((absFinalBalance % 1) * 100) + ' Paise' : 'Only'}`;
   
   // Balance color: CR (Payable) = Red (D32F2F), DR (Receivable/Overpayment) = Green (2E7D32)
   const balanceColor = finalBalance > 0 ? '#D32F2F' : (finalBalance < 0 ? '#2E7D32' : '#666');
@@ -1820,9 +1813,7 @@ const printBuyerSummary = (buyerData) => {
     <body>
       <div class="receipt">
         <div class="top-header">
-          <div class="top-line">
-            ${isMarathi ? '॥ कळवणच्या न्यायक्षेत्रात ॥' : '॥ Under Kalwan Jurisdiction ॥'}
-          </div>
+          
           <div class="title-section">
             <div class="center-title">
               <h1>${businessName}</h1>
@@ -1833,11 +1824,11 @@ const printBuyerSummary = (buyerData) => {
           </div>
           <div class="contact-row">
             <div class="contact-phone">
-              📞 ${businessPhone}
+              Mobile : ${businessPhone}
             </div>
             ${businessEmail ? `
             <div class="contact-email">
-              ✉️ ${businessEmail}
+              Email : ${businessEmail}
             </div>
             ` : ''}
           </div>
@@ -1885,13 +1876,11 @@ const printBuyerSummary = (buyerData) => {
           </div>
           <div class="summary-card balance">
             <h4>${isMarathi ? 'शिल्लक रक्कम' : 'Current Balance'}</h4>
-            <div class="amount">${formatCurrency(absFinalBalance)} (${balanceText})</div>
+           <div class="amount">${formatCurrency(absFinalBalance)}</div>
           </div>
         </div>
         
-        <div class="note-box">
-          ⚠️ ${isMarathi ? 'सूचना: क्रेडिट (CR) म्हणजे खरेदीदाराचे देणे, डेबिट (DR) म्हणजे खरेदीदाराची पावती' : 'Note: CR = Buyer owes (To Pay), DR = Buyer paid (Payment Received)'}
-        </div>
+       
         
         <table class="main-table">
           <colgroup>
@@ -1928,7 +1917,7 @@ const printBuyerSummary = (buyerData) => {
             </div>
             <div class="footer-right">
               ${isMarathi ? 'शिल्लक रक्कम' : 'Balance Amount'}:
-              <span>${absFinalBalance > 0 ? formatCurrency(absFinalBalance) : '₹ 0'} (${balanceText})</span>
+             <span>${absFinalBalance > 0 ? formatCurrency(absFinalBalance) : '₹ 0'}</span>
             </div>
           </div>
           <div class="signature-row">

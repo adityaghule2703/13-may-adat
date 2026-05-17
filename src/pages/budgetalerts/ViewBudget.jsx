@@ -160,7 +160,7 @@ const ViewBudget = () => {
             <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>{t('budgetAlerts.detailsSubtitle')}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <button 
             onClick={() => navigate(`/budget-alerts/edit/${budget._id}`)}
             className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all hover:scale-105"
@@ -168,7 +168,7 @@ const ViewBudget = () => {
           >
             <Edit2 className="w-4 h-4" /> {t('common.edit')}
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Main Card */}

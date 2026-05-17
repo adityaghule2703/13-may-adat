@@ -168,28 +168,29 @@ const Dashboard = () => {
   };
 
   const fetchSalesRevenue = async () => {
-    try {
-      const token = getToken();
-      const response = await fetch(`${BASE_URL}/sales`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+  try {
+    const token = getToken();
+    const response = await fetch(`${BASE_URL}/sales`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
 
-      if (response.status === 401) {
-        localStorage.clear();
-        return 0;
-      }
-
-      const data = await response.json();
-      if (data.success && data.data) {
-        const totalRevenue = data.data.reduce((sum, sale) => sum + (sale.grandTotal || 0), 0);
-        return totalRevenue;
-      }
-      return 0;
-    } catch (error) {
-      console.error('Error fetching sales revenue:', error);
+    if (response.status === 401) {
+      localStorage.clear();
       return 0;
     }
-  };
+
+    const data = await response.json();
+    if (data.success && data.data) {
+      // Use finalReceivable for net revenue (most accurate for accounting)
+      const totalRevenue = data.data.reduce((sum, sale) => sum + (sale.finalReceivable || 0), 0);
+      return totalRevenue;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error fetching sales revenue:', error);
+    return 0;
+  }
+};
 
   const fetchBuyersSummary = async () => {
     try {

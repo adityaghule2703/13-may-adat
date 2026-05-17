@@ -80,9 +80,18 @@ const Login = () => {
         
         const savedToken = localStorage.getItem('token');
         console.log('Token verification - saved successfully:', !!savedToken);
-        console.log('Redirecting to dashboard...');
         
-        navigate('/dashboard');
+        // Check user role and navigate accordingly
+        const userRole = data.user?.role?.toLowerCase();
+        console.log('User role:', userRole);
+        
+        if (userRole === 'operator') {
+          console.log('Operator logged in - redirecting to /farmers');
+          navigate('/farmers');
+        } else {
+          console.log('Non-operator logged in - redirecting to /dashboard');
+          navigate('/dashboard');
+        }
       } else {
         setError(data.message || t('login.errors.loginFailed'));
       }

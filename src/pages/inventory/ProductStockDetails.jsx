@@ -336,7 +336,7 @@ const ProductStockDetails = () => {
         <div className="flex justify-between items-center">
           <div>
             <p className="text-sm text-gray-600">{t('inventory.totalStockAllWarehouses')}</p>
-            <p className="text-3xl font-bold" style={{ color: '#2E7D32' }}>{formatNumber(totalStock)} {t('inventory.units')}</p>
+            <p className="text-3xl font-bold" style={{ color: '#2E7D32' }}>{formatNumber(totalStock)} {t('inventory.units.default')}</p>
           </div>
           <Package className="w-12 h-12" style={{ color: '#43A047' }} />
         </div>

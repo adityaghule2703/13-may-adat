@@ -6,9 +6,12 @@
         "searchPlaceholder": "Search transactions...",
         "logout": "Logout",
         "english": "English",
+        "update": "Update",
     "marathi": "Marathi",
         "save": "Save",
         "cancel": "Cancel",
+        "lastUpdated": "Last Updated",
+        "createdBy": "Created By",
         "edit": "Edit",
         "delete": "Delete",
         "view": "View",
@@ -268,6 +271,7 @@
 
     "sidebar": {
         "todaySummary": "Today's Summary",
+        "sales": "Total Sales",
         "marketInsights": "Market Insights",
         "marketMessage": "Wheat prices expected to rise by 8% this week",
         "buying": "Buying",
@@ -283,6 +287,8 @@
         "subtitle": "Manage and track all your farmers",
         "loading": "Loading farmers...",
         "loadingPayments": "Loading payment history...",
+        "businessName": "Business Name",
+"panNumber": "PAN Number",
         "loadingDues": "Loading dues information...",
         "searchPlaceholder": "Search farmers...",
         "noFarmersFound": "No farmers found",
@@ -495,7 +501,8 @@
   "pending": "Pending",
   "paid": "Paid",
   "completed": "Completed",
-  "cancelled": "Cancelled"
+  "cancelled": "Cancelled",
+  "partialPayment": "Partial Payment"
 },
         "filters": {
             "startDate": "Start Date",
@@ -694,103 +701,142 @@
         }
     },
 
-    "inventory": {
-        "title": "Inventory",
-        "subtitle": "Manage and track all stock levels",
-        "loading": "Loading inventory...",
-        "loadingStockDetails": "Loading stock details...",
-        "stockDetailsSubtitle": "Stock details across all warehouses",
-        "totalStockAllWarehouses": "Total Stock Across All Warehouses",
-        "units": "units",
-        "stockByWarehouse": "Stock by Warehouse",
-        "searchPlaceholder": "Search products...",
-        "noItemsFound": "No inventory items found",
-        "stats": {
-            "totalProducts": "Total Products",
-            "totalStock": "Total Stock (Units)",
-            "lowStockItems": "Low Stock Items",
-            "warehouses": "Warehouses"
-        },
-        "status": {
-            "outOfStock": "Out of Stock",
-            "lowStock": "Low Stock",
-            "inStock": "In Stock"
-        },
-        "table": {
-            "product": "Product",
-            "warehouse": "Warehouse",
-            "currentStock": "Current Stock",
-            "unit": "Unit",
-            "status": "Status",
-            "lastUpdated": "Last Updated",
-            "actions": "Actions"
-        },
-        "filters": {
-            "warehouse": "Warehouse",
-            "allWarehouses": "All Warehouses",
-            "lowStockOnly": "Low Stock Only",
-            "lowStockLabel": "Show only products with stock ≤ 10 units"
-        },
-        "buttons": {
-            "adjustStock": "Adjust Stock",
-            "transferStock": "Transfer Stock"
-        },
-        "pagination": {
-            "showing": "Showing {{start}} to {{end}} of {{total}} items"
-        },
-        "errors": {
-            "fetchFailed": "Failed to fetch inventory",
-            "fetchStockFailed": "Failed to fetch stock details",
-            "warehouseRequired": "Please select a warehouse",
-            "productRequired": "Please select a product",
-            "validQuantityRequired": "Please enter a valid adjustment quantity",
-            "reasonRequired": "Please provide a reason for adjustment",
-            "adjustFailed": "Failed to adjust stock",
-            "sourceWarehouseRequired": "Please select source warehouse",
-            "destWarehouseRequired": "Please select destination warehouse",
-            "sameWarehouse": "Source and destination warehouses cannot be the same",
-            "insufficientStock": "Insufficient stock. Only {{stock}} {{unit}} available",
-            "transferFailed": "Failed to transfer stock",
-            "productNotFound": "Product not found in source warehouse"
-        },
-        "adjustTitle": "Adjust Stock",
-        "adjustSubtitle": "Increase or decrease inventory stock",
-        "stockAdjustmentDetails": "Stock Adjustment Details",
-        "warehouse": "WAREHOUSE",
-        "productName": "PRODUCT NAME",
-        "adjustmentType": "ADJUSTMENT TYPE",
-        "addStock": "Add Stock",
-        "removeStock": "Remove Stock",
-        "quantity": "QUANTITY",
-        "reasonForAdjustment": "REASON FOR ADJUSTMENT",
-        "current": "Current",
-        "currentStock": "Current Stock",
-        "unit": "Unit",
-        "adjustmentNote": "Adding stock will increase inventory. Removing stock will decrease inventory. All adjustments are logged for audit purposes.",
-        "noWarehousesFound": "No warehouses found. Please add a warehouse first.",
-        "noProductsInWarehouse": "No products found in this warehouse.",
-        "placeholders": {
-            "selectWarehouse": "Select a warehouse",
-            "selectProduct": "Search and select a product",
-            "selectWarehouseFirst": "Please select a warehouse first",
-            "quantity": "Enter quantity",
-            "reason": "e.g., New harvest received, Damaged goods, Expired products, etc."
-        },
-        "messages": {
-            "adjustSuccess": "Stock adjusted successfully! Redirecting..."
-        },
-        "transferTitle": "Transfer Stock",
-        "transferSubtitle": "Move stock between warehouses",
-        "transferDetails": "Transfer Details",
-        "fromWarehouse": "FROM WAREHOUSE (Source)",
-        "toWarehouse": "TO WAREHOUSE (Destination)",
-        "quantityToTransfer": "QUANTITY TO TRANSFER",
-        "availableStock": "Available Stock",
-        "stock": "Stock",
-        "in": "in",
-        "totalStock": "Total Stock",
-        "transferNote": "Transferring stock will decrease quantity from source warehouse and increase quantity in destination warehouse."
+    
+  "openingBalance": {
+    "title": "Opening Balance",
+    "subtitle": "Manage your business opening balance",
+    "businessInformation": "Business Information",
+    "businessName": "Business Name",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "openingBalanceDetails": "Opening Balance Details",
+    "currentBalance": "Current Balance",
+    "debit": "Debit",
+    "credit": "Credit",
+    "asOfDate": "As Of Date",
+    "lastUpdated": "Last Updated",
+    "amount": "Amount",
+    "type": "Balance Type",
+    "amountHelperText": "Enter the opening balance amount",
+    "notesPlaceholder": "Add any notes about the opening balance...",
+    "noBalanceFound": "No opening balance has been set yet",
+    "setOpeningBalance": "Set Opening Balance",
+    "whatIsOpeningBalance": "What is Opening Balance?",
+    "description": "Opening balance is the amount of money or inventory value your business has at the start of a financial period. It helps track your financial position accurately.",
+    "errors": {
+      "validAmountRequired": "Please enter a valid amount greater than 0",
+      "dateRequired": "Please select a date"
     },
+    "messages": {
+      "createSuccess": "Opening balance created successfully!",
+      "updateSuccess": "Opening balance updated successfully!"
+    }
+  },
+
+  "inventory": {
+    "title": "Inventory",
+    "subtitle": "Manage and track all stock levels",
+    "loading": "Loading inventory...",
+    "loadingStockDetails": "Loading stock details...",
+    "stockDetailsSubtitle": "Stock details across all warehouses",
+    "totalStockAllWarehouses": "Total Stock Across All Warehouses",
+   
+    "stockByWarehouse": "Stock by Warehouse",
+    "units": {
+  "kgLabel": "KG (Kilograms)",
+  "tonLabel": "TON (Tons)",
+  "quintalLabel": "QUINTAL (100 KG)",
+  "default": "units"
+},
+    "searchPlaceholder": "Search products...",
+    "noItemsFound": "No inventory items found",
+    "stats": {
+      "totalProducts": "Total Products",
+      "totalStock": "Total Stock (Units)",
+      "lowStockItems": "Low Stock Items",
+      "warehouses": "Warehouses"
+    },
+    "status": {
+      "outOfStock": "Out of Stock",
+      "lowStock": "Low Stock",
+      "inStock": "In Stock"
+    },
+    "table": {
+      "product": "Product",
+      "warehouse": "Warehouse",
+      "currentStock": "Current Stock",
+      "unit": "Unit",
+      "status": "Status",
+      "lastUpdated": "Last Updated",
+      "actions": "Actions"
+    },
+    "filters": {
+      "warehouse": "Warehouse",
+      "allWarehouses": "All Warehouses",
+      "lowStockOnly": "Low Stock Only",
+      "lowStockLabel": "Show only products with stock ≤ 10 units"
+    },
+    "buttons": {
+      "adjustStock": "Adjust Stock",
+      "transferStock": "Transfer Stock"
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} items"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch inventory",
+      "fetchStockFailed": "Failed to fetch stock details",
+      "warehouseRequired": "Please select a warehouse",
+      "productRequired": "Please select a product",
+      "validQuantityRequired": "Please enter a valid adjustment quantity",
+      "reasonRequired": "Please provide a reason for adjustment",
+      "adjustFailed": "Failed to adjust stock",
+      "sourceWarehouseRequired": "Please select source warehouse",
+      "destWarehouseRequired": "Please select destination warehouse",
+      "sameWarehouse": "Source and destination warehouses cannot be the same",
+      "insufficientStock": "Insufficient stock. Only {{stock}} {{unit}} available",
+      "transferFailed": "Failed to transfer stock",
+      "productNotFound": "Product not found in source warehouse"
+    },
+    "adjustTitle": "Adjust Stock",
+    "adjustSubtitle": "Increase or decrease inventory stock",
+    "stockAdjustmentDetails": "Stock Adjustment Details",
+    "warehouse": "WAREHOUSE",
+    "productName": "PRODUCT NAME",
+    "adjustmentType": "ADJUSTMENT TYPE",
+    "addStock": "Add Stock",
+    "removeStock": "Remove Stock",
+    "quantity": "QUANTITY",
+    "reasonForAdjustment": "REASON FOR ADJUSTMENT",
+    "current": "Current",
+    "currentStock": "Current Stock",
+    "unit": "Unit",
+    "adjustmentNote": "Adding stock will increase inventory. Removing stock will decrease inventory. All adjustments are logged for audit purposes.",
+    "noWarehousesFound": "No warehouses found. Please add a warehouse first.",
+    "noProductsInWarehouse": "No products found in this warehouse.",
+    "placeholders": {
+      "selectWarehouse": "Select a warehouse",
+      "selectProduct": "Search and select a product",
+      "selectWarehouseFirst": "Please select a warehouse first",
+      "quantity": "Enter quantity",
+      "reason": "e.g., New harvest received, Damaged goods, Expired products, etc."
+    },
+    "messages": {
+      "adjustSuccess": "Stock adjusted successfully! Redirecting..."
+    },
+    "transferTitle": "Transfer Stock",
+    "transferSubtitle": "Move stock between warehouses",
+    "transferDetails": "Transfer Details",
+    "fromWarehouse": "FROM WAREHOUSE (Source)",
+    "toWarehouse": "TO WAREHOUSE (Destination)",
+    "quantityToTransfer": "QUANTITY TO TRANSFER",
+    "availableStock": "Available Stock",
+    "stock": "Stock",
+    "in": "in",
+    "totalStock": "Total Stock",
+    "transferNote": "Transferring stock will decrease quantity from source warehouse and increase quantity in destination warehouse."
+  },
 
     "products": {
         "title": "Products",
@@ -867,136 +913,152 @@
         }
     },
 
-    "warehouses": {
-        "title": "Warehouses",
-        "subtitle": "Manage all storage facilities",
-        "loading": "Loading warehouses...",
-        "searchPlaceholder": "Search by name, code, or city...",
-        "noWarehousesFound": "No warehouses found",
-        "units": "units",
-        "unitLabel": "units",
-        "used": "Used",
-        "productsCount": "products",
-        "code": "Code",
-        "warehouseInformation": "Warehouse Information",
-        "location": "Location",
-        "managerDetails": "Manager Details",
-        "managerName": "Manager Name",
-        "capacityUsage": "Capacity Usage",
-        "total": "Total",
-        "capacityUtilized": "capacity utilized",
-        "inventorySummary": "Inventory Summary",
-        "productsStored": "Products Stored",
-        "totalStockUnits": "Total Stock Units",
-        "stockDetails": "Stock Details",
-        "createdBy": "Created By",
-        "stats": {
-            "totalWarehouses": "Total Warehouses",
-            "activeWarehouses": "Active Warehouses",
-            "totalCapacity": "Total Capacity",
-            "totalStock": "Total Stock"
-        },
-        "status": {
-            "active": "Active",
-            "inactive": "Inactive",
-            "label": "Status"
-        },
-        "table": {
-            "code": "Code",
-            "name": "Name",
-            "location": "Location",
-            "manager": "Manager",
-            "capacity": "Capacity",
-            "stock": "Stock",
-            "status": "Status",
-            "actions": "Actions"
-        },
-        "filters": {
-            "status": "Status"
-        },
-        "buttons": {
-            "addWarehouse": "Add Warehouse",
-            "deactivate": "Deactivate",
-            "deletePermanently": "Delete Permanently"
-        },
-        "modals": {
-            "deactivate": {
-                "title": "Deactivate Warehouse",
-                "subtitle": "Confirm deactivation",
-                "confirmMessage": "Are you sure you want to deactivate {{name}}?",
-                "warningMessage": "This warehouse will become inactive and cannot be used for future transactions."
-            },
-            "delete": {
-                "title": "Delete Warehouse",
-                "subtitle": "Permanently delete warehouse",
-                "confirmMessage": "Are you sure you want to permanently delete {{name}}?",
-                "warningMessage": "This action cannot be undone. All data related to this warehouse will be permanently removed."
-            }
-        },
-        "pagination": {
-            "showing": "Showing {{start}} to {{end}} of {{total}} warehouses"
-        },
-        "errors": {
-            "fetchFailed": "Failed to fetch warehouses",
-            "deactivateFailed": "Failed to deactivate warehouse",
-            "deleteFailed": "Failed to delete warehouse",
-            "nameRequired": "Warehouse name is required",
-            "codeRequired": "Warehouse code is required",
-            "cityRequired": "City is required",
-            "stateRequired": "State is required",
-            "managerNameRequired": "Manager name is required",
-            "managerPhoneRequired": "Manager phone number is required",
-            "invalidPhone": "Enter a valid 10-digit mobile number",
-            "capacityRequired": "Total capacity is required",
-            "addFailed": "Failed to create warehouse"
-        },
-        "messages": {
-            "addSuccess": "Warehouse created successfully! Redirecting..."
-        },
-        "addTitle": "Add New Warehouse",
-        "addSubtitle": "Register a new storage facility",
-        "createWarehouse": "Create Warehouse",
-        "basicInformation": "Basic Information",
-        "locationDetails": "Location Details",
-        "capacityDetails": "Capacity Details",
-        "additionalNotes": "Additional Notes",
-        "warehouseName": "WAREHOUSE NAME",
-        "warehouseCode": "WAREHOUSE CODE",
-        "address": "ADDRESS",
-        "city": "CITY",
-        "state": "STATE",
-        "pincode": "PINCODE",
-        "phoneNumber": "PHONE NUMBER",
-        "totalCapacity": "TOTAL CAPACITY",
-        "usedCapacity": "USED CAPACITY (Optional)",
-        "unit": "UNIT",
-        "usedCapacityHint": "Leave 0 if not known",
-        "steps": {
-            "basicInfo": "Basic Information",
-            "locationManager": "Location & Manager",
-            "capacityNotes": "Capacity & Notes"
-        },
-        "units": {
-            "kg": "KG (Kilograms)",
-            "ton": "TON (Tons)",
-            "quintal": "QUINTAL (100 KG)"
-        },
-        "placeholders": {
-            "warehouseName": "Enter warehouse name",
-            "warehouseCode": "e.g., WH001, CS001",
-            "address": "Enter full address",
-            "city": "Enter city",
-            "state": "Enter state",
-            "pincode": "Enter pincode",
-            "managerName": "Enter manager name",
-            "phoneNumber": "10-digit mobile number",
-            "email": "Enter email address",
-            "totalCapacity": "Enter total capacity",
-            "usedCapacity": "Currently used capacity",
-            "selectUnit": "Select unit",
-            "notes": "Enter any additional notes about this warehouse..."
-        }
+   "warehouses": {
+    "title": "Warehouses",
+    "subtitle": "Manage all storage facilities",
+    "loading": "Loading warehouses...",
+    "email": "Email Address",
+    "searchPlaceholder": "Search by name, code, or city...",
+    "noWarehousesFound": "No warehouses found",
+    "createdOn": "Created On",
+    "noCapacityData": "No capacity data available",
+    "lowStockAlert": "Low Stock Alert",
+    "lowStockProducts": "Low Stock Products",
+    "products": "Products",
+    "totalUnits": "Total Units",
+    "name": "Warehouse Name",
+    "units": "units",
+    "unitLabel": "units",
+    "used": "Used",
+    "productsCount": "products",
+    "code": "Code",
+    "warehouseInformation": "Warehouse Information",
+    "location": "Location",
+    "managerDetails": "Manager Details",
+    "managerName": "Manager Name",
+    "capacityUsage": "Capacity Usage",
+    "total": "Total",
+    "capacityUtilized": "capacity utilized",
+    "inventorySummary": "Inventory Summary",
+    "productsStored": "Products Stored",
+    "totalStockUnits": "Total Stock Units",
+    "stockDetails": "Stock Details",
+    "createdBy": "Created By",
+    "editTitle": "Edit Warehouse",
+    "editSubtitle": "Update warehouse information",
+    "updateSuccess": "Warehouse updated successfully! Redirecting...",
+    "updateFailed": "Failed to update warehouse",
+    "totalCapacityRequired": "Total capacity is required",
+    "nameReadOnlyTooltip": "Warehouse name cannot be changed after creation",
+    "codeReadOnlyTooltip": "Warehouse code cannot be changed after creation",
+    "stats": {
+      "totalWarehouses": "Total Warehouses",
+      "activeWarehouses": "Active Warehouses",
+      "totalCapacity": "Total Capacity",
+      "totalStock": "Total Stock"
     },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "label": "Status"
+    },
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "location": "Location",
+      "manager": "Manager",
+      "capacity": "Capacity",
+      "stock": "Stock",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "filters": {
+      "status": "Status"
+    },
+    "buttons": {
+      "addWarehouse": "Add Warehouse",
+      "deactivate": "Deactivate",
+      "deletePermanently": "Delete Permanently"
+    },
+    "modals": {
+      "deactivate": {
+        "title": "Deactivate Warehouse",
+        "subtitle": "Confirm deactivation",
+        "confirmMessage": "Are you sure you want to deactivate {{name}}?",
+        "warningMessage": "This warehouse will become inactive and cannot be used for future transactions."
+      },
+      "delete": {
+        "title": "Delete Warehouse",
+        "subtitle": "Permanently delete warehouse",
+        "confirmMessage": "Are you sure you want to permanently delete {{name}}?",
+        "warningMessage": "This action cannot be undone. All data related to this warehouse will be permanently removed."
+      }
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} warehouses"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch warehouses",
+      "deactivateFailed": "Failed to deactivate warehouse",
+      "deleteFailed": "Failed to delete warehouse",
+      "nameRequired": "Warehouse name is required",
+      "codeRequired": "Warehouse code is required",
+      "cityRequired": "City is required",
+      "stateRequired": "State is required",
+      "managerNameRequired": "Manager name is required",
+      "managerPhoneRequired": "Manager phone number is required",
+      "invalidPhone": "Enter a valid 10-digit mobile number",
+      "capacityRequired": "Total capacity is required",
+      "addFailed": "Failed to create warehouse"
+    },
+    "messages": {
+      "addSuccess": "Warehouse created successfully! Redirecting...",
+      "updateSuccess": "Warehouse updated successfully! Redirecting..."
+    },
+    "addTitle": "Add New Warehouse",
+    "addSubtitle": "Register a new storage facility",
+    "createWarehouse": "Create Warehouse",
+    "basicInformation": "Basic Information",
+    "locationDetails": "Location Details",
+    "capacityDetails": "Capacity Details",
+    "additionalNotes": "Additional Notes",
+    "warehouseName": "WAREHOUSE NAME",
+    "warehouseCode": "WAREHOUSE CODE",
+    "address": "ADDRESS",
+    "city": "CITY",
+    "state": "STATE",
+    "pincode": "PINCODE",
+    "phoneNumber": "PHONE NUMBER",
+    "totalCapacity": "TOTAL CAPACITY",
+    "usedCapacity": "USED CAPACITY (Optional)",
+    "unit": "UNIT",
+    "usedCapacityHint": "Leave 0 if not known",
+    "steps": {
+      "basicInfo": "Basic Information",
+      "locationManager": "Location & Manager",
+      "capacityNotes": "Capacity & Notes"
+    },
+    "units": {
+      "kg": "KG (Kilograms)",
+      "ton": "TON (Tons)",
+      "quintal": "QUINTAL (100 KG)"
+    },
+    "placeholders": {
+      "warehouseName": "Enter warehouse name",
+      "warehouseCode": "e.g., WH001, CS001",
+      "address": "Enter full address",
+      "city": "Enter city",
+      "state": "Enter state",
+      "pincode": "Enter pincode",
+      "managerName": "Enter manager name",
+      "phoneNumber": "10-digit mobile number",
+      "email": "Enter email address",
+      "totalCapacity": "Enter total capacity",
+      "usedCapacity": "Currently used capacity",
+      "selectUnit": "Select unit",
+      "notes": "Enter any additional notes about this warehouse..."
+    }
+  },
 
    
  
@@ -1246,6 +1308,7 @@
     },
     "stats": {
       "totalFarmers": "Total Farmers",
+      "totalBuyers": "Total Buyers",
       "totalTransactions": "Total Transactions",
       "totalPayments": "Total Payments",
       "totalPurchases": "Total Purchases",
@@ -1334,6 +1397,13 @@
     "loading": "Loading buyers...",
     "searchPlaceholder": "Search buyers by name, email, mobile, or business...",
     "noBuyersFound": "No buyers found",
+    "mobileHint": "Enter 10-digit mobile number (starts with 6,7,8,9)",
+"pincodeHint": "Enter 6-digit pincode",
+"gstHint": "15-character GSTIN (e.g., 27AAAAA0000A1Z)",
+"panHint": "10-character PAN (e.g., AAAAA1234A)",
+"creditLimitHint": "Maximum credit amount allowed (optional)",
+"creditDaysHint": "Number of days for credit payment (optional)",
+"creditOptional": "These fields are optional - leave blank if not applicable",
     "addTitle": "Add New Buyer",
     "addSubtitle": "Enter buyer details to add them to your network",
     "editTitle": "Edit Buyer",
@@ -1603,6 +1673,7 @@
             "statusUpdateFailed": "Failed to update cheque status",
             "notFound": "Payment not found",
             "operatorNotFound": "Operator ID not found",
+            "noPendingPurchases": "No pending purchases found for this farmer",
             "purchaseRequired": "Please select a purchase",
             "validAmountRequired": "Please enter a valid amount",
             "dateRequired": "Payment date is required",
@@ -1832,6 +1903,8 @@
         "title": "Users",
         "subtitle": "Manage system users and their roles",
         "loading": "Loading users...",
+        "lastLogin": "Last Login",
+
         "searchPlaceholder": "Search by name, email, or phone...",
         "noUsersFound": "No users found",
         "noPhone": "No phone",

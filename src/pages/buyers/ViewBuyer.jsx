@@ -235,7 +235,7 @@ const ViewBuyer = () => {
             </p>
           </div>
         </div>
-        <div className="flex gap-3">
+        {/* <div className="flex gap-3">
           <button
             onClick={handleRefresh}
             disabled={refreshing}
@@ -253,7 +253,7 @@ const ViewBuyer = () => {
             <Edit className="w-4 h-4" />
             {t('common.edit')}
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Buyer Information Cards */}
@@ -411,7 +411,7 @@ const ViewBuyer = () => {
                     <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.finalPayable')}</th>
                     <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('purchases.amountDue')}</th>
                     <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('common.status')}</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{t('common.actions')}</th>
+                    
                   </tr>
                 </thead>
                 <tbody>
@@ -479,16 +479,7 @@ const ViewBuyer = () => {
                             {statusConfig.label}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <button
-                            onClick={() => navigate(`/purchases/view/${purchase._id}`)}
-                            className="p-1.5 rounded-lg hover:bg-gray-100 transition-all"
-                            style={{ color: '#2E7D32' }}
-                            title={t('common.view')}
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                        </td>
+                        
                       </tr>
                     );
                   })}

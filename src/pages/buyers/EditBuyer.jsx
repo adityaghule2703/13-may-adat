@@ -8,16 +8,13 @@ import {
   Stack,
   Typography,
   Box,
+  Autocomplete,
   IconButton,
   Collapse,
   Alert,
   Paper,
   InputAdornment,
-  CircularProgress,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel
+  CircularProgress
 } from '@mui/material';
 import { 
   Error as ErrorIcon, 
@@ -32,7 +29,6 @@ import {
   Public as PublicIcon,
   Receipt as ReceiptIcon,
   CreditCard as CardIcon,
-  VpnKey as KeyIcon,
   AttachMoney as MoneyIcon,
   CalendarToday as CalendarIcon,
   Notes as NotesIcon,
@@ -78,15 +74,14 @@ const BUSINESS_TYPES = [
 // Payment mode options
 const PAYMENT_MODES = [
   { value: 'cash', label: 'Cash' },
-  { value: 'bank_transfer', label: 'Bank Transfer' },
+  { value: 'upi', label: 'UPI' },
+  { value: 'bank', label: 'Bank Transfer' },
   { value: 'cheque', label: 'Cheque' },
-  { value: 'credit', label: 'Credit' },
-  { value: 'online', label: 'Online' }
+  { value: 'credit', label: 'Credit' }
 ];
 
 // Floating Error Alert Component
 const FloatingErrorAlert = ({ error, onClose }) => {
-  const { t } = useTranslation();
   if (!error) return null;
   
   return (
@@ -382,7 +377,6 @@ const EditBuyer = () => {
     const errors = {};
     let isValid = true;
 
-    // Step 0 validations
     if (!formData.name.trim()) {
       errors.name = t('buyers.errors.nameRequired');
       isValid = false;
@@ -421,7 +415,6 @@ const EditBuyer = () => {
       isValid = false;
     }
 
-    // Step 1 validations
     if (!formData.businessName.trim()) {
       errors.businessName = t('buyers.errors.businessNameRequired');
       isValid = false;
@@ -440,7 +433,6 @@ const EditBuyer = () => {
       isValid = false;
     }
 
-    // Step 2 validations
     if (formData.creditLimit && !validateCreditLimit(formData.creditLimit)) {
       errors.creditLimit = t('buyers.errors.creditLimitInvalid');
       isValid = false;
@@ -564,15 +556,6 @@ const EditBuyer = () => {
     }
   };
 
-  const selectSx = {
-    ...inputSx,
-    '& .MuiSelect-select': {
-      py: 1,
-      px: 1.5,
-      fontSize: '0.75rem'
-    }
-  };
-
   // Loading state
   if (fetching) {
     return (
@@ -631,7 +614,7 @@ const EditBuyer = () => {
                 }
               }}
             >
-{loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('buyers.buttons.editBuyer')}</>}
+              {loading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <><SaveIcon sx={{ fontSize: '1rem', mr: 0.5 }} /> {t('buyers.buttons.editBuyer')}</>}
             </Button>
           )}
         </Box>
@@ -866,7 +849,7 @@ const EditBuyer = () => {
 
       {/* Step 2: Business Details */}
       {currentStep === 1 && (
-        <Paper sx={{ borderRadius: 2.5, overflow: 'auto', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)', border: `1px solid ${COLORS.border}` }}>
+        <Paper sx={{ borderRadius: 2.5, overflow: 'visible', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)', border: `1px solid ${COLORS.border}` }}>
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <BusinessIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
@@ -894,23 +877,43 @@ const EditBuyer = () => {
                 />
               </Box>
 
-              {/* Business Type */}
+              {/* Business Type - Autocomplete with search */}
               <Box>
                 <Label required>{t('buyers.businessType')}</Label>
-                <FormControl fullWidth size="small" sx={selectSx}>
-                  <Select
-                    name="businessType"
-                    value={formData.businessType}
-                    onChange={handleChange}
-                    sx={{ fontSize: '0.75rem' }}
-                  >
-                    {BUSINESS_TYPES.map(type => (
-                      <MenuItem key={type.value} value={type.value} sx={{ fontSize: '0.75rem' }}>
-                        {type.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Autocomplete
+                  fullWidth
+                  options={BUSINESS_TYPES}
+                  value={BUSINESS_TYPES.find(opt => opt.value === formData.businessType) || null}
+                  onChange={(event, newValue) => {
+                    setFormData(prev => ({ ...prev, businessType: newValue?.value || 'individual' }));
+                  }}
+                  getOptionLabel={(option) => option.label}
+                  isOptionEqualToValue={(option, value) => option.value === value?.value}
+                  disableClearable
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      placeholder={t('buyers.placeholders.businessType')}
+                      sx={inputSx}
+                    />
+                  )}
+                  renderOption={(props, option) => (
+                    <li {...props}>
+                      <Typography sx={{ fontSize: '0.75rem' }}>{option.label}</Typography>
+                    </li>
+                  )}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: '250px',
+                      '& .MuiAutocomplete-option': {
+                        fontSize: '0.75rem',
+                        py: 1,
+                        px: 1.5
+                      }
+                    }
+                  }}
+                />
               </Box>
 
               {/* GST Number */}
@@ -965,7 +968,7 @@ const EditBuyer = () => {
 
       {/* Step 3: Credit Terms & Additional Info */}
       {currentStep === 2 && (
-        <Paper sx={{ borderRadius: 2.5, overflow: 'auto', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)', border: `1px solid ${COLORS.border}` }}>
+        <Paper sx={{ borderRadius: 2.5, overflow: 'visible', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)', border: `1px solid ${COLORS.border}` }}>
           <Box sx={{ px: 2.5, py: 1.5, borderBottom: `1px solid ${COLORS.border}`, bgcolor: COLORS.background.white }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <MoneyIcon sx={{ fontSize: '1.25rem', color: COLORS.primary }} />
@@ -1023,23 +1026,43 @@ const EditBuyer = () => {
                 </Typography>
               </Box>
 
-              {/* Default Payment Mode */}
+              {/* Default Payment Mode - Autocomplete with search */}
               <Box>
                 <Label>{t('buyers.defaultPaymentMode')}</Label>
-                <FormControl fullWidth size="small" sx={selectSx}>
-                  <Select
-                    name="defaultPaymentMode"
-                    value={formData.defaultPaymentMode}
-                    onChange={handleChange}
-                    sx={{ fontSize: '0.75rem' }}
-                  >
-                    {PAYMENT_MODES.map(mode => (
-                      <MenuItem key={mode.value} value={mode.value} sx={{ fontSize: '0.75rem' }}>
-                        {mode.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Autocomplete
+                  fullWidth
+                  options={PAYMENT_MODES}
+                  value={PAYMENT_MODES.find(opt => opt.value === formData.defaultPaymentMode) || null}
+                  onChange={(event, newValue) => {
+                    setFormData(prev => ({ ...prev, defaultPaymentMode: newValue?.value || 'cash' }));
+                  }}
+                  getOptionLabel={(option) => option.label}
+                  isOptionEqualToValue={(option, value) => option.value === value?.value}
+                  disableClearable
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      placeholder={t('buyers.placeholders.paymentMode')}
+                      sx={inputSx}
+                    />
+                  )}
+                  renderOption={(props, option) => (
+                    <li {...props}>
+                      <Typography sx={{ fontSize: '0.75rem' }}>{option.label}</Typography>
+                    </li>
+                  )}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: '250px',
+                      '& .MuiAutocomplete-option': {
+                        fontSize: '0.75rem',
+                        py: 1,
+                        px: 1.5
+                      }
+                    }
+                  }}
+                />
               </Box>
 
               {/* Notes - spans both columns */}

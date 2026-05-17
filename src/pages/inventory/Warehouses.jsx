@@ -1359,16 +1359,7 @@ const Warehouses = () => {
                                 {t('common.edit')}
                               </button>
 
-                              {warehouse.isActive && (
-                                <button
-                                  onClick={() => openDeactivateModal(warehouse)}
-                                  className="w-full px-4 py-2.5 text-left text-sm hover:bg-yellow-50 flex items-center gap-2 transition-colors border-t"
-                                  style={{ color: '#E65100', borderColor: '#E8F5E9' }}
-                                >
-                                  <PowerOff className="w-4 h-4" />
-                                  {t('warehouses.buttons.deactivate')}
-                                </button>
-                              )}
+                             
 
                               <button
                                 onClick={() => openDeleteModal(warehouse)}
