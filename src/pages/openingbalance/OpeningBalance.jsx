@@ -6,13 +6,14 @@ import {
   TrendingUp, Calendar, DollarSign, Wallet, CheckCircle, XCircle,
   AlertCircle, Loader, Edit2, Save, X, Plus, RefreshCw,
   Building2, Phone, Mail, MapPin, Clock, History, Banknote,
-  FileText, Shield, User, Settings, Download, Filter, Users
+  FileText, Shield, User, Settings, Download, Filter, Users,
+  Eye, Printer
 } from 'lucide-react';
 import axios from 'axios';
 import BASE_URL from '../../config/Config';
 
 const OpeningBalance = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
@@ -21,11 +22,14 @@ const OpeningBalance = () => {
   const [success, setSuccess] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [showDayBookModal, setShowDayBookModal] = useState(false);
   const [businessDetails, setBusinessDetails] = useState(null);
   const [openingBalance, setOpeningBalance] = useState(null);
   const [operators, setOperators] = useState([]);
   const [loadingOperators, setLoadingOperators] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [loadingDayBook, setLoadingDayBook] = useState(false);
+  const [dayBookData, setDayBookData] = useState(null);
   
   const [formData, setFormData] = useState({
     amount: '',
@@ -39,6 +43,11 @@ const OpeningBalance = () => {
     endDate: new Date().toISOString().split('T')[0],
     operatorId: '',
     type: ''
+  });
+
+  const [dayBookFilters, setDayBookFilters] = useState({
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0]
   });
 
   const getToken = () => localStorage.getItem('token');
@@ -95,7 +104,6 @@ const OpeningBalance = () => {
       });
 
       if (response.data.success) {
-        // Filter only users with role 'operator'
         const operatorUsers = response.data.data.filter(user => user.role === 'operator');
         setOperators(operatorUsers);
       }
@@ -105,6 +113,511 @@ const OpeningBalance = () => {
     } finally {
       setLoadingOperators(false);
     }
+  };
+
+ const fetchDayBook = async () => {
+  console.log("=== fetchDayBook called ===");
+  console.log("Current filters:", dayBookFilters);
+  
+  if (!dayBookFilters.startDate || !dayBookFilters.endDate) {
+    console.error("Missing dates!");
+    setError('Please select both start date and end date');
+    return;
+  }
+
+  if (new Date(dayBookFilters.startDate) > new Date(dayBookFilters.endDate)) {
+    console.error("Invalid date range!");
+    setError('Start date cannot be after end date');
+    return;
+  }
+
+  setLoadingDayBook(true);
+  setError(null);
+
+  try {
+    const token = getToken();
+    console.log("Token exists?", !!token);
+    
+    const url = `${BASE_URL}/daybook?startDate=${dayBookFilters.startDate}&endDate=${dayBookFilters.endDate}&format=json`;
+    console.log("Fetching from URL:", url);
+    
+    const response = await axios.get(url, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    console.log("Response status:", response.status);
+    console.log("Response data:", response.data);
+    console.log("Response data structure:", Object.keys(response.data));
+    
+    if (response.data.success) {
+      console.log("Success! Data received");
+      console.log("Data.entries:", response.data.data?.entries);
+      console.log("Number of entries:", response.data.data?.entries?.length);
+      
+      setDayBookData(response.data);
+      
+      // Show success message with entry count
+      const entryCount = response.data.data?.entries?.length || 0;
+      console.log(`Found ${entryCount} entries`);
+      setSuccess(`Found ${entryCount} entries for the selected period`);
+      setTimeout(() => setSuccess(null), 3000);
+    } else {
+      console.error("API returned success=false:", response.data.message);
+      setError(response.data.message || 'Failed to fetch day book data');
+    }
+  } catch (err) {
+    console.error("=== ERROR in fetchDayBook ===");
+    console.error("Error object:", err);
+    console.error("Error response:", err.response);
+    console.error("Error message:", err.message);
+    setError(err.response?.data?.message || 'Network error occurred');
+  } finally {
+    setLoadingDayBook(false);
+    console.log("fetchDayBook completed");
+  }
+};
+
+const printDayBook = () => {
+  if (!dayBookData) return;
+
+  const isMarathi = i18n.language === 'mr';
+  const { data, businessDetails: business, generatedAt } = dayBookData;
+  const { period, summary, entries } = data;
+
+  // Debug business keys
+  console.log("Business object:", JSON.stringify(business));
+
+  const businessName = business?.businessName || business?.name || (isMarathi ? 'जय शिवराय व्हेजिटेबल' : 'Jai Shivrai Vegetable Co.');
+  const businessAddress = business?.fullAddress || business?.businessAddress || business?.address || (isMarathi ? 'वेसराणे, ता. कळवण जि. नाशिक' : 'Vesarane, Tal. Kalwan, Dist. Nashik');
+  const businessPhone = business?.phone || business?.businessPhone || business?.contactPhone || (isMarathi ? 'प्रो. रोकेश हिरे मो. ९०२१६९९९९१ / ९६२३९५६३९६' : 'Prop. Rakesh Hire M: 9021699991 / 9623956396');
+  const businessEmail = business?.email || business?.businessEmail || '';
+  const businessGst = business?.gstNumber || business?.gst || '';
+  const businessPan = business?.panNumber || business?.pan || '';
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'N/A';
+    const date = new Date(dateStr);
+    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+  };
+
+  const formatDateTime = (dateStr) => {
+    if (!dateStr) return 'N/A';
+    const date = new Date(dateStr);
+    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount || 0);
+  };
+
+  const getCashFlowBadge = (cashFlow) => {
+    if (cashFlow === 'outflow') {
+      return '<span style="color: #D32F2F; font-weight: bold;">Outflow ▼</span>';
+    } else if (cashFlow === 'inflow') {
+      return '<span style="color: #2E7D32; font-weight: bold;">Inflow ▲</span>';
+    }
+    return '-';
+  };
+
+  const getTypeBadge = (type) => {
+    const colors = {
+      PURCHASE: '#FF6F00',
+      SALE: '#2E7D32',
+      PAYMENT: '#1565C0',
+      EXPENSE: '#9C27B0',
+      ADVANCE: '#FFB74D'
+    };
+    const color = colors[type] || '#666';
+    return `<span style="background: ${color}20; color: ${color}; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; display: inline-block;">${type}</span>`;
+  };
+
+  let entriesRows = '';
+
+  if (entries && Array.isArray(entries) && entries.length > 0) {
+    entriesRows = entries.map((entry, idx) => {
+      let formattedDate = 'N/A';
+      if (entry.date) {
+        const transactionDate = new Date(entry.date);
+        formattedDate = `${transactionDate.getDate().toString().padStart(2, '0')}/${(transactionDate.getMonth() + 1).toString().padStart(2, '0')}/${transactionDate.getFullYear()}`;
+      }
+
+      const formattedTime = entry.formattedTime || '';
+      const dateDisplay = formattedTime ? `${formattedDate} ${formattedTime}` : formattedDate;
+      const partyName = entry.party?.name || entry.party || '-';
+
+      let description = entry.description || 'N/A';
+      if (entry.referenceNo) {
+        description += `<div style="font-size: 9px; color: #888; margin-top: 3px;">Ref: ${entry.referenceNo}</div>`;
+      }
+
+      const subtype = entry.subtype ? `<div style="font-size: 9px; color: #999; margin-top: 2px;">${entry.subtype}</div>` : '';
+      const paymentMode = entry.paymentMode ? `<div style="font-size: 9px; color: #999;">Mode: ${entry.paymentMode}</div>` : '';
+
+      return `
+        <tr>
+          <td style="text-align: center; padding: 10px 8px; border: 1px solid #b3153f; vertical-align: top;">${idx + 1}</td>
+          <td style="text-align: center; padding: 10px 8px; border: 1px solid #b3153f; vertical-align: top;">
+            ${dateDisplay}
+            ${subtype}
+          </td>
+          <td style="text-align: center; padding: 10px 8px; border: 1px solid #b3153f; vertical-align: top;">
+            ${getTypeBadge(entry.type)}
+          </td>
+          <td style="text-align: left; padding: 10px 8px; border: 1px solid #b3153f; vertical-align: top;">
+            ${description}
+            ${paymentMode}
+          </td>
+          <td style="text-align: left; padding: 10px 8px; border: 1px solid #b3153f; vertical-align: top;">${partyName}</td>
+          <td style="text-align: right; padding: 10px 8px; border: 1px solid #b3153f; vertical-align: top; font-weight: ${entry.debit > 0 ? 'bold' : 'normal'}; color: ${entry.debit > 0 ? '#D32F2F' : '#333'};">${entry.debit > 0 ? formatCurrency(entry.debit) : '-'}</td>
+          <td style="text-align: right; padding: 10px 8px; border: 1px solid #b3153f; vertical-align: top; font-weight: ${entry.credit > 0 ? 'bold' : 'normal'}; color: ${entry.credit > 0 ? '#2E7D32' : '#333'};">${entry.credit > 0 ? formatCurrency(entry.credit) : '-'}</td>
+          <td style="text-align: center; padding: 10px 8px; border: 1px solid #b3153f; vertical-align: top;">${getCashFlowBadge(entry.cashFlow)}</td>
+          <td style="text-align: right; padding: 10px 8px; border: 1px solid #b3153f; vertical-align: top; font-weight: bold;">${formatCurrency(Math.abs(entry.runningBalance || 0))}</td>
+        </tr>
+      `;
+    }).join('');
+  } else {
+    entriesRows = `
+      <tr>
+        <td colspan="9" style="text-align: center; padding: 40px; border: 1px solid #b3153f;">
+          <div style="font-size: 14px; color: #999;">No entries found for the selected period</div>
+        </td>
+      </tr>
+    `;
+  }
+
+  const printWindow = window.open('', '_blank');
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="${isMarathi ? 'mr' : 'en'}">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Day Book - ${formatDate(period.start)} to ${formatDate(period.end)}</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+          background: #e5e5e5;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding: 30px 20px;
+          font-family: 'Arial', 'Noto Sans', 'Segoe UI', sans-serif;
+        }
+        .receipt {
+          width: 100%;
+          max-width: 1400px;
+          background: #fff;
+          border: 2px solid #b3153f;
+          color: #b3153f;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          margin: 0 auto;
+        }
+        .top-header {
+          border-bottom: 2px solid #b3153f;
+          padding: 12px 15px 0px;
+        }
+        .title-section {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .center-title {
+          flex: 1;
+          text-align: center;
+          padding: 0 10px 10px;
+        }
+        .center-title h1 {
+          font-size: 28px;
+          font-weight: 700;
+          line-height: 1.2;
+          margin-bottom: 6px;
+          letter-spacing: 1px;
+          word-break: break-word;
+        }
+        .sub {
+          font-size: 12px;
+          font-weight: bold;
+          word-break: break-word;
+        }
+        .receipt-badge {
+          display: inline-block;
+          background: #b3153f;
+          color: white;
+          padding: 5px 15px;
+          border-radius: 20px;
+          font-size: 14px;
+          font-weight: bold;
+          margin-top: 8px;
+        }
+        .gst-pan-row {
+          font-size: 9px;
+          margin-top: 4px;
+          color: #666;
+          text-align: center;
+        }
+        .contact-row {
+          border-top: 2px solid #b3153f;
+          padding: 8px 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 11px;
+          font-weight: bold;
+          flex-wrap: wrap;
+          gap: 5px;
+          min-height: 36px;
+        }
+        .contact-phone {
+          flex: 1;
+          text-align: left;
+          color: #b3153f;
+        }
+        .contact-email {
+          flex: 1;
+          text-align: right;
+          color: #b3153f;
+          word-break: break-all;
+        }
+        .period-header {
+          background: #fff5f0;
+          padding: 10px 15px;
+          text-align: center;
+          font-size: 14px;
+          font-weight: bold;
+          border-bottom: 1px solid #b3153f;
+          color: #b3153f;
+        }
+        .summary-cards {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          padding: 15px;
+          background: #fffaf5;
+          border-bottom: 2px solid #b3153f;
+        }
+        .summary-card {
+          flex: 1;
+          min-width: 130px;
+          border: 1px solid #b3153f;
+          border-radius: 8px;
+          padding: 10px;
+          text-align: center;
+          background: white;
+        }
+        .summary-card h4 {
+          font-size: 11px;
+          margin-bottom: 6px;
+          color: #b3153f;
+        }
+        .summary-card .amount {
+          font-size: 16px;
+          font-weight: bold;
+        }
+        .main-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 11px;
+        }
+        .main-table th,
+        .main-table td {
+          border: 1px solid #b3153f;
+          padding: 8px 6px;
+          vertical-align: middle;
+        }
+        .main-table th {
+          background: #fff5f5;
+          font-weight: bold;
+          text-align: center;
+        }
+        .footer {
+          border-top: 2px solid #b3153f;
+          margin-top: 5px;
+        }
+        .footer-row {
+          display: flex;
+          border-bottom: 2px solid #b3153f;
+          flex-wrap: wrap;
+        }
+        .footer-left {
+          flex: 1;
+          padding: 12px 15px;
+          font-size: 14px;
+          font-weight: bold;
+          color: #b3153f;
+        }
+        .footer-right {
+          width: 320px;
+          border-left: 2px solid #b3153f;
+          padding: 12px 15px;
+          font-size: 16px;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          color: #b3153f;
+        }
+        .footer-right span {
+          color: #000;
+          font-size: 18px;
+          font-weight: bold;
+        }
+        .generated-info {
+          padding: 8px 15px;
+          font-size: 9px;
+          color: #999;
+          text-align: right;
+        }
+        @media print {
+          body { background: white; padding: 0; margin: 0; }
+          .receipt { box-shadow: none; margin: 0; width: 100%; }
+          .main-table th { background: #fff5f5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .summary-cards { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+        @media (max-width: 768px) {
+          .main-table { font-size: 8px; }
+          .summary-card .amount { font-size: 12px; }
+          .center-title h1 { font-size: 22px; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="receipt">
+
+        <!-- HEADER -->
+        <div class="top-header">
+          <div class="title-section">
+            <div class="center-title">
+              <h1>${businessName}</h1>
+              <div class="sub">${businessAddress}</div>
+              ${(businessGst || businessPan)
+                ? `<div class="gst-pan-row">${businessGst ? `GST: ${businessGst}` : ''}${businessGst && businessPan ? ' | ' : ''}${businessPan ? `PAN: ${businessPan}` : ''}</div>`
+                : ''}
+              <div class="receipt-badge">DAY BOOK</div>
+            </div>
+          </div>
+
+          <!-- HORIZONTAL LINE + CONTACT ROW BELOW IT -->
+          <div class="contact-row">
+            <div class="contact-phone">Mobile : ${businessPhone}</div>
+            ${businessEmail ? `<div class="contact-email">Email : ${businessEmail}</div>` : '<div></div>'}
+          </div>
+        </div>
+
+        <!-- PERIOD -->
+        <div class="period-header">
+           Period: ${formatDate(period.start)} to ${formatDate(period.end)}
+        </div>
+
+        <!-- SUMMARY CARDS -->
+        <div class="summary-cards">
+          <div class="summary-card">
+            <h4>Total Purchases</h4>
+            <div class="amount" style="color: #D32F2F;">${formatCurrency(summary.totalPurchases)}</div>
+          </div>
+          <div class="summary-card">
+            <h4>Total Sales</h4>
+            <div class="amount" style="color: #2E7D32;">${formatCurrency(summary.totalSales)}</div>
+          </div>
+          <div class="summary-card">
+            <h4>Payments Out</h4>
+            <div class="amount" style="color: #D32F2F;">${formatCurrency(summary.totalPaymentsOut)}</div>
+          </div>
+          <div class="summary-card">
+            <h4>Payments In</h4>
+            <div class="amount" style="color: #2E7D32;">${formatCurrency(summary.totalPaymentsIn)}</div>
+          </div>
+          <div class="summary-card">
+            <h4>Total Expenses</h4>
+            <div class="amount" style="color: #FF6F00;">${formatCurrency(summary.totalExpenses)}</div>
+          </div>
+          <div class="summary-card">
+            <h4>Net Cash Flow</h4>
+            <div class="amount" style="color: ${summary.netCashFlow >= 0 ? '#2E7D32' : '#D32F2F'};">${formatCurrency(Math.abs(summary.netCashFlow))}</div>
+          </div>
+          <div class="summary-card">
+            <h4>Opening Balance</h4>
+            <div class="amount" style="color: #1565C0;">${formatCurrency(summary.openingBalance)}</div>
+          </div>
+          <div class="summary-card">
+            <h4>Closing Balance</h4>
+            <div class="amount" style="color: ${summary.closingBalance >= 0 ? '#2E7D32' : '#D32F2F'};">${formatCurrency(Math.abs(summary.closingBalance))}</div>
+          </div>
+        </div>
+
+        <!-- ENTRIES TABLE -->
+        <table class="main-table">
+          <thead>
+            <tr>
+              <th style="width: 5%;">#</th>
+              <th style="width: 12%;">Date</th>
+              <th style="width: 10%;">Type</th>
+              <th style="width: 25%;">Description</th>
+              <th style="width: 12%;">Party</th>
+              <th style="width: 10%;">Debit (₹)</th>
+              <th style="width: 10%;">Credit (₹)</th>
+              <th style="width: 8%;">Cash Flow</th>
+              <th style="width: 8%;">Balance (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${entriesRows}
+          </tbody>
+        </table>
+
+        <!-- FOOTER -->
+        <div class="footer">
+          <div class="footer-row">
+            <div class="footer-left">
+               Total Entries: ${summary.totalEntries || 0} &nbsp;|&nbsp; ${isMarathi ? 'धन्यवाद!' : 'Thank You!'}
+            </div>
+            <div class="footer-right">
+              Closing Balance:
+              <span>${formatCurrency(Math.abs(summary.closingBalance))}</span>
+            </div>
+          </div>
+          <div class="generated-info">
+            Generated on: ${formatDateTime(generatedAt)}
+          </div>
+        </div>
+
+      </div>
+    </body>
+    </html>
+  `;
+
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+  }, 500);
+};
+
+  const openDayBookModal = () => {
+    setDayBookFilters({
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: new Date().toISOString().split('T')[0]
+    });
+    setDayBookData(null);
+    setShowDayBookModal(true);
+    setError(null);
+  };
+
+  const closeDayBookModal = () => {
+    setShowDayBookModal(false);
+    setDayBookData(null);
+    setError(null);
+  };
+
+  const handleDayBookView = async () => {
+    await fetchDayBook();
   };
 
   useEffect(() => {
@@ -161,6 +674,11 @@ const OpeningBalance = () => {
   const handleExportInputChange = (e) => {
     const { name, value } = e.target;
     setExportData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleDayBookFilterChange = (e) => {
+    const { name, value } = e.target;
+    setDayBookFilters(prev => ({ ...prev, [name]: value }));
   };
 
   const validateForm = () => {
@@ -255,7 +773,6 @@ const OpeningBalance = () => {
         responseType: 'blob'
       });
 
-      // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -323,6 +840,14 @@ const OpeningBalance = () => {
           <p className="text-sm mt-1" style={{ color: '#8D6E63' }}>{t('openingBalance.subtitle')}</p>
         </div>
         <div className="flex gap-3">
+          <button
+            onClick={openDayBookModal}
+            className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all hover:scale-105 border"
+            style={{ borderColor: '#C8E6C9', color: '#1565C0', background: '#E3F2FD' }}
+          >
+            <Eye className="w-4 h-4" />
+            View Day Book
+          </button>
           <button
             onClick={openExportModal}
             className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all hover:scale-105 border"
@@ -819,6 +1344,117 @@ const OpeningBalance = () => {
           </div>
         </>
       )}
+
+     {/* View Day Book Modal */}
+{showDayBookModal && (
+  <>
+    <div 
+      className="fixed inset-0 z-50 transition-all duration-300"
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)'
+      }}
+      onClick={closeDayBookModal}
+    />
+    
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all duration-300">
+          <div className="px-6 py-4 border-b flex justify-between items-center" style={{ borderColor: '#E5E7EB' }}>
+            <h3 className="text-lg font-semibold flex items-center gap-2" style={{ color: '#1565C0' }}>
+              <Eye className="w-5 h-5" />
+              {t('daybook.viewDayBook')}
+            </h3>
+            <button onClick={closeDayBookModal} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
+              <X className="w-5 h-5" style={{ color: '#6B7280' }} />
+            </button>
+          </div>
+
+          <div className="px-6 py-6">
+            {error && (
+              <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-red-500" />
+                <span className="text-sm text-red-600">{error}</span>
+              </div>
+            )}
+
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: '#374151' }}>
+                  {t('daybook.startDate')} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={dayBookFilters.startDate}
+                  onChange={handleDayBookFilterChange}
+                  className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  style={{ borderColor: '#D1D5DB' }}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: '#374151' }}>
+                  {t('daybook.endDate')} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  name="endDate"
+                  value={dayBookFilters.endDate}
+                  onChange={handleDayBookFilterChange}
+                  className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  style={{ borderColor: '#D1D5DB' }}
+                  required
+                />
+              </div>
+            </div>
+
+            {dayBookData && (
+              <div className="mt-4 p-3 bg-green-50 rounded-lg">
+                <p className="text-sm text-green-700">
+                  {t('daybook.messages.entriesFound', { count: dayBookData.data.summary.totalEntries })}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="px-6 py-4 border-t flex justify-end gap-3" style={{ borderColor: '#E5E7EB' }}>
+            <button
+              onClick={closeDayBookModal}
+              disabled={loadingDayBook}
+              className="px-4 py-2 rounded-lg text-sm font-medium border hover:bg-gray-50 transition-all"
+              style={{ borderColor: '#D1D5DB', color: '#6B7280' }}
+            >
+              {t('common.close')}
+            </button>
+            {dayBookData ? (
+              <button
+                onClick={printDayBook}
+                className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 hover:scale-105 transition-all"
+                style={{ background: 'linear-gradient(135deg, #1565C0, #42A5F5)' }}
+              >
+                <Printer className="w-4 h-4" />
+                {t('common.print')}
+              </button>
+            ) : (
+              <button
+                onClick={handleDayBookView}
+                disabled={loadingDayBook}
+                className="px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2 hover:scale-105 transition-all"
+                style={{ background: 'linear-gradient(135deg, #1565C0, #42A5F5)' }}
+              >
+                {loadingDayBook ? <Loader className="w-4 h-4 animate-spin" /> : <Eye className="w-4 h-4" />}
+                {loadingDayBook ? t('common.loading') : t('common.view')}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+)}
     </div>
   );
 };

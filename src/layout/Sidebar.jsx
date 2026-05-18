@@ -20,7 +20,8 @@ import {
   Bell,
   Receipt,
   Loader,
-  History
+  History,
+  DollarSign  // Add this for opening balance icon
 } from "lucide-react";
 import BASE_URL from '../config/Config';
 
@@ -184,6 +185,7 @@ const Sidebar = ({ isMobileOpen, onClose }) => {
     { path: "/sale-payments",name: t('nav.salepayments'), icon: ShoppingBag, requiredRole: ['superadmin', 'admin', 'operator'] },
     { path: "/expenses",     name: t('nav.expenses'),     icon: Wallet, requiredRole: ['superadmin', 'admin', 'operator'] },
     { path: "/ledger",       name: t('nav.ledger'),       icon: Receipt, requiredRole: ['superadmin', 'admin', 'operator'] },
+    { path: "/openingbalance", name: t('nav.openingBalance'), icon: DollarSign, requiredRole: ['superadmin', 'admin'] },
     // { path: "/budget-alerts",name: t('nav.budgetAlerts'), icon: Bell, requiredRole: ['superadmin', 'admin', 'operator'] },
     { path: "/audit-logs",   name: t('nav.auditLogs'),    icon: History, requiredRole: ['superadmin', 'admin'] },
     { path: "/users",        name: t('nav.usersRoles'),   icon: UserCog, requiredRole: ['superadmin', 'admin'] },

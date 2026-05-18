@@ -170,7 +170,7 @@ const EditPurchase = () => {
   const fetchProducts = async () => {
     try {
       const token = getToken();
-      const response = await axios.get(`${BASE_URL}/products?limit=100`, {
+      const response = await axios.get(`${BASE_URL}/products`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.data.success) {

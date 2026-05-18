@@ -89,6 +89,7 @@
     "account": "Account",
     "receipts": "Receipts",
     "farmers": "Farmers",
+    "openingBalance": "Opening Balance",
     "products": "Products",
     "buyers": "Buyers",
     "transactions": "Transactions",
@@ -113,6 +114,53 @@
     "salepayments": "Sale Payments",
     "mainNav": "Navigation"
   },
+
+ 
+
+"daybook": {
+  "title": "Day Book",
+  "subtitle": "View and export daily transactions",
+  "viewDayBook": "View Day Book",
+  "exportDayBook": "Export Day Book",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "operator": "Operator",
+  "transactionType": "Transaction Type",
+  "allOperators": "All Operators",
+  "allTypes": "All Types",
+  "credit": "Credit",
+  "debit": "Debit",
+  "totalEntries": "Total Entries",
+  "totalPurchases": "Total Purchases",
+  "totalSales": "Total Sales",
+  "paymentsOut": "Payments Out",
+  "paymentsIn": "Payments In",
+  "totalExpenses": "Total Expenses",
+  "netCashFlow": "Net Cash Flow",
+  "openingBalance": "Opening Balance",
+  "closingBalance": "Closing Balance",
+  "period": "Period",
+  "date": "Date",
+  "type": "Type",
+  "description": "Description",
+  "party": "Party",
+  "cashFlow": "Cash Flow",
+  "balance": "Balance",
+  "inflow": "Inflow",
+  "outflow": "Outflow",
+  "generatedOn": "Generated on",
+  "errors": {
+    "startDateRequired": "Please select start date",
+    "endDateRequired": "Please select end date",
+    "invalidDateRange": "Start date cannot be after end date",
+    "fetchFailed": "Failed to fetch day book data",
+    "exportFailed": "Failed to export day book"
+  },
+  "messages": {
+    "exportSuccess": "Day book exported successfully!",
+    "entriesFound": "Found {{count}} entries for the selected period"
+  }
+},
 
     
   "dashboard": {
@@ -702,37 +750,44 @@
     },
 
     
-  "openingBalance": {
-    "title": "Opening Balance",
-    "subtitle": "Manage your business opening balance",
-    "businessInformation": "Business Information",
-    "businessName": "Business Name",
-    "address": "Address",
-    "phone": "Phone",
-    "email": "Email",
-    "openingBalanceDetails": "Opening Balance Details",
-    "currentBalance": "Current Balance",
-    "debit": "Debit",
-    "credit": "Credit",
-    "asOfDate": "As Of Date",
-    "lastUpdated": "Last Updated",
-    "amount": "Amount",
-    "type": "Balance Type",
-    "amountHelperText": "Enter the opening balance amount",
-    "notesPlaceholder": "Add any notes about the opening balance...",
-    "noBalanceFound": "No opening balance has been set yet",
-    "setOpeningBalance": "Set Opening Balance",
-    "whatIsOpeningBalance": "What is Opening Balance?",
-    "description": "Opening balance is the amount of money or inventory value your business has at the start of a financial period. It helps track your financial position accurately.",
-    "errors": {
-      "validAmountRequired": "Please enter a valid amount greater than 0",
-      "dateRequired": "Please select a date"
-    },
-    "messages": {
-      "createSuccess": "Opening balance created successfully!",
-      "updateSuccess": "Opening balance updated successfully!"
-    }
+ "openingBalance": {
+  "title": "Opening Balance",
+  "subtitle": "Manage business opening balance and day book",
+  "addBalance": "Add Opening Balance",
+  "updateBalance": "Update Opening Balance",
+  "businessInformation": "Business Information",
+  "businessName": "Business Name",
+  "address": "Address",
+  "phone": "Phone Number",
+  "email": "Email Address",
+  "gstNumber": "GST Number",
+  "panNumber": "PAN Number",
+  "openingBalanceDetails": "Opening Balance Details",
+  "currentBalance": "Current Balance",
+  "debit": "Debit",
+  "credit": "Credit",
+  "asOfDate": "As Of Date",
+  "createdBy": "Created By",
+  "noBalanceFound": "No Opening Balance Found",
+  "noBalanceDescription": "You haven't set an opening balance yet. This is required to track your financial position accurately.",
+  "whatIsOpeningBalance": "What is Opening Balance?",
+  "description": "Opening balance is the amount of cash or funds available at the start of a financial period. It helps track your financial position and ensures accurate bookkeeping.",
+  "amount": "Amount",
+  "type": "Balance Type",
+  "notesPlaceholder": "Enter any notes about this opening balance...",
+  "errors": {
+    "validAmountRequired": "Please enter a valid amount greater than 0",
+    "dateRequired": "Please select a date",
+    "typeRequired": "Please select a balance type",
+    "createFailed": "Failed to create opening balance",
+    "updateFailed": "Failed to update opening balance",
+    "fetchFailed": "Failed to fetch opening balance"
   },
+  "messages": {
+    "createSuccess": "Opening balance created successfully!",
+    "updateSuccess": "Opening balance updated successfully!"
+  }
+},
 
   "inventory": {
     "title": "Inventory",

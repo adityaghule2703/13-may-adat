@@ -145,7 +145,7 @@ const AddSalePayment = () => {
   const fetchSales = async () => {
     try {
       const token = getToken();
-      const response = await axios.get(`${BASE_URL}/sales?limit=100`, {
+      const response = await axios.get(`${BASE_URL}/sales`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.data.success) {
